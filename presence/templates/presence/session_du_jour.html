@@ -1,0 +1,41 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Session du jour{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>📅 Session du jour</h2>
+
+    {% if session %}
+        <form method="post" class="session-form">
+            {% csrf_token %}
+
+            {# Affiche les champs sauf la date (non modifiable) #}
+            <div class="form-group">
+                <label>Date</label>
+                <input type="text" value="{{ session.date }}" disabled>
+            </div>
+
+            {% for field in form %}
+                {% if field.name != "date" %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="help-text">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <button type="submit" class="btn-submit">💾 Enregistrer</button>
+        </form>
+    {% else %}
+        <p>Aucune session prévue aujourd'hui.</p>
+        <button class="btn-submit" disabled>Modifier session du jour</button>
+    {% endif %}
+</div>
+{% endblock %}

@@ -7,6 +7,7 @@ urlpatterns = [
     # Session
     path('session/creer/', views.creer_session, name='creer_session'),
     path('session/<int:pk>/', views.voir_session, name='voir_session'),
+    path('session-du-jour/', views.modifier_session_du_jour, name='modifier_session_du_jour'),
     path('session/modifier/<int:pk>/', views.modifier_session, name='modifier_session'),
     path('sessions/', views.liste_sessions, name='liste_sessions'), 
 

@@ -1,11 +1,10 @@
 import openpyxl
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
 from .models import Licence, Presence, Session
 from .forms import PresenceForm, SessionForm, LicenceForm
 from django.utils.timezone import localdate
-from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Count, Max
 
 def accueil(request):
@@ -114,6 +113,25 @@ def modifier_session(request, pk):
     else:
         form = SessionForm(instance=session)
     return render(request, 'presence/modifier_session.html', {'form': form, 'session': session})
+
+def modifier_session_du_jour(request):
+    today = localdate()
+    # On récupère la session du jour, s'il y en a plusieurs, on prend la première (ou adapte selon besoin)
+    session = Session.objects.filter(date=today).first()
+    
+    if not session:
+        # Pas de session aujourd'hui
+        return render(request, 'presence/session_du_jour.html', {'session': None})
+
+    if request.method == 'POST':
+        form = SessionForm(request.POST, instance=session)
+        if form.is_valid():
+            form.save()
+            return redirect('modifier_session_du_jour')  # reload page après sauvegarde
+    else:
+        form = SessionForm(instance=session)
+
+    return render(request, 'presence/session_du_jour.html', {'form': form, 'session': session})
 
 # Licencier
 def ajouter_licencie(request):
