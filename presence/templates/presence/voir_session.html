@@ -1,0 +1,26 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Détail de la session{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>📋 Détail de la session du <span class="highlight">{{ session.date }}</span></h2>
+
+    <div class="session-box">
+        <p><strong>Heure :</strong> {{ session.heure_debut }} - {{ session.heure_fin }}</p>
+        <p><strong>Thème :</strong><br><em>{{ session.theme|linebreaksbr }}</em></p>
+        <p><strong>Licenciés présents :</strong></p>
+        {% if session.presences.all %}
+            <ul>
+                {% for licencie in session.presences.all %}
+                    <li>{{ licencie.prenom }} {{ licencie.nom }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucun licencié présent.</p>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'liste_sessions' %}" class="btn-submit">⬅️ Retour à la liste</a>
+</div>
+{% endblock %}

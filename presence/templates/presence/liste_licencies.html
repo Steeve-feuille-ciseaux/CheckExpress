@@ -1,0 +1,33 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Liste des licenciés{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>👥 Liste des licenciés</h2>
+    <a href="{% url 'export_licencies_excel' %}" class="btn-submit" style="margin-top: 10px;">📥 Exporter vers Excel</a>
+
+    {% if licencies %}
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Nombre de présences</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for licencie in licencies %}
+                    <tr>
+                        <td>{{ licencie.nom }}</td>
+                        <td>{{ licencie.prenom }}</td>
+                        <td>{{ licencie.nb_presences }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucun licencié trouvé.</p>
+    {% endif %}
+</div>
+{% endblock %}

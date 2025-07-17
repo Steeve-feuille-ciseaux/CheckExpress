@@ -6,6 +6,7 @@ from .models import Licence, Presence, Session
 from .forms import PresenceForm, SessionForm
 from django.utils.timezone import localdate
 from django.shortcuts import get_object_or_404, redirect
+from django.db.models import Count
 
 def accueil(request):
     return render(request, 'presence/accueil.html')
@@ -99,6 +100,10 @@ def liste_sessions(request):
         'sessions_today': sessions_today,
     })
 
+def voir_session(request, pk):
+    session = get_object_or_404(Session, pk=pk)
+    return render(request, 'presence/voir_session.html', {'session': session})
+
 def modifier_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
     if request.method == 'POST':
@@ -109,3 +114,29 @@ def modifier_session(request, pk):
     else:
         form = SessionForm(instance=session)
     return render(request, 'presence/modifier_session.html', {'form': form, 'session': session})
+
+# Licencier
+def liste_licencies(request):
+    licencies = Licence.objects.annotate(nb_presences=Count('session'))
+    return render(request, 'presence/liste_licencies.html', {'licencies': licencies})
+
+# Export data 
+def export_licencies_excel(request):
+    # Créer un classeur Excel
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Licenciés"
+
+    # Entête
+    ws.append(['Nom', 'Prénom', 'Nombre de présences'])
+
+    # Données
+    licencies = Licence.objects.annotate(nb_presences=Count('session'))
+    for licencie in licencies:
+        ws.append([licencie.nom, licencie.prenom, licencie.nb_presences])
+
+    # Réponse HTTP avec fichier
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=licencies.xlsx'
+    wb.save(response)
+    return response

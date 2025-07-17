@@ -10,27 +10,29 @@
         <div class="session-today">
             <h3>🟢 Session aujourd'hui ({{ today }})</h3>
             {% for session in sessions_today %}
-                <p>
+                <div class="session-box today-box">
                     <strong>{{ session.heure_debut }} - {{ session.heure_fin }}</strong><br>
                     <em>{{ session.theme|linebreaksbr }}</em><br>
                     <small>{{ session.presences.count }} licenciés présents</small><br>
+                    <a href="{% url 'voir_session' session.id %}">🔍 Voir</a> |
                     <a href="{% url 'modifier_session' session.id %}">✏️ Modifier cette session</a>
-                </p>
+                </div>
             {% endfor %}
         </div>
     {% else %}
         <p class="no-session-today">❌ Pas de session aujourd'hui.</p>
     {% endif %}
 
-    <hr>
+    <hr class="session-separator">
 
     {% if sessions %}
         <ul class="session-list">
             {% for session in sessions %}
-                <li>
+                <li class="session-box">
                     <strong>{{ session.date }}</strong> — de {{ session.heure_debut }} à {{ session.heure_fin }}<br>
                     <em>{{ session.theme|linebreaksbr }}</em><br>
                     <small>{{ session.presences.count }} licenciés présents</small><br>
+                    <a href="{% url 'voir_session' session.id %}">🔍 Voir</a> |
                     <a href="{% url 'modifier_session' session.id %}">✏️ Modifier</a>
                 </li>
             {% endfor %}
