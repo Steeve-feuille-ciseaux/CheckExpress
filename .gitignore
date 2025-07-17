@@ -1,0 +1,53 @@
+# Environnements virtuels
+venv/
+.env/
+.venv/
+
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Fichiers de base de données SQLite (optionnel)
+*.sqlite3
+
+# Fichiers temporaires / logs
+*.log
+*.pot
+*.pyc
+*.pyo
+*.swp
+*.swo
+.DS_Store
+
+# JetBrains / VS Code
+.idea/
+.vscode/
+
+# fichiers de test ou de cache
+coverage/
+htmlcov/
+*.cover
+.tox/
+.pytest_cache/
+
+# Fichiers/dossiers Django auto-générés
+staticfiles/
+media/
+db.sqlite3
+
+# Fichiers sensibles
+*.env
+.env.local
+.env.*
+
+# Migrations si tu ne veux pas versionner les migrations (facultatif)
+# **recommandé de les garder**
+# */migrations/*.py
+# */migrations/*.pyc
+
+# Fichiers de configuration secrets (si tu en as)
+secrets.json
+
+# fichiers Excel générés par ton app
+*.xlsx
