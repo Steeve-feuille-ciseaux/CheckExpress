@@ -1,0 +1,105 @@
+/* ===========================
+   RESET
+=========================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===========================
+   BASE STYLES
+=========================== */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+/* ===========================
+   LAYOUT
+=========================== */
+header {
+    background-color: #2c3e50;
+    padding: 1rem;
+    color: white;
+}
+
+.navbar h1 {
+    font-size: 1.5rem;
+}
+
+.submenu {
+    background-color: #34495e;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 0.7rem 0;
+}
+
+.submenu a {
+    color: white;
+    font-weight: 500;
+}
+
+.submenu a:hover {
+    color: #1abc9c;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: white;
+    padding: 2rem 2.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+footer {
+    text-align: center;
+    color: #777;
+    padding: 1rem;
+    margin-top: 3rem;
+}
+
+/* ===========================
+   COMPONENTS
+=========================== */
+button {
+    background-color: #2ecc71;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #27ae60;
+}
+
+
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+    .submenu {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .container {
+        padding: 1.5rem;
+        margin: 20px;
+    }
+}

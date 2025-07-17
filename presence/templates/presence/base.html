@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Application de présence{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'presence/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'presence/css/form.css' %}">
+</head>
+<body>
+
+    <header>
+        <h1>Suivi de présence</h1>
+    </header>
+
+    <nav class="submenu">
+        <a href="{% url 'accueil' %}">🏠 Accueil</a>
+        <a href="{% url 'enregistrer_presence' %}">📋 Marquer présence</a>
+        <a href="{% url 'creer_session' %}">🗓️ Créer une session</a>
+        <a href="{% url 'export_presence_du_jour' %}">📤 Export Excel</a>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        &copy; {{ now.year }} - Présence Manager
+    </footer>
+
+</body>
+</html>

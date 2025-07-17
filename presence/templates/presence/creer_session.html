@@ -1,0 +1,29 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Créer une session{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Créer une nouvelle session</h2>
+
+    <form method="post" class="session-form">
+        {% csrf_token %}
+
+        {# On enveloppe chaque champ dans un div avec une classe pour mieux styliser #}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-submit">✅ Enregistrer la session</button>
+    </form>
+</div>
+{% endblock %}
