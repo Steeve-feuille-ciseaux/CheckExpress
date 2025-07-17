@@ -6,7 +6,7 @@ from .models import Licence, Presence, Session
 from .forms import PresenceForm, SessionForm, LicenceForm
 from django.utils.timezone import localdate
 from django.shortcuts import get_object_or_404, redirect
-from django.db.models import Count
+from django.db.models import Count, Max
 
 def accueil(request):
     return render(request, 'presence/accueil.html')
@@ -116,10 +116,6 @@ def modifier_session(request, pk):
     return render(request, 'presence/modifier_session.html', {'form': form, 'session': session})
 
 # Licencier
-def liste_licencies(request):
-    licencies = Licence.objects.annotate(nb_presences=Count('session'))
-    return render(request, 'presence/liste_licencies.html', {'licencies': licencies})
-
 def ajouter_licencie(request):
     if request.method == 'POST':
         form = LicenceForm(request.POST)
@@ -130,22 +126,57 @@ def ajouter_licencie(request):
         form = LicenceForm()
     return render(request, 'presence/ajouter_licencie.html', {'form': form})
 
-# Export data 
+def liste_licencies(request):
+    licencies = Licence.objects.annotate(
+        nb_presences=Count('session'),
+        last_session_date=Max('session__date')
+    )
+    return render(request, 'presence/liste_licencies.html', {'licencies': licencies})
+
 def export_licencies_excel(request):
-    # Créer un classeur Excel
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Licenciés"
 
-    # Entête
-    ws.append(['Nom', 'Prénom', 'Nombre de présences'])
+    ws.append(['Nom', 'Prénom', 'Nombre de présences', 'Dernière session'])
 
-    # Données
-    licencies = Licence.objects.annotate(nb_presences=Count('session'))
+    licencies = Licence.objects.annotate(
+        nb_presences=Count('session'),
+        last_session_date=Max('session__date')
+    )
     for licencie in licencies:
-        ws.append([licencie.nom, licencie.prenom, licencie.nb_presences])
+        ws.append([
+            licencie.nom,
+            licencie.prenom,
+            licencie.nb_presences,
+            licencie.last_session_date.strftime("%Y-%m-%d") if licencie.last_session_date else "Aucune session"
+        ])
 
-    # Réponse HTTP avec fichier
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=licencies.xlsx'
+    wb.save(response)
+    return response
+
+# Export data 
+def export_licencies_excel(request):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Licenciés"
+
+    ws.append(['Nom', 'Prénom', 'Nombre de présences', 'Dernière session'])
+
+    licencies = Licence.objects.annotate(
+        nb_presences=Count('session_set'),
+        last_session_date=Max('session_set__date')
+    )
+    for licencie in licencies:
+        ws.append([
+            licencie.nom,
+            licencie.prenom,
+            licencie.nb_presences,
+            licencie.last_session_date.strftime("%Y-%m-%d") if licencie.last_session_date else "Aucune session"
+        ])
+
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=licencies.xlsx'
     wb.save(response)

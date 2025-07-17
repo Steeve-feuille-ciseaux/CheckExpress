@@ -20,6 +20,7 @@
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th>Nombre de présences</th>
+                    <th>Dernière session</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,6 +29,13 @@
                         <td>{{ licencie.nom }}</td>
                         <td>{{ licencie.prenom }}</td>
                         <td>{{ licencie.nb_presences }}</td>
+                        <td>
+                            {% if licencie.last_session_date %}
+                                {{ licencie.last_session_date|date:"d/m/Y" }}
+                            {% else %}
+                                Aucune session
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

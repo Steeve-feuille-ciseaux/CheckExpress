@@ -18,7 +18,7 @@ class Licence(models.Model):
 
 
 class Presence(models.Model):
-    licence = models.ForeignKey(Licence, on_delete=models.CASCADE)
+    licence = models.ForeignKey(Licence, on_delete=models.CASCADE, related_name='licencies')
     date = models.DateField(auto_now_add=True)
     present = models.BooleanField(default=False)
 
