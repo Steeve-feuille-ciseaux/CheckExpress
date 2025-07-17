@@ -1,0 +1,42 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Liste des sessions{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>📅 Liste des sessions</h2>
+
+    {% if sessions_today %}
+        <div class="session-today">
+            <h3>🟢 Session aujourd'hui ({{ today }})</h3>
+            {% for session in sessions_today %}
+                <p>
+                    <strong>{{ session.heure_debut }} - {{ session.heure_fin }}</strong><br>
+                    <em>{{ session.theme|linebreaksbr }}</em><br>
+                    <small>{{ session.presences.count }} licenciés présents</small><br>
+                    <a href="{% url 'modifier_session' session.id %}">✏️ Modifier cette session</a>
+                </p>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-session-today">❌ Pas de session aujourd'hui.</p>
+    {% endif %}
+
+    <hr>
+
+    {% if sessions %}
+        <ul class="session-list">
+            {% for session in sessions %}
+                <li>
+                    <strong>{{ session.date }}</strong> — de {{ session.heure_debut }} à {{ session.heure_fin }}<br>
+                    <em>{{ session.theme|linebreaksbr }}</em><br>
+                    <small>{{ session.presences.count }} licenciés présents</small><br>
+                    <a href="{% url 'modifier_session' session.id %}">✏️ Modifier</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune session enregistrée.</p>
+    {% endif %}
+</div>
+{% endblock %}

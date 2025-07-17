@@ -1,11 +1,11 @@
 import openpyxl
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.utils import timezone
-from .models import Licence, Presence
-from .forms import PresenceForm, SessionForm
 from django.http import HttpResponse
-import openpyxl
+from django.utils import timezone
+from .models import Licence, Presence, Session
+from .forms import PresenceForm, SessionForm
+from django.utils.timezone import localdate
+from django.shortcuts import get_object_or_404, redirect
 
 def accueil(request):
     return render(request, 'presence/accueil.html')
@@ -78,6 +78,7 @@ def export_presence_du_jour(request):
     workbook.save(response)
     return response
 
+# Gestion des sessions
 def creer_session(request):
     if request.method == 'POST':
         form = SessionForm(request.POST)
@@ -87,3 +88,24 @@ def creer_session(request):
     else:
         form = SessionForm()
     return render(request, 'presence/creer_session.html', {'form': form})
+
+def liste_sessions(request):
+    today = localdate()
+    sessions = Session.objects.all().order_by('-date', '-heure_debut')
+    sessions_today = sessions.filter(date=today)
+    return render(request, 'presence/liste_sessions.html', {
+        'sessions': sessions,
+        'today': today,
+        'sessions_today': sessions_today,
+    })
+
+def modifier_session(request, pk):
+    session = get_object_or_404(Session, pk=pk)
+    if request.method == 'POST':
+        form = SessionForm(request.POST, instance=session)
+        if form.is_valid():
+            form.save()
+            return redirect('liste_sessions')
+    else:
+        form = SessionForm(instance=session)
+    return render(request, 'presence/modifier_session.html', {'form': form, 'session': session})

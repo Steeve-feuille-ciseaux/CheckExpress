@@ -1,0 +1,28 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Modifier une session{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>✏️ Modifier la session du <span class="highlight">{{ session.date }}</span></h2>
+
+    <form method="post" class="session-form">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-submit">💾 Enregistrer</button>
+    </form>
+</div>
+{% endblock %}

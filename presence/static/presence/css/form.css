@@ -1,4 +1,7 @@
-/* Form styling */
+/* ===========================
+   FORM STYLING
+=========================== */
+
 .session-form {
     display: flex;
     flex-direction: column;
@@ -59,4 +62,9 @@
 
 .btn-submit:hover {
     background-color: #27ae60;
+}
+
+.highlight {
+    color: #1abc9c;
+    font-weight: 600;
 }
