@@ -26,3 +26,11 @@ class SessionForm(forms.ModelForm):
             'heure_fin': forms.TimeInput(attrs={'type': 'time'}),
             'theme': forms.Textarea(attrs={'rows': 3}),
         }
+
+class LicenceForm(forms.ModelForm):
+    class Meta:
+        model = Licence
+        fields = ['nom', 'prenom', 'date_naissance', 'grade']  # adapte si tu as d'autres champs
+        widgets = {
+            'date_naissance': forms.DateInput(attrs={'type': 'date'}),
+        }

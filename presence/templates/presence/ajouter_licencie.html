@@ -1,0 +1,14 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Ajouter un licencié{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="highlight" style="margin-bottom: 1.5rem;">➕ Ajouter un licencié</h2>
+    <form method="post" class="session-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-submit" style="margin-top: 1rem;">✅ Ajouter</button>
+    </form>
+</div>
+{% endblock %}

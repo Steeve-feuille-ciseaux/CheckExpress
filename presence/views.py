@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.utils import timezone
 from .models import Licence, Presence, Session
-from .forms import PresenceForm, SessionForm
+from .forms import PresenceForm, SessionForm, LicenceForm
 from django.utils.timezone import localdate
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Count
@@ -119,6 +119,16 @@ def modifier_session(request, pk):
 def liste_licencies(request):
     licencies = Licence.objects.annotate(nb_presences=Count('session'))
     return render(request, 'presence/liste_licencies.html', {'licencies': licencies})
+
+def ajouter_licencie(request):
+    if request.method == 'POST':
+        form = LicenceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('liste_licencies')  # nom de la page liste licenciés
+    else:
+        form = LicenceForm()
+    return render(request, 'presence/ajouter_licencie.html', {'form': form})
 
 # Export data 
 def export_licencies_excel(request):

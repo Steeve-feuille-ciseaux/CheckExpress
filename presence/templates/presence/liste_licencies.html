@@ -4,8 +4,14 @@
 
 {% block content %}
 <div class="container">
-    <h2>👥 Liste des licenciés</h2>
-    <a href="{% url 'export_licencies_excel' %}" class="btn-submit" style="margin-top: 10px;">📥 Exporter vers Excel</a>
+    <div class="header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2>👥 Liste des licenciés</h2>
+        <div>
+            <a href="{% url 'ajouter_licencie' %}" class="btn-submit" style="margin-right: 10px;">➕ Ajouter</a>
+            <a href="{% url 'export_licencies_excel' %}" class="btn-submit">📥 Exporter vers Excel</a>
+        </div>
+    </div>
+
 
     {% if licencies %}
         <table class="styled-table">
