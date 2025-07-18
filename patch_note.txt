@@ -6,6 +6,8 @@ v0.05.0 -> Afficher la dernière présence du licencier
 v0.06.0 -> raccourcie présence à la session du jour
 v0.06.1 -> lien bonton d'accueil remplacé
 v0.06.1.1 -> push on githubs
+v0.06.1.2 -> Update githubs + Readme.md
+v0.06.1.3 -> Update Readme.md
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher

@@ -1,6 +1,8 @@
 # CheckExpress
 
 **CheckExpress** est une application web rapide et intuitive pour faire l’appel dans vos cours, où que vous soyez.
+Créée à l’origine pour dépanner un ami, cette application peut désormais rendre service à tous.
+Conçue avec une approche Mobile First.
 
 ## ✨ Fonctionnalités principales
 
