@@ -8,6 +8,7 @@ v0.06.1 -> lien bonton d'accueil remplacé
 v0.06.1.1 -> push on githubs
 v0.06.1.2 -> Update githubs + Readme.md
 v0.06.1.3 -> Update Readme.md
+v0.06.1.4 -> Protect project : ajout de commande dans patch note + créer fichier des dépendance
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher
@@ -19,6 +20,15 @@ next step :
 python -m venv env
 env\Scripts\activate
 deactivate
+where python
+
+findstr /s /i "import " *.py
+pip list
+pip freeze > requirements.txt
+pip install -r requirements.txt
+pip show django
+
+python manage.py createsuperuser
 python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
