@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from .models import Licence, Presence, Session
 from .forms import PresenceForm, SessionForm, LicenceForm
-from django.utils.timezone import localdate
+from django.utils.timezone import localdate, localtime
 from django.db.models import Count, Max
 from django.contrib.auth.decorators import login_required
 
@@ -129,9 +129,34 @@ def modifier_session(request, pk):
 @login_required
 def modifier_session_du_jour(request):
     today = localdate()
-    # On récupère la session du jour, s'il y en a plusieurs, on prend la première (ou adapte selon besoin)
-    session = Session.objects.filter(date=today).first()
-    
+    now = localtime().time()
+
+    # Rechercher la session du jour qui est en cours (heure_debut <= now < heure_fin)
+    session = (
+        Session.objects
+        .filter(date=today, heure_debut__lte=now, heure_fin__gt=now)
+        .order_by('heure_debut')
+        .first()
+    )
+
+    # Si aucune session "en cours", afficher la plus proche à venir aujourd'hui
+    if not session:
+        session = (
+            Session.objects
+            .filter(date=today, heure_debut__gte=now)
+            .order_by('heure_debut')
+            .first()
+        )
+
+    # Si toujours rien, afficher la première de la journée passée
+    if not session:
+        session = (
+            Session.objects
+            .filter(date=today)
+            .order_by('heure_debut')
+            .first()
+        )
+
     if not session:
         return render(request, 'presence/session_du_jour.html', {'session': None})
 
@@ -142,7 +167,7 @@ def modifier_session_du_jour(request):
             session.checked_by = request.user
             session.save()
             form.save_m2m()
-            return redirect('liste_sessions') # reload page après sauvegarde
+            return redirect('liste_sessions')
     else:
         form = SessionForm(instance=session)
 
