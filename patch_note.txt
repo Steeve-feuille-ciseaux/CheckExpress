@@ -8,5 +8,15 @@ v0.06.1 -> lien bonton d'accueil remplacé
 v0.06.1.1 -> push on githubs
 
 next step : 
-Facilité la sélection des noms présent en grossisant les cases à cocher
-accueil et UX en général
+- Facilité la sélection des noms présent en grossisant les cases à cocher
+- accueil et UX en général
+- ajouter le prof qui fais le cours
+- repenser le design Mobile First
+
+** cmd récurrent *
+python -m venv env
+env\Scripts\activate
+deactivate
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
