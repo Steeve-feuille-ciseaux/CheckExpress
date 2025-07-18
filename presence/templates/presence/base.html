@@ -11,7 +11,7 @@
 <body>
 
     <header>
-        <h1>Suivi de présence</h1>
+        <h1><a href="{% url 'accueil' %}">Check Express</a></h1>
     </header>
 
     <nav class="submenu">
@@ -20,8 +20,16 @@
         <a href="{% url 'modifier_session_du_jour' %}">📋 Marquer présence</a>
         <a href="{% url 'liste_sessions' %}">📅 Voir les sessions</a>
         <a href="{% url 'creer_session' %}">🗓️ Créer une session</a>
-        <a href="{% url 'export_presence_du_jour' %}">📤 Export Excel (old)</a>
-        <a href="{% url 'enregistrer_presence' %}">📋 Marquer présence (old)</a>
+        <!-- <a href="{% url 'export_presence_du_jour' %}">📤 Export Excel (old)</a>
+        <a href="{% url 'enregistrer_presence' %}">📋 Marquer présence (old)</a> -->
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit">🔒 Déconnexion</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">🔑 Connexion</a>
+        {% endif %}
     </nav>
 
     <div class="container">

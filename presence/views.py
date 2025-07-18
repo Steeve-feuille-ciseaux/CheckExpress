@@ -6,6 +6,7 @@ from .models import Licence, Presence, Session
 from .forms import PresenceForm, SessionForm, LicenceForm
 from django.utils.timezone import localdate
 from django.db.models import Count, Max
+from django.contrib.auth.decorators import login_required
 
 def accueil(request):
     return render(request, 'presence/accueil.html')
@@ -52,7 +53,6 @@ def enregistrer_presence(request):
     else:
         form = PresenceForm()
     return render(request, 'presence/presence_form.html', {'form': form})
-
 
 def export_presence_du_jour(request):
     today = timezone.now().date()

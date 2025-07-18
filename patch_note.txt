@@ -12,6 +12,7 @@ v0.06.1.4 -> Protect project : ajout de commande dans patch note + créer fichie
 v0.06.1.5 -> Design UX : paramétrès la page d'accueil
 v0.06.1.6 -> Protect project : Retire db.sqlite3 du suivi Git
 v0.06.1.7 -> Review : Session a améliorer + lenue
+v0.07.0 -> Authentification 
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher
