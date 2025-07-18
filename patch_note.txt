@@ -11,12 +11,15 @@ v0.06.1.3 -> Update Readme.md
 v0.06.1.4 -> Protect project : ajout de commande dans patch note + créer fichier des dépendance
 v0.06.1.5 -> Design UX : paramétrès la page d'accueil
 v0.06.1.6 -> Protect project : Retire db.sqlite3 du suivi Git
+v0.06.1.7 -> Review : Session a améliorer + lenue
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher
 - accueil et UX en général
 - ajouter le prof qui fais le cours
 - repenser le design Mobile First
+
+**  Bug repérer sur les session a revenir **
 
 ** cmd récurrent *
 python -m venv env
