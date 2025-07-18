@@ -1,0 +1,12 @@
+v0.01.0 -> prototype + créer session 
+v0.02.0 -> modifier session
+v0.03.0 -> visualiser les licenciers et exporté la liste sur excel
+v0.04.0 -> ajouté de nouveau licencier
+v0.05.0 -> Afficher la dernière présence du licencier
+v0.06.0 -> raccourcie présence à la session du jour
+v0.06.1 -> lien bonton d'accueil remplacé
+v0.06.1.1 -> push on githubs
+
+next step : 
+Facilité la sélection des noms présent en grossisant les cases à cocher
+accueil et UX en général
