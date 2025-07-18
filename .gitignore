@@ -11,6 +11,7 @@ __pycache__/
 
 # Fichiers de base de données SQLite (optionnel)
 *.sqlite3
+db.sqlite3
 
 # Fichiers temporaires / logs
 *.log
