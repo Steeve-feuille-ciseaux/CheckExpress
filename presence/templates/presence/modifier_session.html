@@ -9,10 +9,31 @@
     <form method="post" class="session-form">
         {% csrf_token %}
 
+        {% if form.non_field_errors %}
+            <div class="error">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if session.created_by %}
+            <div class="form-group">
+                <label>Créée par</label>
+                <input type="text" value="{{ session.created_by.get_full_name|default:session.created_by.username }}" disabled>
+            </div>
+        {% endif %}
+        {% if session.checked_by %}
+            <div class="form-group">
+                <label>Vérifiée par</label>
+                <input type="text" value="{{ session.checked_by.get_full_name|default:session.checked_by.username }}" disabled>
+            </div>
+        {% endif %}
+
         {# Affichage statique de la date, non modifiable #}
         <div class="form-group">
             <label>Date</label>
-            <input type="text" value="{{ session.date }}" disabled>
+            <input type="date" name="date" value="{{ session.date|date:'Y-m-d' }}">
         </div>
 
         {# Afficher les autres champs sauf date #}

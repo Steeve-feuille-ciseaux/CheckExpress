@@ -13,12 +13,14 @@ v0.06.1.5 -> Design UX : paramétrès la page d'accueil
 v0.06.1.6 -> Protect project : Retire db.sqlite3 du suivi Git
 v0.06.1.7 -> Review : Session a améliorer + lenue
 v0.07.0 -> Authentification 
+v0.08.0 -> ajout du champs create_by et checked_by au session pour savoir qui l'a crée et faire l'appel des élève
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher
 - accueil et UX en général
 - ajouter le prof qui fais le cours
 - repenser le design Mobile First
+- adapter l'interface sensei / élèves
 
 **  Bug repérer sur les session a revenir **
 

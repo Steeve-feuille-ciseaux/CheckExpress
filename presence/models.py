@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Licence(models.Model):
     nom = models.CharField(max_length=100)
@@ -16,7 +17,6 @@ class Licence(models.Model):
     def __str__(self):
         return f"{self.prenom} {self.nom}"
 
-
 class Presence(models.Model):
     licence = models.ForeignKey(Licence, on_delete=models.CASCADE, related_name='licencies')
     date = models.DateField(auto_now_add=True)
@@ -25,13 +25,15 @@ class Presence(models.Model):
     def __str__(self):
         return f"{self.licence} - {self.date} - {'Présent' if self.present else 'Absent'}"
 
-
 class Session(models.Model):
     date = models.DateField()
     heure_debut = models.TimeField()
     heure_fin = models.TimeField()
     theme = models.TextField()
     presences = models.ManyToManyField(Licence, blank=True)
+
+    created_by = models.ForeignKey(User, related_name='sessions_created', on_delete=models.SET_NULL, null=True, blank=True)
+    checked_by = models.ForeignKey(User, related_name='sessions_checked', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Session du {self.date} ({self.heure_debut} - {self.heure_fin})"

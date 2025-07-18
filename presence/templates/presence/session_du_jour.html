@@ -4,20 +4,44 @@
 
 {% block content %}
 <div class="container">
-    <h2>📅 Session du jour</h2>
+    <h2>📅 Session du jour : 
+        <span class="highlight">{{ session.date }}</span>
+        de <span class="highlight">{{ session.heure_debut|default:"?" }}</span> à <span class="highlight">{{ session.heure_fin|default:"?" }}</span>
+    </h2>
 
     {% if session %}
         <form method="post" class="session-form">
             {% csrf_token %}
 
-            {# Affiche les champs sauf la date (non modifiable) #}
-            <div class="form-group">
-                <label>Date</label>
-                <input type="text" value="{{ session.date }}" disabled>
-            </div>
+            {% if form.non_field_errors %}
+                <div class="error">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
+            {% if session.created_by %}
+                <div class="form-group">
+                    <label>Créée par</label>
+                    <input type="text" value="{{ session.created_by.get_full_name|default:session.created_by.username }}" disabled>
+                </div>
+            {% endif %}
+            {% if session.checked_by %}
+                <div class="form-group">
+                    <label>Vérifiée par</label>
+                    <input type="text" value="{{ session.checked_by.get_full_name|default:session.checked_by.username }}" disabled>
+                </div>
+            {% endif %}
+
+            {# Champs cachés : date, heure_debut, heure_fin #}
+            <input type="hidden" name="date" value="{{ session.date|date:'Y-m-d' }}">
+            <input type="hidden" name="heure_debut" value="{{ session.heure_debut|time:'H:i' }}">
+            <input type="hidden" name="heure_fin" value="{{ session.heure_fin|time:'H:i' }}">
+
+            {# Affiche les autres champs sauf date, heure_debut, heure_fin #}
             {% for field in form %}
-                {% if field.name != "date" %}
+                {% if field.name != "date" and field.name != "heure_debut" and field.name != "heure_fin" %}
                     <div class="form-group">
                         {{ field.label_tag }}
                         {{ field }}

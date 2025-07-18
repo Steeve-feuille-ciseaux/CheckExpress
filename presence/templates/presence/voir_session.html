@@ -9,6 +9,12 @@
     <div class="session-box">
         <p><strong>Heure :</strong> {{ session.heure_debut }} - {{ session.heure_fin }}</p>
         <p><strong>Thème :</strong><br><em>{{ session.theme|linebreaksbr }}</em></p>
+        {% if session.created_by %}
+            <p><strong>Créée par :</strong> {{ session.created_by.get_full_name|default:session.created_by.username }}</p>
+        {% endif %}
+        {% if session.checked_by %}
+            <p><strong>Vérifiée par :</strong> {{ session.checked_by.get_full_name|default:session.checked_by.username }}</p>
+        {% endif %}
         <p><strong>Licenciés présents :</strong></p>
         {% if session.presences.all %}
             <ul>

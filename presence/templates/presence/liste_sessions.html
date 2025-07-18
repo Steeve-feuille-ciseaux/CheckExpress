@@ -14,6 +14,12 @@
                     <strong>{{ session.heure_debut }} - {{ session.heure_fin }}</strong><br>
                     <em>{{ session.theme|linebreaksbr }}</em><br>
                     <small>{{ session.presences.count }} licenciés présents</small><br>
+                    {% if session.created_by %}
+                        <small>Créée par : {{ session.created_by.get_full_name|default:session.created_by.username }}</small><br>
+                    {% endif %}
+                    {% if session.checked_by %}
+                        <small>Vérifiée par : {{ session.checked_by.get_full_name|default:session.checked_by.username }}</small><br>
+                    {% endif %}
                     <a href="{% url 'voir_session' session.id %}">🔍 Voir</a> |
                     <a href="{% url 'modifier_session' session.id %}">✏️ Modifier cette session</a>
                 </div>
@@ -32,6 +38,12 @@
                     <strong>{{ session.date }}</strong> — de {{ session.heure_debut }} à {{ session.heure_fin }}<br>
                     <em>{{ session.theme|linebreaksbr }}</em><br>
                     <small>{{ session.presences.count }} licenciés présents</small><br>
+                    {% if session.created_by %}
+                        <small>Créée par : {{ session.created_by.get_full_name|default:session.created_by.username }}</small><br>
+                    {% endif %}
+                    {% if session.checked_by %}
+                        <small>Vérifiée par : {{ session.checked_by.get_full_name|default:session.checked_by.username }}</small><br>
+                    {% endif %}
                     <a href="{% url 'voir_session' session.id %}">🔍 Voir</a> |
                     <a href="{% url 'modifier_session' session.id %}">✏️ Modifier</a>
                 </li>

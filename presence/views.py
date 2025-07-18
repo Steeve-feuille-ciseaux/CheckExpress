@@ -79,12 +79,16 @@ def export_presence_du_jour(request):
     return response
 
 # Gestion des sessions
+@login_required
 def creer_session(request):
     if request.method == 'POST':
         form = SessionForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('accueil')  # Ou une autre vue de confirmation
+            session = form.save(commit=False)
+            session.created_by = request.user
+            session.save()
+            form.save_m2m()
+            return redirect('accueil') # Ou une autre vue de confirmation
     else:
         form = SessionForm()
     return render(request, 'presence/creer_session.html', {'form': form})
@@ -103,31 +107,38 @@ def voir_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
     return render(request, 'presence/voir_session.html', {'session': session})
 
+@login_required
 def modifier_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
     if request.method == 'POST':
         form = SessionForm(request.POST, instance=session)
         if form.is_valid():
-            form.save()
+            session = form.save(commit=False)
+            session.checked_by = request.user
+            session.save()
+            form.save_m2m()
             return redirect('liste_sessions')
     else:
         form = SessionForm(instance=session)
     return render(request, 'presence/modifier_session.html', {'form': form, 'session': session})
 
+@login_required
 def modifier_session_du_jour(request):
     today = localdate()
     # On récupère la session du jour, s'il y en a plusieurs, on prend la première (ou adapte selon besoin)
     session = Session.objects.filter(date=today).first()
     
     if not session:
-        # Pas de session aujourd'hui
         return render(request, 'presence/session_du_jour.html', {'session': None})
 
     if request.method == 'POST':
         form = SessionForm(request.POST, instance=session)
         if form.is_valid():
-            form.save()
-            return redirect('modifier_session_du_jour')  # reload page après sauvegarde
+            session = form.save(commit=False)
+            session.checked_by = request.user
+            session.save()
+            form.save_m2m()
+            return redirect('liste_sessions') # reload page après sauvegarde
     else:
         form = SessionForm(instance=session)
 
