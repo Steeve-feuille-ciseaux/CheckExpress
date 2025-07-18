@@ -16,13 +16,13 @@
 
     <nav class="submenu">
         <a href="{% url 'accueil' %}">🏠 Accueil</a>
-        <a href="{% url 'liste_licencies' %}">👥 Licenciés</a>
-        <a href="{% url 'modifier_session_du_jour' %}">📋 Marquer présence</a>
-        <a href="{% url 'liste_sessions' %}">📅 Voir les sessions</a>
-        <a href="{% url 'creer_session' %}">🗓️ Créer une session</a>
-        <!-- <a href="{% url 'export_presence_du_jour' %}">📤 Export Excel (old)</a>
-        <a href="{% url 'enregistrer_presence' %}">📋 Marquer présence (old)</a> -->
+
         {% if user.is_authenticated %}
+            <a href="{% url 'liste_licencies' %}">👥 Licenciés</a>
+            <a href="{% url 'modifier_session_du_jour' %}">📋 Marquer présence</a>
+            <a href="{% url 'liste_sessions' %}">📅 Voir les sessions</a>
+            <a href="{% url 'creer_session' %}">🗓️ Créer une session</a>
+
             <form method="post" action="{% url 'logout' %}" class="logout-form">
                 {% csrf_token %}
                 <button type="submit">🔒 Déconnexion</button>

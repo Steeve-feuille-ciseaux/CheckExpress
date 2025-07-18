@@ -9,7 +9,11 @@ from django.db.models import Count, Max
 from django.contrib.auth.decorators import login_required
 
 def accueil(request):
-    return render(request, 'presence/accueil.html')
+    today = localdate()
+    sessions_today = Session.objects.filter(date=today)
+    sessions = Session.objects.exclude(date=today).order_by('-date')
+
+    return render(request, 'presence/accueil.html', {'sessions_today': sessions_today, 'sessions': sessions, 'today': today,})
 
 def export_presence_excel(request):
     workbook = openpyxl.Workbook()
