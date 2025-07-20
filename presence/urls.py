@@ -21,7 +21,6 @@ urlpatterns = [
     path('licencies/export/', views.export_licencies_excel, name='export_licencies_excel'),
 
     path('presence/', views.enregistrer_presence, name='enregistrer_presence'),
-    path('export/', views.export_presence_du_jour, name='export_presence_du_jour'),
 
     # Connection 
     path('login/', auth_views.LoginView.as_view(template_name='presence/login.html'), name='login'),

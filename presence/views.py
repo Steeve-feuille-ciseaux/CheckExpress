@@ -18,29 +18,6 @@ def accueil(request):
 
     return render(request, 'presence/accueil.html', {'sessions_today': sessions_today, 'sessions': sessions, 'today': today, 'now': now,})
 
-def export_presence_excel(request):
-    workbook = openpyxl.Workbook()
-    sheet = workbook.active
-    sheet.title = "Présences"
-
-    # En-têtes
-    sheet.append(['Nom', 'Prénom', 'Date', 'Présent'])
-
-    # Données
-    for p in Presence.objects.select_related('licence').all():
-        sheet.append([
-            p.licence.nom,
-            p.licence.prenom,
-            p.date.strftime("%Y-%m-%d"),
-            "Oui" if p.present else "Non"
-        ])
-
-    # Réponse HTTP avec fichier
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=presences.xlsx'
-    workbook.save(response)
-    return response
-
 def enregistrer_presence(request):
     if request.method == 'POST':
         form = PresenceForm(request.POST)
@@ -60,30 +37,6 @@ def enregistrer_presence(request):
     else:
         form = PresenceForm()
     return render(request, 'presence/presence_form.html', {'form': form})
-
-def export_presence_du_jour(request):
-    today = timezone.now().date()
-    workbook = openpyxl.Workbook()
-    sheet = workbook.active
-    sheet.title = "Présences"
-
-    sheet.append(['Nom', 'Prénom', 'Date', 'Présent'])
-
-    presences = Presence.objects.select_related('licence').filter(date=today)
-    for p in presences:
-        sheet.append([
-            p.licence.nom,
-            p.licence.prenom,
-            p.date.strftime("%Y-%m-%d"),
-            "Oui" if p.present else "Non"
-        ])
-
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-    response['Content-Disposition'] = f'attachment; filename=presences_{today}.xlsx'
-    workbook.save(response)
-    return response
 
 # Gestion des sessions
 @login_required
@@ -228,8 +181,8 @@ def ajouter_licencie(request):
 
 def liste_licencies(request):
     licencies = Licence.objects.annotate(
-        nb_presences=Count('session'),
-        last_session_date=Max('session__date')
+        nb_presences=Count('sessions'),
+        last_session_date=Max('sessions__date')
     )
     return render(request, 'presence/liste_licencies.html', {'licencies': licencies})
 
@@ -258,41 +211,36 @@ def supprimer_licencie(request, licencie_id):
 
     return render(request, 'presence/confirmer_suppression_licencie.html', {'licencie': licencie})
 
-def export_licencies_excel(request):
-    wb = openpyxl.Workbook()
-    ws = wb.active
-    ws.title = "Licenciés"
-
-    ws.append(['Nom', 'Prénom', 'Nombre de présences', 'Dernière session'])
-
-    licencies = Licence.objects.annotate(
-        nb_presences=Count('session'),
-        last_session_date=Max('session__date')
-    )
-    for licencie in licencies:
-        ws.append([
-            licencie.nom,
-            licencie.prenom,
-            licencie.nb_presences,
-            licencie.last_session_date.strftime("%Y-%m-%d") if licencie.last_session_date else "Aucune session"
-        ])
-
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=licencies.xlsx'
-    wb.save(response)
-    return response
-
 # Export data 
+@login_required
 def export_licencies_excel(request):
+    import openpyxl
+    from django.utils.timezone import localtime, now
+
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Licenciés"
 
+    # Date et heure locale au moment de l'export
+    current_time = localtime(now())
+    export_date = current_time.strftime('%d/%m/%Y')
+    export_time = current_time.strftime('%H:%M:%S')
+
+    # User connecté
+    user = request.user
+
+    # Infos en haut du fichier
+    ws.append([f"Exporté par : {user.get_full_name() or user.username}"])
+    ws.append([f"Date d'export : {export_date}"])
+    ws.append([f"Heure d'export : {export_time}"])
+    ws.append([])  # ligne vide avant le tableau
+
+    # En-têtes du tableau
     ws.append(['Nom', 'Prénom', 'Nombre de présences', 'Dernière session'])
 
     licencies = Licence.objects.annotate(
-        nb_presences=Count('session_set'),
-        last_session_date=Max('session_set__date')
+        nb_presences=Count('sessions'),
+        last_session_date=Max('sessions__date')
     )
     for licencie in licencies:
         ws.append([
@@ -302,7 +250,12 @@ def export_licencies_excel(request):
             licencie.last_session_date.strftime("%Y-%m-%d") if licencie.last_session_date else "Aucune session"
         ])
 
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=licencies.xlsx'
+    # Génération du nom de fichier avec date et heure sans tirets
+    filename = f"Kudo_{current_time.strftime('%d%m%Y')}_{current_time.strftime('%H%M%S')}.xlsx"
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename={filename}'
     wb.save(response)
     return response

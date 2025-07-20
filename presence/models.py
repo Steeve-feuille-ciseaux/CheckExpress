@@ -14,6 +14,11 @@ class Licence(models.Model):
     ]
     grade = models.CharField(max_length=20, choices=GRADE_CHOICES)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['nom', 'prenom'], name='unique_nom_prenom')
+        ]
+
     def __str__(self):
         return f"{self.prenom} {self.nom}"
 
@@ -30,7 +35,7 @@ class Session(models.Model):
     heure_debut = models.TimeField()
     heure_fin = models.TimeField()
     theme = models.TextField()
-    presences = models.ManyToManyField(Licence, blank=True)
+    presences = models.ManyToManyField(Licence, blank=True, related_name='sessions')
 
     created_by = models.ForeignKey(User, related_name='sessions_created', on_delete=models.SET_NULL, null=True, blank=True)
     checked_by = models.ForeignKey(User, related_name='sessions_checked', on_delete=models.SET_NULL, null=True, blank=True)

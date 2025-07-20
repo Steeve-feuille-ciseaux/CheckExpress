@@ -22,6 +22,7 @@ v0.11.1.1 -> ajout l'heure de fin en champs pré-remplie
 v0.12.0 -> Correction visuel
 v0.13.0 -> Modifier et supprimé un licencier
 v0.13.1 -> Update UX : liste_licencies.html
+v0.14.0 -> Update Feature : Export data licencier
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher
@@ -42,6 +43,8 @@ pip list
 pip freeze > requirements.txt
 pip install -r requirements.txt
 pip show django
+
+git rm --cached -r presence/__pycache__
 
 python manage.py createsuperuser
 python manage.py makemigrations
