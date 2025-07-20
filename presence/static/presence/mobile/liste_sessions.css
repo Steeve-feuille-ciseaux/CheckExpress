@@ -1,0 +1,468 @@
+/* Styles pour la liste des sessions mobile */
+.mobile-sessions {
+    padding: 0;
+    max-width: 100%;
+}
+
+/* Espacement pour les utilisateurs non connectés */
+.mobile-sessions-anonymous {
+    padding-top: 1rem;
+}
+
+/* Correction pour la section-header lorsque l'utilisateur n'est pas connecté */
+.mobile-sessions-anonymous .section-header {
+    margin-top: 0.5rem;
+}
+
+/* Sections principales */
+.today-section,
+.upcoming-section {
+    margin-bottom: 2rem;
+}
+
+/* En-têtes de section */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.section-title {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.section-date {
+    background: #e3f2fd;
+    color: #1976D2;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Grille des sessions */
+.sessions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Cartes de session */
+.session-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.session-card:active {
+    transform: scale(0.98);
+}
+
+/* Session d'aujourd'hui */
+.today-card {
+    border-left: 4px solid #4CAF50;
+}
+
+/* Sessions à venir */
+.upcoming-card {
+    border-left: 4px solid #2196F3;
+}
+
+/* Badge de session */
+.session-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.today-badge {
+    background: #4CAF50;
+    color: white;
+}
+
+.upcoming-badge {
+    background: #2196F3;
+    color: white;
+}
+
+/* En-tête de session */
+.session-header {
+    padding: 1rem 1rem 0.5rem 1rem;
+}
+
+.session-date {
+    margin-bottom: 0.5rem;
+}
+
+.date-badge {
+    background: #f5f5f5;
+    color: #666;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.session-time {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.time-badge {
+    background: #2196F3;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.today-time {
+    background: #4CAF50;
+}
+
+.session-status {
+    margin-top: 0.5rem;
+}
+
+.status-active {
+    color: #4CAF50;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-pending {
+    color: #FF9800;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Contenu de session */
+.session-content {
+    padding: 0 1rem 1rem 1rem;
+}
+
+.session-theme {
+    margin-bottom: 0.75rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+.session-stats {
+    margin-bottom: 0.75rem;
+}
+
+.stat-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.stat-icon {
+    font-size: 1.1rem;
+}
+
+.stat-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+}
+
+.session-meta {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.75rem;
+}
+
+.meta-item {
+    margin-bottom: 0.25rem;
+}
+
+.meta-label {
+    font-weight: 500;
+}
+
+.meta-value {
+    color: #555;
+}
+
+/* Actions de session */
+.session-actions {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.primary-btn {
+    background: #2196F3;
+    color: white;
+}
+
+.primary-btn:active {
+    background: #1976D2;
+}
+
+.secondary-btn {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+.secondary-btn:active {
+    background: #e9ecef;
+}
+
+.danger-btn {
+    background: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #ffcdd2;
+}
+
+.danger-btn:active {
+    background: #ffcdd2;
+}
+
+.action-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* Pas de session */
+.no-session-container {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.no-session-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.no-session-title {
+    margin: 0 0 0.75rem 0;
+    color: #555;
+    font-size: 1.2rem;
+}
+
+.no-session-text {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.create-session-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #4CAF50;
+    color: white;
+    text-decoration: none;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    transition: all 0.3s ease;
+}
+
+.create-session-btn:active {
+    background: #45a049;
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Séparateur de section */
+.section-divider {
+    display: flex;
+    align-items: center;
+    margin: 2rem 0;
+    gap: 1rem;
+}
+
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #ddd, transparent);
+}
+
+.divider-text {
+    background: #f8f9fa;
+    color: #666;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid #e9ecef;
+}
+
+/* Actions supplémentaires */
+.additional-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.action-tile {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1.25rem 1rem;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.action-tile:active {
+    transform: scale(0.95);
+}
+
+.primary-tile {
+    border-color: #4CAF50;
+}
+
+.primary-tile:active {
+    background: #f1f8e9;
+}
+
+.secondary-tile {
+    border-color: #2196F3;
+}
+
+.secondary-tile:active {
+    background: #e3f2fd;
+}
+
+.tertiary-tile {
+    border-color: #FF9800;
+}
+
+.tertiary-tile:active {
+    background: #fff3e0;
+}
+
+.tile-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.tile-text {
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Icônes */
+.btn-icon {
+    font-size: 1.1rem;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.session-card,
+.no-session-container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.session-card:nth-child(2) { animation-delay: 0.1s; }
+.session-card:nth-child(3) { animation-delay: 0.2s; }
+.session-card:nth-child(4) { animation-delay: 0.3s; }
+
+/* Responsive */
+@media (max-width: 480px) {
+    .section-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .session-badge {
+        position: static;
+        margin-bottom: 1rem;
+        align-self: flex-start;
+    }
+    
+    .action-group {
+        flex-direction: column;
+    }
+    
+    .action-btn {
+        margin-right: 0;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 360px) {
+    .mobile-sessions-anonymous {
+        padding-top: 1.5rem;
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-divider {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .divider-line {
+        width: 100%;
+    }
+}
