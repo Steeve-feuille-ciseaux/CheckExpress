@@ -92,10 +92,18 @@ def creer_session(request):
             session.created_by = request.user
             session.save()
             form.save_m2m()
-            return redirect('accueil') # Ou une autre vue de confirmation
+            return redirect('accueil')
     else:
-        form = SessionForm()
+        initial = {}
+        date_from_get = request.GET.get("date")
+        heure_debut_from_get = request.GET.get("heure_debut")
+        if date_from_get:
+            initial["date"] = date_from_get
+        if heure_debut_from_get:
+            initial["heure_debut"] = heure_debut_from_get
+        form = SessionForm(initial=initial)
     return render(request, 'presence/creer_session.html', {'form': form})
+
 
 def liste_sessions(request):
     today = localdate()
@@ -156,6 +164,15 @@ def modifier_session_du_jour(request):
             .order_by('heure_debut')
             .first()
         )
+    
+    # Si aucune session "en cours", créer un pour aujourd'hui
+    if not session:
+        today = localdate()
+        return render(request, 'presence/session_du_jour.html', {
+            'session': None,
+            'today': today,
+            'now': now,
+        })
 
     if not session:
         return render(request, 'presence/session_du_jour.html', {'session': None})

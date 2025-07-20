@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <h2>📅 Liste des sessions</h2>
+    <h2 class="section-title">📅 Liste des sessions d'aujourd'hui</h2>
 
     {% if sessions_today %}
         <div class="session-today">
@@ -30,6 +30,7 @@
     {% endif %}
 
     <hr class="session-separator">
+    <h2 class="section-title">📅 Liste des prochaines sessions </h2>
 
     {% if sessions %}
         <ul class="session-list">

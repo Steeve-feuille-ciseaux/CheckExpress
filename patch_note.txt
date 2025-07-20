@@ -16,6 +16,7 @@ v0.07.0 -> Authentification
 v0.08.0 -> ajout du champs create_by et checked_by au session pour savoir qui l'a crée et faire l'appel des élève
 v0.09.0 -> Update Design UX : le menu change selon user où visiteur
 v0.10.0 -> faire l'appel à la session en cours via le menu où le bouton faire l'appel
+v0.11.0 -> s'il n'y a pas de session aujourd'hui, facilite la création d'une session au moment T
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher

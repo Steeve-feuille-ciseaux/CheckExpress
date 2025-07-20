@@ -187,3 +187,30 @@ button:hover {
 .logout-form button:hover {
     color: #1abc9c;
 }
+
+.section-title {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+}
+
+.btn-submit {
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: #2980b9;
+    text-decoration: none;
+}

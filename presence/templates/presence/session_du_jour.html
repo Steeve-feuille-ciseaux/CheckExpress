@@ -4,10 +4,15 @@
 
 {% block content %}
 <div class="container">
-    <h2>📅 Session du jour : 
-        <span class="highlight">{{ session.date }}</span>
-        de <span class="highlight">{{ session.heure_debut|default:"?" }}</span> à <span class="highlight">{{ session.heure_fin|default:"?" }}</span>
-    </h2>
+
+    {% if session %}
+        <h2>📅 Session du jour : 
+            <span class="highlight">{{ session.date }}</span>
+            de <span class="highlight">{{ session.heure_debut|default:"?" }}</span> à <span class="highlight">{{ session.heure_fin|default:"?" }}</span>
+        </h2>
+    {% else %}
+        <h2>📅 Aucune session prévue aujourd'hui.</h2>
+    {% endif %}
 
     {% if session %}
         <form method="post" class="session-form">
@@ -58,8 +63,8 @@
             <button type="submit" class="btn-submit">💾 Enregistrer</button>
         </form>
     {% else %}
-        <p>Aucune session prévue aujourd'hui.</p>
-        <button class="btn-submit" disabled>Modifier session du jour</button>
+        <p>Programmer une session maintenant</p>
+        <a href="{% url 'creer_session' %}?date={{ today|date:'Y-m-d' }}&heure_debut={{ now|time:'H:i' }}" class="btn-submit">➕ Créer une session</a>
     {% endif %}
 </div>
 {% endblock %}
