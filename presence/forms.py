@@ -30,7 +30,20 @@ class SessionForm(forms.ModelForm):
 class LicenceForm(forms.ModelForm):
     class Meta:
         model = Licence
-        fields = ['nom', 'prenom', 'date_naissance', 'grade']  # adapte si tu as d'autres champs
+        fields = ['nom', 'prenom', 'date_naissance', 'grade']
         widgets = {
-            'date_naissance': forms.DateInput(attrs={'type': 'date'}),
+            'date_naissance': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                },
+                format='%Y-%m-%d'  # ← important
+            ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Forcer l'affichage au format HTML5 si instance existe
+        if self.instance and self.instance.date_naissance:
+            self.initial['date_naissance'] = self.instance.date_naissance.strftime('%Y-%m-%d')

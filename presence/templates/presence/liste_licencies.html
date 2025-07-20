@@ -12,17 +12,17 @@
         </div>
     </div>
 
-
     {% if licencies %}
         <table class="styled-table">
             <thead>
                 <tr>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Nombre de participation</th>
+                    <th style="width: 18%;">Nom</th>
+                    <th style="width: 18%;">Prénom</th>
+                    <th>Grade</th>
+                    <th style="width: 14%; text-align: center;">Participation</th>
                     <th>Dernière présence</th>
                     {% if user.is_authenticated %}
-                        <th>Actions</th>
+                        <th style="width: 14%; text-align: center;">Actions</th>
                     {% endif %}
                 </tr>
             </thead>
@@ -31,7 +31,8 @@
                     <tr>
                         <td>{{ licencie.nom }}</td>
                         <td>{{ licencie.prenom }}</td>
-                        <td>{{ licencie.nb_presences }}</td>
+                        <td>{{ licencie.grade }}</td>
+                        <td style="text-align: center;">{{ licencie.nb_presences }}</td>
                         <td>
                             {% if licencie.last_session_date %}
                                 {{ licencie.last_session_date|date:"d/m/Y" }}
@@ -40,9 +41,13 @@
                             {% endif %}
                         </td>
                         {% if user.is_authenticated %}
-                            <td>
-                                <a href="{% url 'modifier_licencie' licencie.id %}" style="margin-right: 10px;">✏️ Modifier</a>
-                                <a href="{% url 'supprimer_licencie' licencie.id %}" style="color: red;">🗑️ Supprimer</a>
+                            <td style="text-align: center;">
+                                <a href="{% url 'modifier_licencie' licencie.id %}" class="btn-icon btn-edit" title="Modifier">✏️</a>
+
+                                <form action="{% url 'supprimer_licencie' licencie.id %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-icon btn-delete" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer ce licencié ?');">❌</button>
+                                </form>
                             </td>
                         {% endif %}
                     </tr>

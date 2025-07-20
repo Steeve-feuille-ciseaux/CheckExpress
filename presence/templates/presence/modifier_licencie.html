@@ -4,12 +4,36 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="highlight">✏️ Modifier {{ licencie.prenom }} {{ licencie.nom }}</h2>
+    <h2>✏️ Modifier <span class="highlight">{{ licencie.prenom }} {{ licencie.nom }}</span></h2>
+
     <form method="post" class="session-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn-submit" style="margin-top: 1rem;">💾 Enregistrer</button>
-        <a href="{% url 'liste_licencies' %}" class="btn-submit" style="background-color: #ccc; color: black;">Annuler</a>
+
+        {% if form.non_field_errors %}
+            <div class="error">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">💾 Enregistrer</button>
+            <a href="{% url 'liste_licencies' %}" class="btn-cancel">Annuler</a>
+        </div>
     </form>
 </div>
 {% endblock %}

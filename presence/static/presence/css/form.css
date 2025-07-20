@@ -68,3 +68,28 @@
     color: #1abc9c;
     font-weight: 600;
 }
+
+.btn-cancel {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+.btn-cancel:hover {
+    background-color: #ccc;
+    color: black;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: center;
+}

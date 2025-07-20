@@ -20,6 +20,8 @@ v0.11.0 -> facilite la création d'une session au moment T
 v0.11.1 -> ajout l'heure de début en champs pré-remplie
 v0.11.1.1 -> ajout l'heure de fin en champs pré-remplie
 v0.12.0 -> Correction visuel
+v0.13.0 -> Modifier et supprimé un licencier
+v0.13.1 -> Update UX : liste_licencies.html
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher
