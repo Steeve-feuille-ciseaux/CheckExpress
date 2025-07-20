@@ -1,0 +1,15 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Modifier un licencié{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="highlight">✏️ Modifier {{ licencie.prenom }} {{ licencie.nom }}</h2>
+    <form method="post" class="session-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-submit" style="margin-top: 1rem;">💾 Enregistrer</button>
+        <a href="{% url 'liste_licencies' %}" class="btn-submit" style="background-color: #ccc; color: black;">Annuler</a>
+    </form>
+</div>
+{% endblock %}

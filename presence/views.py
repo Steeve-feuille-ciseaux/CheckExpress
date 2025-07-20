@@ -233,6 +233,31 @@ def liste_licencies(request):
     )
     return render(request, 'presence/liste_licencies.html', {'licencies': licencies})
 
+@login_required
+def modifier_licencie(request, licencie_id):
+    licencie = get_object_or_404(Licence, pk=licencie_id)
+
+    if request.method == 'POST':
+        form = LicenceForm(request.POST, instance=licencie)
+        if form.is_valid():
+            form.save()
+            return redirect('liste_licencies')
+    else:
+        form = LicenceForm(instance=licencie)
+
+    return render(request, 'presence/modifier_licencie.html', {'form': form, 'licencie': licencie})
+
+@login_required
+def supprimer_licencie(request, licencie_id):
+    licencie = get_object_or_404(Licence, pk=licencie_id)
+
+    if request.method == 'POST':
+        licencie.delete()
+        messages.success(request, f"Licencié {licencie.prenom} {licencie.nom} supprimé.")
+        return redirect('liste_licencies')
+
+    return render(request, 'presence/confirmer_suppression_licencie.html', {'licencie': licencie})
+
 def export_licencies_excel(request):
     wb = openpyxl.Workbook()
     ws = wb.active

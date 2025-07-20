@@ -1,0 +1,16 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Supprimer un licencié{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="highlight">🗑️ Confirmer la suppression</h2>
+    <p>Êtes-vous sûr de vouloir supprimer <strong>{{ licencie.prenom }} {{ licencie.nom }}</strong> ?</p>
+
+    <form method="post" style="margin-top: 1.5rem;">
+        {% csrf_token %}
+        <button type="submit" class="btn-submit">✅ Oui, supprimer</button>
+        <a href="{% url 'liste_licencies' %}" class="btn-submit" style="background-color: #ccc; color: black;">Annuler</a>
+    </form>
+</div>
+{% endblock %}
