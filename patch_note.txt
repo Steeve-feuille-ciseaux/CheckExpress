@@ -23,6 +23,7 @@ v0.12.0 -> Correction visuel
 v0.13.0 -> Modifier et supprimé un licencier
 v0.13.1 -> Update UX : liste_licencies.html
 v0.14.0 -> Update Feature : Export data licencier
+v0.14.1 -> Rendu export excel amélioré
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher

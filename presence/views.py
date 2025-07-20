@@ -1,10 +1,12 @@
 import openpyxl
+from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
+from openpyxl.utils import get_column_letter
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
 from .models import Licence, Presence, Session
 from .forms import PresenceForm, SessionForm, LicenceForm
-from django.utils.timezone import localdate, localtime
+from django.utils.timezone import localdate, localtime, now
 from datetime import datetime, timedelta
 from django.db.models import Count, Max
 from django.contrib.auth.decorators import login_required
@@ -214,43 +216,86 @@ def supprimer_licencie(request, licencie_id):
 # Export data 
 @login_required
 def export_licencies_excel(request):
-    import openpyxl
-    from django.utils.timezone import localtime, now
-
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Licenciés"
 
-    # Date et heure locale au moment de l'export
     current_time = localtime(now())
     export_date = current_time.strftime('%d/%m/%Y')
     export_time = current_time.strftime('%H:%M:%S')
-
-    # User connecté
     user = request.user
 
-    # Infos en haut du fichier
-    ws.append([f"Exporté par : {user.get_full_name() or user.username}"])
-    ws.append([f"Date d'export : {export_date}"])
-    ws.append([f"Heure d'export : {export_time}"])
-    ws.append([])  # ligne vide avant le tableau
+    # Styles
+    header_font = Font(bold=True, color="FFFFFF")
+    title_font = Font(bold=True, size=14)
+    header_fill = PatternFill("solid", fgColor="4F81BD")  # bleu clair
+    border = Border(
+        left=Side(style='thin'),
+        right=Side(style='thin'),
+        top=Side(style='thin'),
+        bottom=Side(style='thin')
+    )
+    center_align = Alignment(horizontal='center', vertical='center')
+    left_align = Alignment(horizontal='left', vertical='center')
 
-    # En-têtes du tableau
-    ws.append(['Nom', 'Prénom', 'Nombre de présences', 'Dernière session'])
+    # Largeur colonnes
+    column_widths = [20, 20, 18, 20]
+    start_col = 2  # Décalage à la colonne B pour marge à gauche
 
+    def merge_and_center(row, text, col_start, col_end, font=None):
+        ws.merge_cells(start_row=row, start_column=col_start, end_row=row, end_column=col_end)
+        cell = ws.cell(row=row, column=col_start)
+        cell.value = text
+        cell.alignment = center_align
+        if font:
+            cell.font = font
+
+    # Ligne 1 à 3 : infos à gauche (col B), sans fusion
+    ws.cell(row=1, column=start_col, value=f"Exporté par : {user.get_full_name() or user.username}").alignment = left_align
+    ws.cell(row=2, column=start_col, value=f"Date : {export_date}").alignment = left_align
+    ws.cell(row=3, column=start_col, value=f"Heure : {export_time}").alignment = left_align
+
+    # Ligne 4 : ligne vide (espace)
+    # Ligne 5 : titre "Suivi de présence" centré sur colonnes B à E
+    merge_and_center(5, "Suivi de présence", start_col, start_col + 3, font=title_font)
+
+    # Ligne 6 : ligne vide (espace)
+
+    # Ligne 7 : en-têtes du tableau
+    headers = ['Nom', 'Prénom', 'participation', 'Dernière présence']
+    for col_num, header in enumerate(headers, start_col):
+        cell = ws.cell(row=7, column=col_num, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.border = border
+        cell.alignment = center_align
+
+    # Récupérer les licenciés
     licencies = Licence.objects.annotate(
         nb_presences=Count('sessions'),
         last_session_date=Max('sessions__date')
     )
-    for licencie in licencies:
-        ws.append([
-            licencie.nom,
-            licencie.prenom,
-            licencie.nb_presences,
-            licencie.last_session_date.strftime("%Y-%m-%d") if licencie.last_session_date else "Aucune session"
-        ])
 
-    # Génération du nom de fichier avec date et heure sans tirets
+    # Remplir les données à partir de la ligne 8
+    for i, licencie in enumerate(licencies, start=8):
+        ws.cell(row=i, column=start_col, value=licencie.nom).alignment = center_align
+        ws.cell(row=i, column=start_col).border = border
+
+        ws.cell(row=i, column=start_col + 1, value=licencie.prenom).alignment = center_align
+        ws.cell(row=i, column=start_col + 1).border = border
+
+        ws.cell(row=i, column=start_col + 2, value=licencie.nb_presences).alignment = center_align
+        ws.cell(row=i, column=start_col + 2).border = border
+
+        last_session = licencie.last_session_date.strftime("%Y-%m-%d") if licencie.last_session_date else " "
+        ws.cell(row=i, column=start_col + 3, value=last_session).alignment = center_align
+        ws.cell(row=i, column=start_col + 3).border = border
+
+    # Ajuster la largeur des colonnes (colonnes B à E)
+    for i, width in enumerate(column_widths, start_col):
+        ws.column_dimensions[get_column_letter(i)].width = width
+
+    # Génération du nom de fichier
     filename = f"Kudo_{current_time.strftime('%d%m%Y')}_{current_time.strftime('%H%M%S')}.xlsx"
 
     response = HttpResponse(
