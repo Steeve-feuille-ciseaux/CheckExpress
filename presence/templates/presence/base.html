@@ -4,64 +4,140 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Application de présence{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#2196F3">
     <link rel="stylesheet" href="{% static 'presence/css/style.css' %}?v=3">
     <link rel="stylesheet" href="{% static 'presence/css/form.css' %}?v=2">
-    <link rel="stylesheet" href="{% static 'presence/css/mobile.css' %}?v=1" media="only screen and (max-width: 767px)">
+    <link rel="stylesheet" href="{% static 'presence/css/mobile.css' %}?v=2">
 </head>
 <body>
 
-    <header>
-        <h1><a href="{% url 'accueil' %}">Check Express</a></h1>
+    <header class="mobile-header">
+        <div class="header-content">
+            <h1><a href="{% url 'accueil' %}">Check Express</a></h1>
+            <button class="burger-btn" aria-label="Menu" aria-expanded="false">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </button>
+        </div>
     </header>
 
-    <!-- Bouton burger pour mobile -->
-    <button class="burger-btn" aria-label="Menu">&#9776;</button>
+    <!-- Overlay pour fermer le menu en cliquant à côté -->
+    <div class="menu-overlay"></div>
 
-    <nav class="submenu">
-        <a href="{% url 'accueil' %}">🏠 Accueil</a>
-        <a href="{% url 'liste_sessions' %}">📅 Voir les sessions</a>
+    <nav class="mobile-nav">
+        <div class="nav-header">
+            <span class="nav-title">Menu</span>
+            <button class="close-nav" aria-label="Fermer le menu">&times;</button>
+        </div>
+        
+        <ul class="nav-list">
+            <li><a href="{% url 'accueil' %}"><span class="nav-icon">🏠</span>Accueil</a></li>
+            <li><a href="{% url 'liste_sessions' %}"><span class="nav-icon">📅</span>Voir les sessions</a></li>
 
-        {% if user.is_authenticated %}
-            <a href="{% url 'liste_licencies' %}">👥 Licenciés</a>
-            <a href="{% url 'modifier_session_du_jour' %}">📋 Marquer présence</a>
-            <a href="{% url 'creer_session' %}">🗓️ Créer une session</a>
-
-            <form method="post" action="{% url 'logout' %}" class="logout-form">
-                {% csrf_token %}
-                <button type="submit">🔒 Déconnexion</button>
-            </form>
-        {% else %}
-            <a href="{% url 'login' %}">🔑 Connexion</a>
-        {% endif %}
+            {% if user.is_authenticated %}
+                <li class="nav-divider"></li>
+                <li><a href="{% url 'liste_licencies' %}"><span class="nav-icon">👥</span>Licenciés</a></li>
+                <li><a href="{% url 'modifier_session_du_jour' %}"><span class="nav-icon">📋</span>Marquer présence</a></li>
+                <li><a href="{% url 'creer_session' %}"><span class="nav-icon">🗓️</span>Créer une session</a></li>
+                
+                <li class="nav-divider"></li>
+                <li class="logout-item">
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit"><span class="nav-icon">🔒</span>Déconnexion</button>
+                    </form>
+                </li>
+            {% else %}
+                <li class="nav-divider"></li>
+                <li><a href="{% url 'login' %}"><span class="nav-icon">🔑</span>Connexion</a></li>
+            {% endif %}
+        </ul>
     </nav>
 
-    <div class="container">
+    <main class="main-content">
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    <div class="alert alert-{{ message.tags|default:'info' }}">
+                        <span class="alert-icon">
+                            {% if message.tags == 'success' %}✅
+                            {% elif message.tags == 'error' %}❌
+                            {% elif message.tags == 'warning' %}⚠️
+                            {% else %}ℹ️{% endif %}
+                        </span>
                         {{ message }}
+                        <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
                     </div>
                 {% endfor %}
             </div>
         {% endif %}
 
-        {% block content %}{% endblock %}
-    </div>
+        <div class="content-container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
-    <footer>
-        &copy; {{ now.year }} - Check Express
+    <footer class="mobile-footer">
+        <p>&copy; {{ now.year }} - Check Express</p>
     </footer>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const burger = document.querySelector(".burger-btn");
-            const nav = document.querySelector(".submenu");
+            const nav = document.querySelector(".mobile-nav");
+            const overlay = document.querySelector(".menu-overlay");
+            const closeNav = document.querySelector(".close-nav");
+            const body = document.body;
 
-            burger.addEventListener("click", function () {
-                nav.classList.toggle("active");
-                burger.classList.toggle("open");
+            // Fonction pour ouvrir le menu
+            function openMenu() {
+                nav.classList.add("active");
+                overlay.classList.add("active");
+                burger.setAttribute("aria-expanded", "true");
+                body.style.overflow = "hidden"; // Empêche le scroll du body
+            }
+
+            // Fonction pour fermer le menu
+            function closeMenu() {
+                nav.classList.remove("active");
+                overlay.classList.remove("active");
+                burger.setAttribute("aria-expanded", "false");
+                body.style.overflow = ""; // Restaure le scroll
+            }
+
+            // Événements
+            burger.addEventListener("click", openMenu);
+            closeNav.addEventListener("click", closeMenu);
+            overlay.addEventListener("click", closeMenu);
+
+            // Fermer le menu avec Escape
+            document.addEventListener("keydown", function(e) {
+                if (e.key === "Escape" && nav.classList.contains("active")) {
+                    closeMenu();
+                }
+            });
+
+            // Fermer le menu quand on clique sur un lien (sauf logout)
+            const navLinks = nav.querySelectorAll("a:not(.logout-form button)");
+            navLinks.forEach(link => {
+                link.addEventListener("click", closeMenu);
+            });
+
+            // Gestion du swipe pour fermer le menu
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            nav.addEventListener("touchstart", function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+
+            nav.addEventListener("touchend", function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                if (touchStartX - touchEndX > 50) { // Swipe vers la gauche
+                    closeMenu();
+                }
             });
         });
     </script>
