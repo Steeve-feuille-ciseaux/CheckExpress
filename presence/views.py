@@ -5,6 +5,7 @@ from django.utils import timezone
 from .models import Licence, Presence, Session
 from .forms import PresenceForm, SessionForm, LicenceForm
 from django.utils.timezone import localdate, localtime
+from datetime import datetime, timedelta
 from django.db.models import Count, Max
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -99,10 +100,21 @@ def creer_session(request):
         initial = {}
         date_from_get = request.GET.get("date")
         heure_debut_from_get = request.GET.get("heure_debut")
+
         if date_from_get:
             initial["date"] = date_from_get
+
         if heure_debut_from_get:
-            initial["heure_debut"] = heure_debut_from_get
+            try:
+                heure_debut_obj = datetime.strptime(heure_debut_from_get, "%H:%M")
+                initial["heure_debut"] = heure_debut_obj.time()
+                
+                # Ajouter 2h à l'heure de début
+                heure_fin_obj = (heure_debut_obj + timedelta(hours=2)).time()
+                initial["heure_fin"] = heure_fin_obj
+            except ValueError:
+                pass  # en cas de format incorrect, on ignore et laisse vide
+
         form = SessionForm(initial=initial)
 
     return render(request, 'presence/creer_session.html', {'form': form})
