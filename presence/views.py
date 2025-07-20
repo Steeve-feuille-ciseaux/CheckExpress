@@ -7,13 +7,15 @@ from .forms import PresenceForm, SessionForm, LicenceForm
 from django.utils.timezone import localdate, localtime
 from django.db.models import Count, Max
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 def accueil(request):
     today = localdate()
+    now = localtime()
     sessions_today = Session.objects.filter(date=today)
     sessions = Session.objects.exclude(date=today).order_by('-date')
 
-    return render(request, 'presence/accueil.html', {'sessions_today': sessions_today, 'sessions': sessions, 'today': today,})
+    return render(request, 'presence/accueil.html', {'sessions_today': sessions_today, 'sessions': sessions, 'today': today, 'now': now,})
 
 def export_presence_excel(request):
     workbook = openpyxl.Workbook()
@@ -102,8 +104,8 @@ def creer_session(request):
         if heure_debut_from_get:
             initial["heure_debut"] = heure_debut_from_get
         form = SessionForm(initial=initial)
-    return render(request, 'presence/creer_session.html', {'form': form})
 
+    return render(request, 'presence/creer_session.html', {'form': form})
 
 def liste_sessions(request):
     today = localdate()
@@ -189,6 +191,17 @@ def modifier_session_du_jour(request):
         form = SessionForm(instance=session)
 
     return render(request, 'presence/session_du_jour.html', {'form': form, 'session': session})
+
+@login_required
+def confirmer_suppression_session(request, pk):
+    session = get_object_or_404(Session, pk=pk)
+
+    if request.method == "POST":
+        session.delete()
+        messages.success(request, "La session a bien été supprimée.")
+        return redirect('liste_sessions')
+
+    return render(request, 'presence/confirmer_suppression_session.html', {'session': session})
 
 # Licencier
 def ajouter_licencie(request):

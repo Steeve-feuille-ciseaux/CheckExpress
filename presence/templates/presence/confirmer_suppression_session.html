@@ -1,0 +1,17 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Confirmation suppression{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>❗ Confirmation de suppression</h2>
+    <p>Vous êtes sur le point de <strong>supprimer définitivement</strong> la session du <strong>{{ session.date }}</strong> de <strong>{{ session.heure_debut }}</strong> à <strong>{{ session.heure_fin }}</strong>.</p>
+    <p>Cette action est irréversible.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-submit" style="background-color: #e74c3c;">✅ Oui, supprimer</button>
+        <a href="{% url 'liste_sessions' %}" class="btn-submit" style="background-color: #7f8c8d;">↩️ Annuler</a>
+    </form>
+</div>
+{% endblock %}

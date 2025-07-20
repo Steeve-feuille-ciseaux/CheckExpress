@@ -22,6 +22,7 @@
                     {% endif %}
                     <a href="{% url 'voir_session' session.id %}">🔍 Voir</a> |
                     <a href="{% url 'modifier_session' session.id %}">✏️ Modifier cette session</a>
+                    <a href="{% url 'confirmer_suppression_session' session.id %}">🗑️ Supprimer</a>
                 </div>
             {% endfor %}
         </div>
@@ -47,6 +48,7 @@
                     {% endif %}
                     <a href="{% url 'voir_session' session.id %}">🔍 Voir</a> |
                     <a href="{% url 'modifier_session' session.id %}">✏️ Modifier</a>
+                    <a href="{% url 'confirmer_suppression_session' session.id %}">🗑️ Supprimer</a>
                 </li>
             {% endfor %}
         </ul>
