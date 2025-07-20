@@ -7,12 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'presence/css/style.css' %}?v=3">
     <link rel="stylesheet" href="{% static 'presence/css/form.css' %}?v=2">
+    <link rel="stylesheet" href="{% static 'presence/css/mobile.css' %}?v=1" media="only screen and (max-width: 767px)">
 </head>
 <body>
 
     <header>
         <h1><a href="{% url 'accueil' %}">Check Express</a></h1>
     </header>
+
+    <!-- Bouton burger pour mobile -->
+    <button class="burger-btn" aria-label="Menu">&#9776;</button>
 
     <nav class="submenu">
         <a href="{% url 'accueil' %}">🏠 Accueil</a>
@@ -49,6 +53,18 @@
     <footer>
         &copy; {{ now.year }} - Check Express
     </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const burger = document.querySelector(".burger-btn");
+            const nav = document.querySelector(".submenu");
+
+            burger.addEventListener("click", function () {
+                nav.classList.toggle("active");
+                burger.classList.toggle("open");
+            });
+        });
+    </script>
 
 </body>
 </html>
