@@ -1,8 +1,12 @@
-
 /* Styles spécifiques à la page d'accueil mobile */
 .mobile-home {
     padding: 0;
     max-width: 100%;
+}
+
+/* Espacement pour les utilisateurs non connectés */
+.mobile-home-anonymous {
+    padding-top: 1rem;
 }
 
 /* Section de bienvenue */
@@ -101,6 +105,11 @@
 /* Sessions d'aujourd'hui */
 .today-sessions {
     margin-bottom: 2rem;
+}
+
+/* Correction pour la section-header lorsque l'utilisateur n'est pas connecté */
+.mobile-home-anonymous .section-header {
+    margin-top: 0.5rem;
 }
 
 .section-header {
@@ -399,5 +408,10 @@
     
     .actions-grid {
         grid-template-columns: 1fr;
+    }
+    
+    /* Augmenter l'espacement pour les très petits écrans */
+    .mobile-home-anonymous {
+        padding-top: 1.5rem;
     }
 }

@@ -28,6 +28,7 @@ v0.14.2 -> Update pré-requis d'installation
 v0.14.2.1 -> préparation interface mobile
 v0.15.0 -> UI Mobile : Menu -> base.html
 v0.15.1 -> UI Mobile : base.html améliorer
+v0.15.2 -> UI Mobile : accueil.html
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher

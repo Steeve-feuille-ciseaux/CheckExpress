@@ -1,49 +1,151 @@
 {% extends "presence/base.html" %}
 
+{% load static %}
+
 {% block title %}Accueil{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/accueil.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container">
+<div class="mobile-home{% if not user.is_authenticated %} mobile-home-anonymous{% endif %}">
+    
+    {% if user.is_authenticated %}
+        <!-- Section de bienvenue -->
+        <div class="welcome-section">
+            <div class="welcome-card">
+                <h2 class="welcome-title">👋 Bienvenue !</h2>
+                <p class="welcome-text">Gérez facilement la présence de vos licenciés et exportez les données.</p>
+            </div>
+        </div>
+
+        <!-- Action rapide -->
+        <div class="quick-action-section">
+            <div class="quick-action-card">
+                <div class="quick-action-icon">📋</div>
+                <div class="quick-action-content">
+                    <h3>Session actuelle</h3>
+                    <p>Marquer les présences rapidement</p>
+                </div>
+                <a href="{% url 'modifier_session_du_jour' %}" class="quick-action-btn">
+                    Faire l'appel
+                    <span class="btn-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+    {% endif %}
+
+    <!-- Sessions du jour -->
+    <div class="today-sessions">
+        <div class="section-header">
+            <h2 class="section-title">📅 Aujourd'hui</h2>
+            <span class="section-date">{{ today|date:"d/m/Y" }}</span>
+        </div>
+
+        {% if sessions_today %}
+            <div class="sessions-list">
+                {% for session in sessions_today %}
+                    <div class="session-card">
+                        <div class="session-header">
+                            <div class="session-time">
+                                <span class="time-badge">{{ session.heure_debut }} - {{ session.heure_fin }}</span>
+                            </div>
+                            <div class="session-status">
+                                {% if session.presences.count > 0 %}
+                                    <span class="status-active">✅ Active</span>
+                                {% else %}
+                                    <span class="status-pending">⏳ En attente</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="session-content">
+                            {% if session.theme %}
+                                <div class="session-theme">
+                                    <strong>{{ session.theme|linebreaksbr }}</strong>
+                                </div>
+                            {% endif %}
+
+                            <div class="session-stats">
+                                <div class="stat-item">
+                                    <span class="stat-icon">👥</span>
+                                    <span class="stat-text">{{ session.presences.count }} présent{{ session.presences.count|pluralize }}</span>
+                                </div>
+                            </div>
+
+                            {% if session.created_by or session.checked_by %}
+                                <div class="session-meta">
+                                    {% if session.created_by %}
+                                        <div class="meta-item">
+                                            <span class="meta-label">Créée par :</span>
+                                            <span class="meta-value">{{ session.created_by.get_full_name|default:session.created_by.username }}</span>
+                                        </div>
+                                    {% endif %}
+                                    {% if session.checked_by %}
+                                        <div class="meta-item">
+                                            <span class="meta-label">Vérifiée par :</span>
+                                            <span class="meta-value">{{ session.checked_by.get_full_name|default:session.checked_by.username }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="session-actions">
+                            <a href="{% url 'voir_session' session.id %}" class="session-view-btn">
+                                <span class="btn-icon">🔍</span>
+                                Voir détails
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Pas de session aujourd'hui -->
+            <div class="no-session-container">
+                <div class="no-session-icon">📭</div>
+                <h3 class="no-session-title">Aucune session aujourd'hui</h3>
+                <p class="no-session-text">Il n'y a pas de session prévue pour aujourd'hui.</p>
+                
+                {% if user.is_authenticated %}
+                    <div class="no-session-actions">
+                        <p class="no-session-suggestion">Vous pouvez créer une session rapidement :</p>
+                        <a href="{% url 'creer_session' %}?date={{ today|date:'Y-m-d' }}&heure_debut={{ now|time:'H:i' }}" 
+                           class="create-session-btn">
+                            <span class="btn-icon">🚀</span>
+                            Créer une session
+                            <span class="btn-arrow">→</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
 
     {% if user.is_authenticated %}
-        <h2>Bienvenue sur l'application de gestion de présence</h2>
-        <p>Utilisez cette application pour suivre facilement la présence de vos licenciés et exporter les données.</p>
-
-        <div style="margin-top: 2rem;">
-            <p>Session actuelle ou prochaine ?</p>
-            <a href="{% url 'modifier_session_du_jour' %}" class="btn-submit">📋 Faire l'appel</a>
+        <!-- Actions rapides supplémentaires -->
+        <div class="additional-actions">
+            <h3 class="actions-title">Actions rapides</h3>
+            <div class="actions-grid">
+                <a href="{% url 'liste_sessions' %}" class="action-tile">
+                    <div class="tile-icon">📊</div>
+                    <div class="tile-text">Voir toutes les sessions</div>
+                </a>
+                <a href="{% url 'liste_licencies' %}" class="action-tile">
+                    <div class="tile-icon">👥</div>
+                    <div class="tile-text">Gérer les licenciés</div>
+                </a>
+                <a href="{% url 'creer_session' %}" class="action-tile">
+                    <div class="tile-icon">➕</div>
+                    <div class="tile-text">Nouvelle session</div>
+                </a>
+            </div>
         </div>
-        <hr class="session-separator" style="margin: 2.5rem 0;">
     {% endif %}
-
-
-    <h2>📅 Sessions prévues aujourd'hui ({{ today|date:"d/m/Y" }})</h2>
-
-    {% if sessions_today %}
-        <div class="session-today">
-            {% for session in sessions_today %}
-                <div class="session-box today-box" style="margin-bottom: 1rem;">
-                    <strong>{{ session.heure_debut }} - {{ session.heure_fin }}</strong><br>
-                    <em>{{ session.theme|linebreaksbr }}</em><br>
-                    <small>{{ session.presences.count }} licenciés présents</small><br>
-                    {% if session.created_by %}
-                        <small>Créée par : {{ session.created_by.get_full_name|default:session.created_by.username }}</small><br>
-                    {% endif %}
-                    {% if session.checked_by %}
-                        <small>Vérifiée par : {{ session.checked_by.get_full_name|default:session.checked_by.username }}</small><br>
-                    {% endif %}
-                    <a href="{% url 'voir_session' session.id %}">🔍 Voir</a>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="no-session-today">❌ Pas de session aujourd'hui.</p>
-        <br>
-        {% if user.is_authenticated %}
-            <p class="no-session-today">Si une session était prévue, vous pouvez en créer une dès maintenant.</p>
-            <a href="{% url 'creer_session' %}?date={{ today|date:'Y-m-d' }}&heure_debut={{ now|time:'H:i' }}" class="btn-submit">🚀 Créer rapidement</a>
-        {% endif %}
-    {% endif %}
-
 </div>
+
 {% endblock %}
