@@ -7,8 +7,19 @@
     <h2 class="highlight" style="margin-bottom: 1.5rem;">➕ Ajouter un licencié</h2>
     <form method="post" class="session-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn-submit" style="margin-top: 1rem;">✅ Ajouter</button>
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn-submit">✅ Ajouter</button>
     </form>
 </div>
 {% endblock %}

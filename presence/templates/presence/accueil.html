@@ -13,9 +13,9 @@
             <p>Session actuelle ou prochaine ?</p>
             <a href="{% url 'modifier_session_du_jour' %}" class="btn-submit">📋 Faire l'appel</a>
         </div>
+        <hr class="session-separator" style="margin: 2.5rem 0;">
     {% endif %}
 
-    <hr class="session-separator" style="margin: 2.5rem 0;">
 
     <h2>📅 Sessions prévues aujourd'hui ({{ today|date:"d/m/Y" }})</h2>
 
@@ -39,8 +39,10 @@
     {% else %}
         <p class="no-session-today">❌ Pas de session aujourd'hui.</p>
         <br>
-        <p class="no-session-today">Si une session était prévue, vous pouvez en créer une dès maintenant.</p>
-        <a href="{% url 'creer_session' %}?date={{ today|date:'Y-m-d' }}&heure_debut={{ now|time:'H:i' }}" class="btn-submit">🚀 Créer rapidement</a>
+        {% if user.is_authenticated %}
+            <p class="no-session-today">Si une session était prévue, vous pouvez en créer une dès maintenant.</p>
+            <a href="{% url 'creer_session' %}?date={{ today|date:'Y-m-d' }}&heure_debut={{ now|time:'H:i' }}" class="btn-submit">🚀 Créer rapidement</a>
+        {% endif %}
     {% endif %}
 
 </div>

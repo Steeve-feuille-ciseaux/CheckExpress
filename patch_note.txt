@@ -19,6 +19,7 @@ v0.10.0 -> faire l'appel à la session en cours via le menu où le bouton faire 
 v0.11.0 -> facilite la création d'une session au moment T
 v0.11.1 -> ajout l'heure de début en champs pré-remplie
 v0.11.1.1 -> ajout l'heure de fin en champs pré-remplie
+v0.12.0 -> Correction visuel
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher

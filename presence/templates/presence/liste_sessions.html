@@ -20,9 +20,11 @@
                     {% if session.checked_by %}
                         <small>Vérifiée par : {{ session.checked_by.get_full_name|default:session.checked_by.username }}</small><br>
                     {% endif %}
-                    <a href="{% url 'voir_session' session.id %}">🔍 Voir</a> |
-                    <a href="{% url 'modifier_session' session.id %}">✏️ Modifier cette session</a>
-                    <a href="{% url 'confirmer_suppression_session' session.id %}">🗑️ Supprimer</a>
+                    <a href="{% url 'voir_session' session.id %}">🔍 Voir</a>
+                    {% if user.is_authenticated %}
+                    |   <a href="{% url 'modifier_session' session.id %}">✏️ Modifier cette session</a>
+                        <a href="{% url 'confirmer_suppression_session' session.id %}">🗑️ Supprimer</a>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
@@ -46,9 +48,11 @@
                     {% if session.checked_by %}
                         <small>Vérifiée par : {{ session.checked_by.get_full_name|default:session.checked_by.username }}</small><br>
                     {% endif %}
-                    <a href="{% url 'voir_session' session.id %}">🔍 Voir</a> |
-                    <a href="{% url 'modifier_session' session.id %}">✏️ Modifier</a>
-                    <a href="{% url 'confirmer_suppression_session' session.id %}">🗑️ Supprimer</a>
+                    <a href="{% url 'voir_session' session.id %}">🔍 Voir</a>
+                    {% if user.is_authenticated %}
+                        | <a href="{% url 'modifier_session' session.id %}">✏️ Modifier</a>
+                        <a href="{% url 'confirmer_suppression_session' session.id %}">🗑️ Supprimer</a>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
