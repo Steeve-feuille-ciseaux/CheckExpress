@@ -1,61 +1,123 @@
 {% extends "presence/base.html" %}
 
+{% load static %}
+
 {% block title %}Liste des licenciés{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/liste_licencies.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <div class="header-row">
         <h2>👥 Liste des licenciés</h2>
-        <div>
-            <a href="{% url 'ajouter_licencie' %}" class="btn-submit" style="margin-right: 10px;">➕ Ajouter</a>
-            <a href="{% url 'export_licencies_excel' %}" class="btn-submit">📥 Exporter vers Excel</a>
+        <div class="header-actions">
+            <a href="{% url 'ajouter_licencie' %}" class="btn-submit btn-add" title="Ajouter un licencié">
+                <span class="btn-icon">➕</span>
+                <span class="btn-text">Ajouter</span>
+            </a>
+            <a href="{% url 'export_licencies_excel' %}" class="btn-submit btn-export" title="Exporter la liste">
+                <span class="btn-icon">📥</span>
+                <span class="btn-text">Exporter</span>
+            </a>
         </div>
     </div>
 
     {% if licencies %}
-        <table class="styled-table">
-            <thead>
-                <tr>
-                    <th style="width: 18%;">Nom</th>
-                    <th style="width: 18%;">Prénom</th>
-                    <th>Grade</th>
-                    <th style="width: 14%; text-align: center;">Participation</th>
-                    <th>Dernière présence</th>
-                    {% if user.is_authenticated %}
-                        <th style="width: 14%; text-align: center;">Actions</th>
-                    {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for licencie in licencies %}
+        <!-- Version bureau/tablette -->
+        <div class="table-container desktop-view">
+            <table class="styled-table">
+                <thead>
                     <tr>
-                        <td>{{ licencie.nom }}</td>
-                        <td>{{ licencie.prenom }}</td>
-                        <td>{{ licencie.grade }}</td>
-                        <td style="text-align: center;">{{ licencie.nb_presences }}</td>
-                        <td>
-                            {% if licencie.last_session_date %}
-                                {{ licencie.last_session_date|date:"d/m/Y" }}
-                            {% else %}
-                                &mdash;
-                            {% endif %}
-                        </td>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Grade</th>
+                        <th>Participation</th>
+                        <th>Dernière présence</th>
                         {% if user.is_authenticated %}
-                            <td style="text-align: center;">
-                                <a href="{% url 'modifier_licencie' licencie.id %}" class="btn-icon btn-edit" title="Modifier">✏️</a>
-
-                                <form action="{% url 'supprimer_licencie' licencie.id %}" method="post" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-icon btn-delete" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer ce licencié ?');">❌</button>
-                                </form>
-                            </td>
+                            <th>Actions</th>
                         {% endif %}
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for licencie in licencies %}
+                        <tr>
+                            <td>{{ licencie.nom }}</td>
+                            <td>{{ licencie.prenom }}</td>
+                            <td>{{ licencie.grade }}</td>
+                            <td>{{ licencie.nb_presences }}</td>
+                            <td>
+                                {% if licencie.last_session_date %}
+                                    {{ licencie.last_session_date|date:"d/m/Y" }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </td>
+                            {% if user.is_authenticated %}
+                                <td>
+                                    <div class="actions-group">
+                                        <form action="{% url 'modifier_licencie' licencie.id %}" method="get" style="display:inline;">
+                                            <button type="submit" class="btn-icon btn-edit" title="Modifier">
+                                                <span aria-hidden="true">✏️</span>
+                                                <span class="sr-only">Modifier</span>
+                                            </button>
+                                        </form>
+                                        <form action="{% url 'supprimer_licencie' licencie.id %}" method="get" style="display:inline;">
+                                            <button type="submit" class="btn-icon btn-delete" title="Supprimer">
+                                                <span aria-hidden="true">❌</span>
+                                                <span class="sr-only">Supprimer</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Version mobile -->
+        <div class="mobile-view">
+            {% for licencie in licencies %}
+                <div class="licencie-card">
+                    <div class="card-header">
+                        <strong>{{ licencie.nom }} {{ licencie.prenom }}</strong>
+                        <span class="grade-badge">{{ licencie.grade }}</span>
+                    </div>
+                    <div class="card-info">
+                        <div>
+                            <span class="info-label">Participation :</span>
+                            <span class="info-value">{{ licencie.nb_presences }}</span>
+                        </div>
+                        <div>
+                            <span class="info-label">Dernière présence :</span>
+                            <span class="info-value">
+                                {% if licencie.last_session_date %}
+                                    {{ licencie.last_session_date|date:"d/m/Y" }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    {% if user.is_authenticated %}
+                        <div class="card-actions">
+                            <a href="{% url 'modifier_licencie' licencie.id %}" class="btn-mobile btn-edit-mobile" title="Modifier">✏️ Modifier</a>
+                            <form action="{% url 'supprimer_licencie' licencie.id %}" method="get" style="display:inline;">
+                                <button type="submit" class="btn-mobile btn-delete-mobile" title="Supprimer">❌ Supprimer</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <p>Aucun licencié trouvé.</p>
+        <div class="no-data">
+            <p>Aucun licencié trouvé.</p>
+        </div>
     {% endif %}
 </div>
 {% endblock %}

@@ -1,0 +1,328 @@
+/* ========== STYLES DE BASE ========== */
+.container {
+    padding: 1rem;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+    background: #0056b3;
+}
+
+.desktop-view {
+    display: block;
+}
+
+.mobile-view {
+    display: none;
+}
+
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.styled-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.styled-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.actions-group {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    width: 36px;
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-icon:hover {
+    background-color: #138496;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+
+/* ========== STYLES POUR ECRANS <= 768px ========== */
+@media (max-width: 768px) {
+    .desktop-view {
+        display: none;
+    }
+
+    .mobile-view {
+        display: block;
+    }
+
+    .header-row {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .header-row h2 {
+        margin-bottom: 0.5rem;
+    }
+
+    .header-actions {
+        justify-content: center;
+    }
+
+    .btn-submit {
+        padding: 0.75rem;
+        min-width: 50px;
+        justify-content: center;
+        flex: 1;
+    }
+
+    .btn-submit .btn-text {
+        display: none;
+    }
+
+    .licencie-card {
+        background: white;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e9ecef;
+    }
+
+    .card-line {
+        margin-bottom: 0.75rem;
+    }
+
+    .card-line:last-child {
+        margin-bottom: 0;
+    }
+
+    .name-grade {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .name-grade strong {
+        font-size: 1.1rem;
+        color: #495057;
+    }
+
+    .grade-badge {
+        background: #e9ecef;
+        padding: 0.25rem 0.5rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .participation-presence {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-item {
+        flex: 1;
+    }
+
+    .info-label {
+        font-weight: 500;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .info-value {
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .card-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: nowrap;
+    }
+
+    .btn-mobile,
+    .btn-mobile:focus,
+    .btn-mobile:active {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        vertical-align: middle;
+    }
+
+    .btn-mobile {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+        height: 38px;
+        min-width: 100px;
+        border-radius: 4px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        color: white;
+        background: #007bff;
+        text-align: center;
+        transition: background-color 0.2s ease-in-out;
+        line-height: 1;
+        box-sizing: border-box;
+    }
+
+    .btn-edit-mobile {
+        background-color: #17a2b8;
+        margin-top: 2px; /* 🔧 pour ajuster l'alignement vertical */
+    }
+
+    .btn-edit-mobile:hover {
+        background-color: #138496;
+    }
+
+    .btn-delete-mobile {
+        background-color: #dc3545;
+    }
+
+    .btn-delete-mobile:hover {
+        background-color: #c82333;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+}
+
+
+/* ========== ECRANS ≤ 480px ========== */
+@media (max-width: 480px) {
+    .container {
+        padding: 0.5rem;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .btn-action {
+        flex: 1;
+        justify-content: center;
+        max-width: 100px;
+    }
+
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .detail-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}
+
+
+/* ========== MODE PAYSAGE MOBILE ========== */
+@media (max-width: 768px) and (orientation: landscape) {
+    .desktop-view {
+        display: block;
+    }
+
+    .mobile-view {
+        display: none;
+    }
+
+    .table-container {
+        font-size: 0.85rem;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 0.5rem;
+    }
+}
