@@ -70,23 +70,18 @@
                             {% endif %}
                         </div>
 
-                        <div class="session-actions">
+                        <div class="session-actions action-group">
                             <a href="{% url 'voir_session' session.id %}" class="action-btn primary-btn">
-                                <span class="btn-icon">🔍</span>
                                 Voir détails
                             </a>
                             
                             {% if user.is_authenticated %}
-                                <div class="action-group">
-                                    <a href="{% url 'modifier_session' session.id %}" class="action-btn secondary-btn">
-                                        <span class="btn-icon">✏️</span>
-                                        Modifier
-                                    </a>
-                                    <a href="{% url 'confirmer_suppression_session' session.id %}" class="action-btn danger-btn">
-                                        <span class="btn-icon">🗑️</span>
-                                        Supprimer
-                                    </a>
-                                </div>
+                                <a href="{% url 'modifier_session' session.id %}" class="action-btn secondary-btn">
+                                    Modifier
+                                </a>
+                                <a href="{% url 'confirmer_suppression_session' session.id %}" class="action-btn danger-btn">
+                                    Supprimer
+                                </a>
                             {% endif %}
                         </div>
                     </div>
@@ -171,23 +166,18 @@
                             {% endif %}
                         </div>
 
-                        <div class="session-actions">
+                        <div class="session-actions action-group">
                             <a href="{% url 'voir_session' session.id %}" class="action-btn primary-btn">
-                                <span class="btn-icon">🔍</span>
                                 Voir détails
                             </a>
                             
                             {% if user.is_authenticated %}
-                                <div class="action-group">
-                                    <a href="{% url 'modifier_session' session.id %}" class="action-btn secondary-btn">
-                                        <span class="btn-icon">✏️</span>
-                                        Modifier
-                                    </a>
-                                    <a href="{% url 'confirmer_suppression_session' session.id %}" class="action-btn danger-btn">
-                                        <span class="btn-icon">🗑️</span>
-                                        Supprimer
-                                    </a>
-                                </div>
+                                <a href="{% url 'modifier_session' session.id %}" class="action-btn secondary-btn">
+                                    Modifier
+                                </a>
+                                <a href="{% url 'confirmer_suppression_session' session.id %}" class="action-btn danger-btn">
+                                    Supprimer
+                                </a>
                             {% endif %}
                         </div>
                     </div>
