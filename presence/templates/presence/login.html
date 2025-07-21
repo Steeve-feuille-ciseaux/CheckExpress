@@ -1,9 +1,9 @@
 {% extends 'presence/base.html' %}
 
 {% block content %}
-  <h2>Bienvenue sur l'application de gestion de présence</h2>
-  <p>Utilisez cette application pour suivre facilement la présence de vos licenciés et exporter les données.</p>
-  <h3>🔐 Connexion requise</h3>
+    <h2 class="login-title">Bienvenue sur l'application de gestion de présence</h2>
+    <p>Utilisez cette application pour suivre facilement la présence de vos licenciés et exporter les données.</p>
+    <h3>🔐 Connexion requise</h3>
   <form method="post" action="{% url 'login' %}" style="max-width: 400px; margin-top: 2rem;">
       {% csrf_token %}
       {% if form.errors %}
@@ -17,6 +17,6 @@
           <label for="id_password">Mot de passe :</label>
           <input type="password" name="password" id="id_password" required class="form-control">
       </div>
-      <button type="submit" style="margin-top: 1rem; background-color: #2c3e50; color: white; padding: 10px 20px; border: none; border-radius: 4px;">🔓 Se connecter</button>
+      <button type="submit" style="margin-top: 1rem; background-color: #2196F3; color: white; padding: 10px 20px; border: none; border-radius: 4px;">🔓 Se connecter</button>
   </form>
 {% endblock %}

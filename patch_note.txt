@@ -30,6 +30,7 @@ v0.15.0 -> UI Mobile : Menu -> base.html
 v0.15.1 -> UI Mobile : base.html améliorer
 v0.15.2 -> UI Mobile : accueil.html
 v0.15.3 -> UI Mobile : liste_session.html
+v0.15.4 -> UI Mobile : login.html
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher

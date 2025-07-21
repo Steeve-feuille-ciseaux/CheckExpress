@@ -412,3 +412,7 @@ body {
         background: #333;
     }
 }
+
+.login-title {
+    margin-top: 1.5rem; /* ou 2rem si besoin */
+}
