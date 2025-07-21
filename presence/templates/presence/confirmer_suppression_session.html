@@ -1,17 +1,34 @@
 {% extends "presence/base.html" %}
+{% load static %}
 
-{% block title %}Confirmation suppression{% endblock %}
+{% block title %}Confirmation de suppression{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/confirme_delete.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>❗ Confirmation de suppression</h2>
-    <p>Vous êtes sur le point de <strong>supprimer définitivement</strong> la session du <strong>{{ session.date }}</strong> de <strong>{{ session.heure_debut }}</strong> à <strong>{{ session.heure_fin }}</strong>.</p>
-    <p>Cette action est irréversible.</p>
+<div class="container confirmation-container">
+    <div class="confirmation-box">
+        <h2 class="confirmation-title">⚠️ Suppression d'une session</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn-submit" style="background-color: #e74c3c;">✅ Oui, supprimer</button>
-        <a href="{% url 'liste_sessions' %}" class="btn-submit" style="background-color: #7f8c8d;">↩️ Annuler</a>
-    </form>
+        <p class="confirmation-text">
+            Êtes-vous sûr de vouloir <strong>supprimer définitivement</strong> la session suivante ?
+        </p>
+
+        <div class="licencie-highlight">
+            📅 {{ session.date }}<br>
+            🕒 De {{ session.heure_debut|default:"--:--" }} à {{ session.heure_fin|default:"--:--" }}
+        </div>
+
+        <form method="post" class="confirmation-form">
+            {% csrf_token %}
+            <div class="confirmation-buttons">
+                <button type="submit" class="btn-confirm">❌ Supprimer</button>
+                <a href="{% url 'liste_sessions' %}" class="btn-cancel">Annuler</a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
