@@ -1,17 +1,26 @@
 {% extends "presence/base.html" %}
 
+{% load static %}
+
 {% block title %}Session du jour{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/session_du_jour.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container">
 
     {% if session %}
-        <h2>📅 Session du jour : 
-            <span class="highlight">{{ session.date }}</span>
-            de <span class="highlight">{{ session.heure_debut|default:"?" }}</span> à <span class="highlight">{{ session.heure_fin|default:"?" }}</span>
-        </h2>
+        <div class="session-heading">
+            <h2>📅 Session du jour : <br>
+                <span class="highlight">{{ session.date }}</span> <br>
+                de <span class="highlight">{{ session.heure_debut|default:"?" }}</span> à <span class="highlight">{{ session.heure_fin|default:"?" }}</span>
+            </h2>
+        </div>
     {% else %}
-        <h2>📅 Aucune session prévue aujourd'hui.</h2>
+        <h2 class="session-heading">📅 Aucune session prévue aujourd'hui.</h2>
     {% endif %}
 
     {% if session %}
@@ -61,6 +70,9 @@
             {% endfor %}
 
             <button type="submit" class="btn-submit">💾 Enregistrer</button>
+            <div class="cancel-wrapper">
+                <a href="{% url 'liste_sessions' %}" class="btn-cancel">Annuler</a>
+            </div>
         </form>
     {% else %}
         <p>Programmer une session maintenant</p>
@@ -68,3 +80,29 @@
     {% endif %}
 </div>
 {% endblock %}
+
+<style>
+.form-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.btn-cancel {
+    background-color: #eee;
+    color: #333;
+    padding: 0.5rem 1.2rem;
+    text-decoration: none;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #ddd;
+    color: #000;
+}
+
+</style>

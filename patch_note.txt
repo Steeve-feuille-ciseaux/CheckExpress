@@ -34,6 +34,7 @@ v0.15.4 -> UI Mobile : login.html
 v0.15.4.1 -> Bug corrigé : liste_session.html -> h2 repositionné
 v0.15.4.2 -> Bug corrigé : liste_session.html et accueil.html
 v0.15.5 -> UI Mobile : liste_licencies.html + confirmer_suppression_licencies.html
+v0.15.5 -> UI Mobile : session_du_jour.html
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher
