@@ -1,5 +1,7 @@
 from django import forms
 from .models import Session, Licence
+from django.utils.html import format_html
+
 
 class PresenceForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -8,7 +10,6 @@ class PresenceForm(forms.Form):
             self.fields[f'licence_{licence.id}'] = forms.BooleanField(
                 label=f"{licence.prenom} {licence.nom}", required=False
             )
-
 class SessionForm(forms.ModelForm):
     presences = forms.ModelMultipleChoiceField(
         queryset=Licence.objects.all(),
@@ -26,6 +27,12 @@ class SessionForm(forms.ModelForm):
             'heure_fin': forms.TimeInput(attrs={'type': 'time'}),
             'theme': forms.Textarea(attrs={'rows': 3}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Récupérer tous les objets Licence dans l'ordre du queryset
+        self.licences = list(self.fields['presences'].queryset)
 
 class LicenceForm(forms.ModelForm):
     class Meta:

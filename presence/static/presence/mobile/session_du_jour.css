@@ -1,54 +1,7 @@
-/* Centrage du titre h2 */
-.session-heading {
-    text-align: center;
-    margin-bottom: 2rem;
-}
+/* ========================================
+   OPTIMISATION MOBILE POUR LES PARTICIPANTS
+   ======================================== */
 
-/* Boutons d'action */
-.form-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1.2rem;
-    margin-top: 2rem;
-    flex-wrap: wrap;
-}
-
-.btn-submit,
-.btn-cancel {
-    padding: 0.6rem 1.4rem;
-    font-size: 1rem;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-}
-
-/* Bouton Annuler */
-.btn-cancel {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
-}
-
-.btn-cancel:hover {
-    background-color: #ddd;
-    color: #000;
-}
-
-/* Conteneur du bouton Annuler sous Enregistrer */
-.cancel-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 0.8rem; /* rapprochement */
-}
-/*
-===========================================
-OPTIMISATION MOBILE POUR LES CHECKBOXES
-Ajoutez ce code à votre session_du_jour.css
-===========================================
-*/
-
-/* Optimisation mobile pour les cases à cocher */
 .participants-section {
     margin: 1.5rem 0;
 }
@@ -80,11 +33,21 @@ Ajoutez ce code à votre session_du_jour.css
     display: flex;
     align-items: center;
     gap: 1rem;
+    /* Amélioration de la zone cliquable */
+    width: 100%;
+    box-sizing: border-box;
+    user-select: none; /* Évite la sélection de texte */
 }
 
 .participant-item:hover {
     border-color: #007bff;
     background-color: #f0f8ff;
+    transform: translateY(-1px); /* Effet de survol plus visible */
+}
+
+.participant-item:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
 }
 
 .participant-item.selected {
@@ -93,44 +56,30 @@ Ajoutez ce code à votre session_du_jour.css
     box-shadow: 0 2px 8px rgba(0,123,255,0.2);
 }
 
+/* Indicateur de sélection à droite */
 .participant-item.selected::after {
     content: "✓";
     position: absolute;
     right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
     color: #007bff;
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    z-index: 2;
 }
 
+/* SUPPRESSION de la case à cocher visuelle */
 .participant-checkbox {
-    width: 24px;
-    height: 24px;
-    border: 2px solid #dee2e6;
-    border-radius: 6px;
-    background: white;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+    display: none !important;
 }
 
-.participant-item.selected .participant-checkbox {
-    background-color: #007bff;
-    border-color: #007bff;
-}
-
-.participant-item.selected .participant-checkbox::before {
-    content: "✓";
-    color: white;
-    font-weight: bold;
-    font-size: 14px;
-}
-
+/* Amélioration de la zone d'information */
 .participant-info {
     flex: 1;
     display: flex;
     flex-direction: column;
+    pointer-events: none; /* Évite les conflits de clic */
 }
 
 .participant-name {
@@ -138,11 +87,13 @@ Ajoutez ce code à votre session_du_jour.css
     font-size: 1rem;
     color: #2c3e50;
     margin-bottom: 0.2rem;
+    line-height: 1.2;
 }
 
 .participant-details {
     font-size: 0.85rem;
     color: #6c757d;
+    line-height: 1.3;
 }
 
 /* Actions rapides */
@@ -163,10 +114,16 @@ Ajoutez ce code à votre session_du_jour.css
     font-size: 0.85rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    font-weight: 500;
 }
 
 .quick-btn:hover {
     background: #5a6268;
+}
+
+.quick-btn:active {
+    transform: translateY(1px);
+    transition: transform 0.1s ease;
 }
 
 .quick-btn.select-all {
@@ -197,18 +154,40 @@ Ajoutez ce code à votre session_du_jour.css
     font-weight: 600;
 }
 
-/* Cacher la checkbox HTML native */
+/* Masquer complètement la checkbox HTML native */
 .participant-item input[type="checkbox"] {
     position: absolute;
     opacity: 0;
     pointer-events: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+/* Amélioration pour les écrans tactiles */
+@media (hover: none) and (pointer: coarse) {
+    .participant-item {
+        min-height: 70px; /* Plus grand sur tactile */
+    }
+    
+    .participant-item:hover {
+        transform: none; /* Supprime l'effet hover sur mobile */
+    }
+    
+    .participant-item:active {
+        background-color: #e3f2fd;
+        border-color: #2196f3;
+    }
 }
 
 /* Responsive pour très petits écrans */
 @media (max-width: 360px) {
     .participant-item {
         padding: 0.8rem;
-        min-height: 55px;
+        min-height: 65px;
+        gap: 0.8rem;
     }
     
     .participant-name {
@@ -218,176 +197,41 @@ Ajoutez ce code à votre session_du_jour.css
     .participant-details {
         font-size: 0.8rem;
     }
+    
+    .participant-item.selected::after {
+        right: 0.8rem;
+        font-size: 1.2rem;
+    }
 }
 
-        /* Optimisation mobile pour les cases à cocher */
-        .participants-section {
-            margin: 1.5rem 0;
-        }
+/* Animation d'entrée pour les cartes */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        .participants-section h3 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+.participant-item {
+    animation: slideIn 0.3s ease-out;
+}
 
-        .participants-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+/* État de chargement si nécessaire */
+.participants-grid.loading .participant-item {
+    opacity: 0.5;
+    pointer-events: none;
+}
 
-        .participant-item {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 1rem;
-            transition: all 0.2s ease;
-            position: relative;
-            cursor: pointer;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+.session-heading {
+    text-align: center;
+}
 
-        .participant-item:hover {
-            border-color: #007bff;
-            background-color: #f0f8ff;
-        }
-
-        .participant-item.selected {
-            background-color: #e7f3ff;
-            border-color: #007bff;
-            box-shadow: 0 2px 8px rgba(0,123,255,0.2);
-        }
-
-        .participant-item.selected::after {
-            content: "✓";
-            position: absolute;
-            right: 1rem;
-            color: #007bff;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .participant-checkbox {
-            width: 24px;
-            height: 24px;
-            border: 2px solid #dee2e6;
-            border-radius: 6px;
-            background: white;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .participant-item.selected .participant-checkbox {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .participant-item.selected .participant-checkbox::before {
-            content: "✓";
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .participant-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .participant-name {
-            font-weight: 600;
-            font-size: 1rem;
-            color: #2c3e50;
-            margin-bottom: 0.2rem;
-        }
-
-        .participant-details {
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-
-        /* Actions rapides */
-        .quick-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .quick-btn {
-            flex: 1;
-            padding: 0.6rem;
-            background: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .quick-btn:hover {
-            background: #5a6268;
-        }
-
-        .quick-btn.select-all {
-            background: #28a745;
-        }
-
-        .quick-btn.select-all:hover {
-            background: #218838;
-        }
-
-        .quick-btn.clear-all {
-            background: #dc3545;
-        }
-
-        .quick-btn.clear-all:hover {
-            background: #c82333;
-        }
-
-        /* Compteur de sélection */
-        .selection-counter {
-            background: #007bff;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        /* Cacher la checkbox HTML native */
-        .participant-item input[type="checkbox"] {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Responsive pour très petits écrans */
-        @media (max-width: 360px) {
-            .participant-item {
-                padding: 0.8rem;
-                min-height: 55px;
-            }
-            
-            .participant-name {
-                font-size: 0.95rem;
-            }
-            
-            .participant-details {
-                font-size: 0.8rem;
-            }
-        }
+.cancel-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}

@@ -58,26 +58,26 @@
                 </div>
 
                 <div class="quick-actions">
-                    <button type="button" class="quick-btn select-all" onclick="selectAll()">Tout sélectionner</button>
-                    <button type="button" class="quick-btn clear-all" onclick="clearAll()">Tout désélectionner</button>
+                    <button type="button" class="quick-btn select-all" onclick="selectAllParticipants()">Tout sélectionner</button>
+                    <button type="button" class="quick-btn clear-all" onclick="clearAllParticipants()">Tout désélectionner</button>
                 </div>
 
                 <div class="participants-grid">
-                    {% for checkbox in form.presences %}
-                        <div class="participant-item{% if checkbox.data.checked %} selected{% endif %}" onclick="toggleParticipant(this)">
-                            <label style="display:flex; align-items:center; cursor:pointer; width: 100%;">
-                                {{ checkbox.tag }}
+                    {% for licence in form.licences %}
+                        {% with checkbox_id="id_presences_"|add:forloop.counter0|stringformat:"s" %}
+                        <div class="participant-item{% if licence in form.initial.presences %} selected{% endif %}" onclick="toggleParticipant(this)">
+                            <label for="{{ checkbox_id }}" style="display:flex; align-items:center; cursor:pointer; width: 100%;">
+                                <input type="checkbox" name="presences" value="{{ licence.id }}" id="{{ checkbox_id }}"
+                                    {% if licence in form.initial.presences %}checked{% endif %}
+                                    style="display:none;">
                                 <div class="participant-checkbox"></div>
                                 <div class="participant-info">
-                                    <div class="participant-name">{{ checkbox.choice_label }}</div>
-                                    <div class="participant-details">
-                                        {% with licence=checkbox.choice_label %}
-                                            Grade : {{ licence.grade|default:"N/A" }}
-                                        {% endwith %}
-                                    </div>
+                                    <div class="participant-name">{{ licence.prenom }} {{ licence.nom }}</div>
+                                    <div class="participant-details">Grade : {{ licence.grade }}</div>
                                 </div>
                             </label>
                         </div>
+                        {% endwith %}
                     {% endfor %}
                 </div>
             </div>
