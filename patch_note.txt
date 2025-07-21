@@ -31,6 +31,7 @@ v0.15.1 -> UI Mobile : base.html améliorer
 v0.15.2 -> UI Mobile : accueil.html
 v0.15.3 -> UI Mobile : liste_session.html
 v0.15.4 -> UI Mobile : login.html
+v0.15.4.1 -> Bug corrigé : liste_session.html -> h2 repositionné
 
 next step : 
 - Facilité la sélection des noms présent en grossisant les cases à cocher
