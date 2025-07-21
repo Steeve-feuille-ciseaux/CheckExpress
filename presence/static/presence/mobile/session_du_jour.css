@@ -41,3 +41,353 @@
     justify-content: center;
     margin-top: 0.8rem; /* rapprochement */
 }
+/*
+===========================================
+OPTIMISATION MOBILE POUR LES CHECKBOXES
+Ajoutez ce code à votre session_du_jour.css
+===========================================
+*/
+
+/* Optimisation mobile pour les cases à cocher */
+.participants-section {
+    margin: 1.5rem 0;
+}
+
+.participants-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.participants-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.participant-item {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.2s ease;
+    position: relative;
+    cursor: pointer;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.participant-item:hover {
+    border-color: #007bff;
+    background-color: #f0f8ff;
+}
+
+.participant-item.selected {
+    background-color: #e7f3ff;
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+}
+
+.participant-item.selected::after {
+    content: "✓";
+    position: absolute;
+    right: 1rem;
+    color: #007bff;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.participant-checkbox {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.participant-item.selected .participant-checkbox {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.participant-item.selected .participant-checkbox::before {
+    content: "✓";
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.participant-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.participant-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2c3e50;
+    margin-bottom: 0.2rem;
+}
+
+.participant-details {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Actions rapides */
+.quick-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.quick-btn {
+    flex: 1;
+    padding: 0.6rem;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.quick-btn:hover {
+    background: #5a6268;
+}
+
+.quick-btn.select-all {
+    background: #28a745;
+}
+
+.quick-btn.select-all:hover {
+    background: #218838;
+}
+
+.quick-btn.clear-all {
+    background: #dc3545;
+}
+
+.quick-btn.clear-all:hover {
+    background: #c82333;
+}
+
+/* Compteur de sélection */
+.selection-counter {
+    background: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* Cacher la checkbox HTML native */
+.participant-item input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Responsive pour très petits écrans */
+@media (max-width: 360px) {
+    .participant-item {
+        padding: 0.8rem;
+        min-height: 55px;
+    }
+    
+    .participant-name {
+        font-size: 0.95rem;
+    }
+    
+    .participant-details {
+        font-size: 0.8rem;
+    }
+}
+
+        /* Optimisation mobile pour les cases à cocher */
+        .participants-section {
+            margin: 1.5rem 0;
+        }
+
+        .participants-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .participants-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .participant-item {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.2s ease;
+            position: relative;
+            cursor: pointer;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .participant-item:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+
+        .participant-item.selected {
+            background-color: #e7f3ff;
+            border-color: #007bff;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+        }
+
+        .participant-item.selected::after {
+            content: "✓";
+            position: absolute;
+            right: 1rem;
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .participant-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            background: white;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .participant-item.selected .participant-checkbox {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .participant-item.selected .participant-checkbox::before {
+            content: "✓";
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .participant-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .participant-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-bottom: 0.2rem;
+        }
+
+        .participant-details {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        /* Actions rapides */
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            flex: 1;
+            padding: 0.6rem;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .quick-btn:hover {
+            background: #5a6268;
+        }
+
+        .quick-btn.select-all {
+            background: #28a745;
+        }
+
+        .quick-btn.select-all:hover {
+            background: #218838;
+        }
+
+        .quick-btn.clear-all {
+            background: #dc3545;
+        }
+
+        .quick-btn.clear-all:hover {
+            background: #c82333;
+        }
+
+        /* Compteur de sélection */
+        .selection-counter {
+            background: #007bff;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        /* Cacher la checkbox HTML native */
+        .participant-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Responsive pour très petits écrans */
+        @media (max-width: 360px) {
+            .participant-item {
+                padding: 0.8rem;
+                min-height: 55px;
+            }
+            
+            .participant-name {
+                font-size: 0.95rem;
+            }
+            
+            .participant-details {
+                font-size: 0.8rem;
+            }
+        }
