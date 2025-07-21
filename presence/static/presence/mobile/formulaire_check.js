@@ -3,31 +3,27 @@
  * Permet de cliquer n'importe où sur la carte du participant
  */
 
-function toggleParticipant(element) {
-    // Vérification que l'élément existe
-    if (!element) return;
-    
-    // Trouve la checkbox associée
-    const checkbox = element.querySelector('input[type="checkbox"]');
+function toggleParticipant(containerElement) {
+    if (!containerElement) return;
+
+    const checkbox = containerElement.querySelector('input[type="checkbox"]');
     if (!checkbox) return;
-    
-    // Toggle de l'état
-    const isCurrentlySelected = element.classList.contains('selected');
-    
+
+    const participantItem = containerElement.closest('.participant-item');
+    if (!participantItem) return;
+
+    const isCurrentlySelected = participantItem.classList.contains('selected');
+
     if (isCurrentlySelected) {
-        // Désélectionner
-        element.classList.remove('selected');
+        participantItem.classList.remove('selected');
         checkbox.checked = false;
     } else {
-        // Sélectionner
-        element.classList.add('selected');
+        participantItem.classList.add('selected');
         checkbox.checked = true;
     }
-    
-    // Mettre à jour le compteur
+
     updateCounter();
-    
-    // Feedback haptique léger sur mobile (si supporté)
+
     if ('vibrate' in navigator) {
         navigator.vibrate(50);
     }

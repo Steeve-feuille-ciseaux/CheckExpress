@@ -1,29 +1,79 @@
 {% extends "presence/base.html" %}
+{% load static %}
 
 {% block title %}Créer une session{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/formulaire_check.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container">
-    <h2>Créer une nouvelle session</h2>
+    <h2 class="session-heading">Créer une nouvelle session</h2>
 
     <form method="post" class="session-form">
         {% csrf_token %}
 
-        {# On enveloppe chaque champ dans un div avec une classe pour mieux styliser #}
+        <!-- Champs individuels sauf 'presences' -->
         {% for field in form %}
-            <div class="form-group">
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.help_text %}
-                    <small class="help-text">{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
-                    <p class="error">{{ error }}</p>
-                {% endfor %}
-            </div>
+            {% if field.name != 'presences' %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
         {% endfor %}
 
+        <!-- Section participants (licenciés à cocher) -->
+        <div class="participants-section">
+            <h3>👥 Licenciés présents</h3>
+
+            <div class="selection-counter">
+                <span id="selectedCount">0</span> licencié(s) sélectionné(s)
+            </div>
+
+            <div class="quick-actions">
+                <button type="button" class="quick-btn select-all" onclick="selectAllParticipants()">Tout sélectionner</button>
+                <button type="button" class="quick-btn clear-all" onclick="clearAllParticipants()">Tout désélectionner</button>
+            </div>
+
+            <div class="participants-grid">
+                {% for checkbox in form.presences %}
+                    {% with checkbox_id=checkbox.id_for_label %}
+                        <div class="participant-item{% if checkbox.data.checked %} selected{% endif %}" onclick="toggleParticipant(this)">
+                            {{ checkbox.tag }}
+                            <div class="participant-checkbox"></div>
+                            <div class="participant-info">
+                                <div class="participant-name">{{ checkbox.choice_label }}</div>
+                                <div class="participant-details">
+                                    {% with licence=checkbox.choice_label %}
+                                        Grade : {{ licence.grade|default:"N/A" }}
+                                    {% endwith %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+
         <button type="submit" class="btn-submit">✅ Enregistrer la session</button>
+
+        <div class="cancel-wrapper">
+            <a href="{% url 'liste_sessions' %}" class="btn-cancel">Annuler</a>
+        </div>
     </form>
 </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'presence/mobile/formulaire_check.js' %}"></script>
 {% endblock %}

@@ -50,7 +50,7 @@ def creer_session(request):
             session.created_by = request.user
             session.save()
             form.save_m2m()
-            return redirect('accueil')
+            return redirect('liste_sessions')
     else:
         initial = {}
         date_from_get = request.GET.get("date")
