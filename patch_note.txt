@@ -39,11 +39,12 @@ v0.15.6.1 -> UI Mobile : tentative formulaire présence.html
 v0.15.7 -> UI Mobile : formulaire marquer présence -> session_du_jour.html
 v0.15.8 -> UI Mobile : creer_session.html + correction bug
 v0.15.9 -> UI Mobile : modifier_session.html + confirmer_suppression_session.html
+v0.15.10 -> UI Mobile : liste_session.html -> filtre session futur et a venir
 
 next step : 
-- Facilité la sélection des noms présent en grossisant les cases à cocher
-- repenser le design Mobile First
 - inclure tuto d'installation
+- ajuste les message d'information validation, modification, créer, suppression
+- dans liste session afficher que les session futur et non passé
 
 **  Bug repérer sur les session a revenir **
 

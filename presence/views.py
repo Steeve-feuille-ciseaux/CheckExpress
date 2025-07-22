@@ -76,12 +76,21 @@ def creer_session(request):
 
 def liste_sessions(request):
     today = localdate()
-    sessions = Session.objects.all().order_by('-date', '-heure_debut')
-    sessions_today = sessions.filter(date=today)
+    
+    # Sessions d'aujourd'hui
+    sessions_today = Session.objects.filter(date=today).order_by('heure_debut')
+    
+    # Sessions futures (après aujourd'hui)
+    sessions_futures = Session.objects.filter(date__gt=today).order_by('date', 'heure_debut')
+    
+    # Sessions passées (avant aujourd'hui)
+    sessions_passees = Session.objects.filter(date__lt=today).order_by('-date', '-heure_debut')
+    
     return render(request, 'presence/liste_sessions.html', {
-        'sessions': sessions,
-        'today': today,
         'sessions_today': sessions_today,
+        'sessions_futures': sessions_futures,
+        'sessions_passees': sessions_passees,
+        'today': today,
     })
 
 def voir_session(request, pk):

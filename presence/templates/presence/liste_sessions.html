@@ -106,22 +106,27 @@
         {% endif %}
     </div>
 
-    <!-- Séparateur -->
-    <div class="section-divider">
-        <div class="divider-line"></div>
-        <span class="divider-text">Sessions à venir</span>
-        <div class="divider-line"></div>
+    <!-- Boutons de filtrage -->
+    <div class="filter-buttons-container">
+        <button id="btn-sessions-futures" class="filter-btn active" data-filter="futures">
+            <span class="filter-icon">📅</span>
+            Sessions futures
+        </button>
+        <button id="btn-sessions-passees" class="filter-btn" data-filter="passees">
+            <span class="filter-icon">🕒</span>
+            Sessions passées
+        </button>
     </div>
 
-    <!-- Prochaines sessions -->
-    <div class="upcoming-section">
+    <!-- Sessions futures -->
+    <div id="section-futures" class="upcoming-section filter-section active">
         <div class="section-header">
-            <h2 class="section-title">📅 Prochaines sessions</h2>
+            <h2 class="section-title">📅 Sessions futures</h2>
         </div>
 
-        {% if sessions %}
+        {% if sessions_futures %}
             <div class="sessions-grid">
-                {% for session in sessions %}
+                {% for session in sessions_futures %}
                     <div class="session-card upcoming-card">
                         <div class="session-badge upcoming-badge">{{ session.date|date:"d/m" }}</div>
                         
@@ -186,7 +191,7 @@
         {% else %}
             <div class="no-session-container">
                 <div class="no-session-icon">📅</div>
-                <h3 class="no-session-title">Aucune session à venir</h3>
+                <h3 class="no-session-title">Aucune session future</h3>
                 <p class="no-session-text">Aucune session n'est prévue dans les prochains jours.</p>
                 
                 {% if user.is_authenticated %}
@@ -197,6 +202,85 @@
                         </a>
                     </div>
                 {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Sessions passées -->
+    <div id="section-passees" class="upcoming-section filter-section" style="display: none;">
+        <div class="section-header">
+            <h2 class="section-title">🕒 Sessions passées</h2>
+        </div>
+
+        {% if sessions_passees %}
+            <div class="sessions-grid">
+                {% for session in sessions_passees %}
+                    <div class="session-card past-card">
+                        <div class="session-badge past-badge">{{ session.date|date:"d/m" }}</div>
+                        
+                        <div class="session-header">
+                            <div class="session-date">
+                                <span class="date-badge">{{ session.date|date:"l d F Y" }}</span>
+                            </div>
+                            <div class="session-time">
+                                <span class="time-badge">{{ session.heure_debut }} - {{ session.heure_fin }}</span>
+                            </div>
+                        </div>
+
+                        <div class="session-content">
+                            {% if session.theme %}
+                                <div class="session-theme">
+                                    <strong>{{ session.theme|linebreaksbr }}</strong>
+                                </div>
+                            {% endif %}
+
+                            <div class="session-stats">
+                                <div class="stat-item">
+                                    <span class="stat-icon">👥</span>
+                                    <span class="stat-text">{{ session.presences.count }} présent{{ session.presences.count|pluralize }}</span>
+                                </div>
+                            </div>
+
+                            {% if session.created_by or session.checked_by %}
+                                <div class="session-meta">
+                                    {% if session.created_by %}
+                                        <div class="meta-item">
+                                            <span class="meta-label">Créée par :</span>
+                                            <span class="meta-value">{{ session.created_by.get_full_name|default:session.created_by.username }}</span>
+                                        </div>
+                                    {% endif %}
+                                    {% if session.checked_by %}
+                                        <div class="meta-item">
+                                            <span class="meta-label">Vérifiée par :</span>
+                                            <span class="meta-value">{{ session.checked_by.get_full_name|default:session.checked_by.username }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="session-actions action-group">
+                            <a href="{% url 'voir_session' session.id %}" class="action-btn primary-btn">
+                                Voir détails
+                            </a>
+                            
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'modifier_session' session.id %}" class="action-btn secondary-btn">
+                                    Modifier
+                                </a>
+                                <a href="{% url 'confirmer_suppression_session' session.id %}" class="action-btn danger-btn">
+                                    Supprimer
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-session-container">
+                <div class="no-session-icon">🕒</div>
+                <h3 class="no-session-title">Aucune session passée</h3>
+                <p class="no-session-text">Aucune session n'a encore eu lieu.</p>
             </div>
         {% endif %}
     </div>
@@ -221,4 +305,9 @@
         </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'presence/mobile/liste_sessions.js' %}"></script>
 {% endblock %}
