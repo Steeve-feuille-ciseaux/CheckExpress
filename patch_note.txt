@@ -41,12 +41,17 @@ v0.15.8 -> UI Mobile : creer_session.html + correction bug
 v0.15.9 -> UI Mobile : modifier_session.html + confirmer_suppression_session.html
 v0.15.10 -> UI Mobile : liste_session.html -> filtre session futur et a venir
 v0.15.10.1 -> deploie test
-v0.15.10.2 -> MAK git ignore mac
+v0.15.10.2 -> MAJ git ignore mac
+v0.15.10.3 -> Deploie local réussie + next objectif
 
 next step : 
 - inclure tuto d'installation
 - ajuste les message d'information validation, modification, créer, suppression
-- dans liste session afficher que les session futur et non passé
+- ajout Makefile
+- champs theme d'une session non obligatoire
+- ajout models.py profs + assistant prof
+- Modifier mots de passe -> superuser valide les user puis les users change leur mots de passe
+- les session passé ne sont plus modifiable
 
 **  Bug repérer sur les session a revenir **
 
