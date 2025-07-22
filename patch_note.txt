@@ -41,6 +41,7 @@ v0.15.8 -> UI Mobile : creer_session.html + correction bug
 v0.15.9 -> UI Mobile : modifier_session.html + confirmer_suppression_session.html
 v0.15.10 -> UI Mobile : liste_session.html -> filtre session futur et a venir
 v0.15.10.1 -> deploie test
+v0.15.10.2 -> MAK git ignore mac
 
 next step : 
 - inclure tuto d'installation
