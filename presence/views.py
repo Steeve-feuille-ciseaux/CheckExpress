@@ -100,6 +100,20 @@ def voir_session(request, pk):
 @login_required
 def modifier_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
+
+    # Date et heure de la session (on combine date + heure_debut)
+    session_datetime = datetime.combine(session.date, session.heure_debut)
+
+    # Convertir en timezone-aware si nécessaire
+    if timezone.is_naive(session_datetime):
+        session_datetime = timezone.make_aware(session_datetime)
+
+    # Vérifier si plus de 24h sont passées
+    if now() > session_datetime + timedelta(hours=24):
+        messages.error(request, "Impossible de modifier une session de plus de 24h.")
+        return redirect('liste_sessions')
+
+    # Logique existante
     if request.method == 'POST':
         form = SessionForm(request.POST, instance=session)
         if form.is_valid():
@@ -110,6 +124,7 @@ def modifier_session(request, pk):
             return redirect('liste_sessions')
     else:
         form = SessionForm(instance=session)
+
     return render(request, 'presence/modifier_session.html', {'form': form, 'session': session})
 
 @login_required
@@ -172,13 +187,25 @@ def modifier_session_du_jour(request):
 def confirmer_suppression_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
 
+    # Calcul de la date/heure de début de session
+    session_datetime = datetime.combine(session.date, session.heure_debut)
+
+    # Rendre timezone-aware si nécessaire
+    if timezone.is_naive(session_datetime):
+        session_datetime = timezone.make_aware(session_datetime)
+
+    # Bloquer suppression si plus de 24h
+    if timezone.now() > session_datetime + timedelta(hours=24):
+        messages.error(request, "Impossible de supprimer une session de plus de 24h.")
+        return redirect('liste_sessions')
+
+    # Suppression si autorisée
     if request.method == "POST":
         session.delete()
         messages.success(request, "La session a bien été supprimée.")
         return redirect('liste_sessions')
 
     return render(request, 'presence/confirmer_suppression_session.html', {'session': session})
-
 # Licencier
 def ajouter_licencie(request):
     if request.method == 'POST':

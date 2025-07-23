@@ -43,12 +43,12 @@ v0.15.10 -> UI Mobile : liste_session.html -> filtre session futur et a venir
 v0.15.10.1 -> deploie test
 v0.15.10.2 -> MAJ git ignore mac
 v0.15.10.3 -> Deploie local réussie + next objectif
+v0.16.0 -> Champs themes non obligatoire + impossible de supprimer où modifier une session 24h plus tard
 
 next step : 
 - inclure tuto d'installation
 - ajuste les message d'information validation, modification, créer, suppression
 - ajout Makefile
-- champs theme d'une session non obligatoire
 - ajout models.py profs + assistant prof
 - Modifier mots de passe -> superuser valide les user puis les users change leur mots de passe
 - les session passé ne sont plus modifiable

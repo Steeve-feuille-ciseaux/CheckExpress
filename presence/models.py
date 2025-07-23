@@ -34,7 +34,7 @@ class Session(models.Model):
     date = models.DateField()
     heure_debut = models.TimeField()
     heure_fin = models.TimeField()
-    theme = models.TextField()
+    theme = models.TextField(blank=True)
     presences = models.ManyToManyField(Licence, blank=True, related_name='sessions')
 
     created_by = models.ForeignKey(User, related_name='sessions_created', on_delete=models.SET_NULL, null=True, blank=True)
