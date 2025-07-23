@@ -44,14 +44,15 @@ v0.15.10.1 -> deploie test
 v0.15.10.2 -> MAJ git ignore mac
 v0.15.10.3 -> Deploie local réussie + next objectif
 v0.16.0 -> Champs themes non obligatoire + impossible de supprimer où modifier une session 24h plus tard
+v0.17.0 -> formulaire au superuser pour ajouter prof et prof assistant
 
 next step : 
 - inclure tuto d'installation
 - ajuste les message d'information validation, modification, créer, suppression
 - ajout Makefile
-- ajout models.py profs + assistant prof
+- poursuivre gestionnaire prof et prof assistant
 - Modifier mots de passe -> superuser valide les user puis les users change leur mots de passe
-- les session passé ne sont plus modifiable
+- MAJ mobile -> voir_session.html
 
 **  Bug repérer sur les session a revenir **
 

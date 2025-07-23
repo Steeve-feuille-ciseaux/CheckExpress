@@ -11,6 +11,9 @@ from datetime import datetime, timedelta
 from django.db.models import Count, Max
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
+from .forms import UserCreationWithGroupForm
+
 
 def accueil(request):
     today = localdate()
@@ -340,3 +343,20 @@ def export_licencies_excel(request):
     response['Content-Disposition'] = f'attachment; filename={filename}'
     wb.save(response)
     return response
+
+@login_required
+def ajouter_utilisateur_prof(request):
+    if not request.user.is_superuser:
+        messages.warning(request, "Accès refusé")
+        return redirect('accueil')  # redirige vers la page d'accueil
+
+    if request.method == 'POST':
+        form = UserCreationWithGroupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Utilisateur ajouté avec succès.")
+            return redirect('accueil')
+    else:
+        form = UserCreationWithGroupForm()
+
+    return render(request, 'presence/ajouter_utilisateur.html', {'form': form})

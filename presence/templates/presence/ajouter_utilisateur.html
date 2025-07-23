@@ -1,0 +1,33 @@
+<!-- templates/presence/ajouter_utilisateur.html -->
+{% extends "presence/base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>➕ Ajouter un utilisateur Prof / Prof assistant</h2>
+
+    {% if form.errors %}
+    <div class="form-errors">
+        <ul>
+        {% for field in form %}
+            {% for error in field.errors %}
+            <li>{{ field.label }} : {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn-submit">Créer l'utilisateur</button>
+    </form>
+
+    <div class="cancel-wrapper">
+      <a href="{% url 'accueil' %}" class="btn-cancel">Annuler</a>
+    </div>
+  </div>
+{% endblock %}

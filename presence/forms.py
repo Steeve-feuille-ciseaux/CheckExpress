@@ -1,6 +1,8 @@
 from django import forms
 from .models import Session, Licence
 from django.utils.html import format_html
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User, Group
 
 
 class PresenceForm(forms.Form):
@@ -54,3 +56,24 @@ class LicenceForm(forms.ModelForm):
         # Forcer l'affichage au format HTML5 si instance existe
         if self.instance and self.instance.date_naissance:
             self.initial['date_naissance'] = self.instance.date_naissance.strftime('%Y-%m-%d')
+
+class UserCreationWithGroupForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    group = forms.ModelChoiceField(
+        queryset=Group.objects.filter(name__in=['Prof', 'Prof assistant']),
+        required=True,
+        label="Rôle (groupe)"
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'group', 'password1', 'password2')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+            group = self.cleaned_data['group']
+            user.groups.add(group)
+        return user
