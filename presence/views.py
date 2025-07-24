@@ -344,6 +344,19 @@ def export_licencies_excel(request):
     wb.save(response)
     return response
 
+# Gestion prof
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def voir_utilisateurs(request):
+    users = User.objects.prefetch_related('groups').all()
+    return render(request, 'presence/voir_utilisateurs.html', {'users': users})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def user_detail(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    return render(request, 'presence/user_detail.html', {'user_obj': user})
+
 @login_required
 def ajouter_utilisateur_prof(request):
     if not request.user.is_superuser:
@@ -363,6 +376,51 @@ def ajouter_utilisateur_prof(request):
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
+def user_edit(request, user_id):
+    user_obj = get_object_or_404(User, pk=user_id)
+    profile = getattr(user_obj, 'profile', None)
+
+    if request.method == 'POST':
+        form = UserCreationWithGroupForm(request.POST, instance=user_obj)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Utilisateur mis à jour avec succès.")
+            return redirect('voir_utilisateurs')
+    else:
+        initial = {'etablissement': profile.etablissement if profile else None, 'group': user_obj.groups.first()}
+        form = UserCreationWithGroupForm(instance=user_obj, initial=initial)
+
+    return render(request, 'presence/user_edit.html', {
+        'form': form,
+        'user_obj': user_obj
+    })
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def user_delete(request, user_id):
+    user_obj = get_object_or_404(User, pk=user_id)
+
+    if request.method == 'POST':
+        # Optionnel : Empêcher un superuser de se supprimer lui-même
+        if user_obj == request.user:
+            messages.error(request, "Vous ne pouvez pas supprimer votre propre compte.")
+            return redirect('voir_utilisateurs')
+
+        user_obj.delete()
+        messages.success(request, "Utilisateur supprimé avec succès.")
+        return redirect('voir_utilisateurs')
+
+    return render(request, 'presence/user_confirm_delete.html', {'user_obj': user_obj})
+
+# gestion ville
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def gestion_ville(request):
+    villes = Ville.objects.all()
+    return render(request, 'presence/gestion_ville.html', {'villes': villes})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def ajouter_ville(request):
     if request.method == 'POST':
         form = VilleForm(request.POST)
@@ -373,6 +431,13 @@ def ajouter_ville(request):
     else:
         form = VilleForm()
     return render(request, 'presence/ajouter_ville.html', {'form': form})
+
+# gestion établissement
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def gestion_etablissement(request):
+    etablissements = Etablissement.objects.select_related('ville').all()
+    return render(request, 'presence/gestion_etablissement.html', {'etablissements': etablissements})
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -387,6 +452,13 @@ def ajouter_etablissement(request):
         form = EtablissementForm()
     return render(request, 'presence/ajouter_etablissement.html', {'form': form})
 
+# gestion role
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def gestion_role(request):
+    groupes = Group.objects.all()
+    return render(request, 'presence/gestion_role.html', {'groupes': groupes})
+
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def ajouter_role(request):
@@ -400,9 +472,3 @@ def ajouter_role(request):
         form = GroupForm()
 
     return render(request, 'presence/ajouter_role.html', {'form': form})
-
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def voir_utilisateurs(request):
-    users = User.objects.prefetch_related('groups').all()
-    return render(request, 'presence/voir_utilisateurs.html', {'users': users})

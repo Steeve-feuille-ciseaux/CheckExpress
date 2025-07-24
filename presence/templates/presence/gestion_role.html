@@ -1,0 +1,28 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Gestion des rôles{% endblock %}
+
+{% block content %}
+  <h2>🛡️ Gestion des rôles</h2>
+
+  <a href="{% url 'ajouter_role' %}" class="btn">➕ Ajouter un rôle</a>
+
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>Nom du rôle</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for groupe in groupes %}
+        <tr>
+          <td>{{ groupe.name }}</td>
+        </tr>
+      {% empty %}
+        <tr><td>Aucun rôle défini.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{% url 'accueil' %}" class="btn-cancel">⬅ Retour</a>
+{% endblock %}

@@ -47,7 +47,8 @@ v0.16.0 -> Champs themes non obligatoire + impossible de supprimer où modifier 
 v0.17.0 -> formulaire au superuser pour ajouter prof et prof assistant
 v0.17.1 -> formulaire au superuser pour ajouter ville et établissement
 v0.17.2 -> formulaire au superuser pour ajouter role
-v0.17.3 -> visuel user générale 
+v0.17.3 -> visuel générale des utilisateur
+v0.17.4 -> menu paramètres -> début crud -> ville, user, établissement, role
 
 next step : 
 - inclure tuto d'installation

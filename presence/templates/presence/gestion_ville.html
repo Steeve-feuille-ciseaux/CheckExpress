@@ -1,0 +1,28 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Gestion des Villes{% endblock %}
+
+{% block content %}
+  <h2>🏙️ Gestion des villes</h2>
+
+  <a href="{% url 'ajouter_ville' %}" class="btn">➕ Ajouter une ville</a>
+
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>Nom</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ville in villes %}
+        <tr>
+          <td>{{ ville.name }}</td>
+        </tr>
+      {% empty %}
+        <tr><td>Aucune ville enregistrée.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{% url 'accueil' %}" class="btn-cancel">⬅ Retour</a>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "presence/base.html" %}
+
+{% block content %}
+  <h2>Confirmer la suppression</h2>
+  <p>Êtes-vous sûr de vouloir supprimer l'utilisateur {{ user_obj.get_full_name }} ({{ user_obj.username }}) ?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+    <a href="{% url 'voir_utilisateurs' %}" class="btn btn-secondary">Annuler</a>
+  </form>
+{% endblock %}

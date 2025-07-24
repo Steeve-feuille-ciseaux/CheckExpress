@@ -81,16 +81,16 @@ class UserCreationWithGroupForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
-        
+
         if commit:
             user.save()
+
             group = self.cleaned_data['group']
-            user.groups.add(group)
+            user.groups.set([group])  # Remplace tous les groupes existants
 
             etablissement = self.cleaned_data.get('etablissement')
-            # Crée ou mets à jour le profile lié à l'utilisateur
             Profile.objects.update_or_create(user=user, defaults={'etablissement': etablissement})
-        
+
         return user
     
 class VilleForm(forms.ModelForm):

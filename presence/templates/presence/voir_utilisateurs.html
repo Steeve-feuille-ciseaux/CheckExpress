@@ -4,6 +4,12 @@
 {% block content %}
 <h2>Liste des utilisateurs</h2>
 
+<div class="action-buttons" style="margin-bottom: 20px;">
+    <a href="{% url 'gestion_ville' %}" class="btn">Ville</a>
+    <a href="{% url 'gestion_etablissement' %}" class="btn">Établissement</a>
+    <a href="{% url 'gestion_role' %}" class="btn">Rôle</a>
+</div>
+
 <table class="styled-table">
     <thead>
         <tr>
@@ -12,6 +18,7 @@
             <th>Rôle</th>
             <th>Établissement</th>
             <th>Ville</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -28,10 +35,15 @@
                 </td>
                 <td>{{ user.profile.etablissement.name|default:"Non défini" }}</td>
                 <td>{{ user.profile.etablissement.ville.name|default:"Non défini" }}</td>
+                <td>
+                    <a href="{% url 'user_detail' user.id %}" class="btn-small">Voir</a>
+                    <a href="{% url 'user_edit' user.id %}" class="btn-small">Modifier</a>
+                    <a href="{% url 'user_delete' user.id %}" class="btn btn-sm btn-danger">Supprimer</a>
+                </td>
             </tr>
         {% empty %}
             <tr>
-                <td colspan="5">Aucun utilisateur trouvé.</td>
+                <td colspan="6">Aucun utilisateur trouvé.</td>
             </tr>
         {% endfor %}
     </tbody>

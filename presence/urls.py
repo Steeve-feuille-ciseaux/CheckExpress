@@ -22,11 +22,17 @@ urlpatterns = [
 
     path('presence/', views.enregistrer_presence, name='enregistrer_presence'),
 
-    # Connection 
+    # Admin
     path('utilisateurs/', views.voir_utilisateurs, name='voir_utilisateurs'),
+    path('utilisateur/<int:user_id>/', views.user_detail, name='user_detail'),
     path('ajouter-utilisateur/', views.ajouter_utilisateur_prof, name='ajouter_utilisateur_prof'),
+    path('utilisateur/<int:user_id>/modifier/', views.user_edit, name='user_edit'),
+    path('users/<int:user_id>/delete/', views.user_delete, name='user_delete'),
+    path('gestion/ville/', views.gestion_ville, name='gestion_ville'),
     path('ajouter-ville/', views.ajouter_ville, name='ajouter_ville'),
+    path('gestion/etablissement/', views.gestion_etablissement, name='gestion_etablissement'),
     path('ajouter-etablissement/', views.ajouter_etablissement, name='ajouter_etablissement'),
+    path('gestion/role/', views.gestion_role, name='gestion_role'),
     path('ajouter-role/', views.ajouter_role, name='ajouter_role'),
     path('login/', auth_views.LoginView.as_view(template_name='presence/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='accueil'), name='logout'),

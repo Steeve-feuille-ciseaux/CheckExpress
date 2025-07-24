@@ -1,0 +1,23 @@
+{% extends "presence/base.html" %}
+
+{% block title %}Détail de l'utilisateur{% endblock %}
+
+{% block content %}
+  <h2>👤 Détail de l'utilisateur : {{ user_obj.username }}</h2>
+
+  <ul>
+    <li><strong>Email :</strong> {{ user_obj.email }}</li>
+    <li><strong>Groupes :</strong>
+        {% for group in user_obj.groups.all %}
+            {{ group.name }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+            Aucun
+        {% endfor %}
+    </li>
+    <li><strong>Établissement :</strong> {{ user_obj.profile.etablissement.name|default:"Non défini" }}</li>
+    <li><strong>Ville :</strong> {{ user_obj.profile.etablissement.ville.name|default:"Non défini" }}</li>
+    <li><strong>Date d’inscription :</strong> {{ user_obj.date_joined|date:"d/m/Y à H:i" }}</li>
+  </ul>
+
+  <a href="{% url 'voir_utilisateurs' %}" class="btn-cancel">⬅ Retour</a>
+{% endblock %}
