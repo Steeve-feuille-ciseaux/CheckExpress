@@ -45,6 +45,7 @@
                 <li><a href="{% url 'modifier_session_du_jour' %}"><span class="nav-icon">📋</span>Marquer présence</a></li>
                 <li><a href="{% url 'creer_session' %}"><span class="nav-icon">🗓️</span>Créer une session</a></li>
                 {% if user.is_superuser %}
+                    <li><a href="{% url 'voir_utilisateurs' %}"><span class="nav-icon">👤</span>Voir les utilisateurs</a></li>
                     <li><a href="{% url 'ajouter_utilisateur_prof' %}"><span class="nav-icon">🗓️</span>gestion prof / prof assistant</a></li>
                     <li><a href="{% url 'ajouter_ville' %}"><span class="nav-icon">🏙️</span>Ajouter une ville</a></li>
                     <li><a href="{% url 'ajouter_etablissement' %}"><span class="nav-icon">🏫</span>Ajouter un établissement</a></li>

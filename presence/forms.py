@@ -1,5 +1,5 @@
 from django import forms
-from .models import Session, Licence, Ville, Etablissement
+from .models import Session, Licence, Ville, Etablissement, Profile
 from django.utils.html import format_html
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group, Permission
@@ -61,15 +61,22 @@ class UserCreationWithGroupForm(UserCreationForm):
     email = forms.EmailField(required=True, label="Adresse email")
     
     group = forms.ModelChoiceField(
-        queryset=Group.objects.all(),  # ou filtrer ici si besoin
+        queryset=Group.objects.all(),  # tu peux filtrer ici si besoin
         required=True,
         label="Rôle (groupe)",
         help_text="Sélectionnez le rôle de l'utilisateur"
     )
+    
+    etablissement = forms.ModelChoiceField(
+        queryset=Etablissement.objects.all(),
+        required=False,
+        label="Établissement",
+        help_text="Sélectionnez l'établissement de l'utilisateur"
+    )
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'group', 'password1', 'password2')
+        fields = ('username', 'email', 'group', 'etablissement', 'password1', 'password2')
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -79,6 +86,10 @@ class UserCreationWithGroupForm(UserCreationForm):
             user.save()
             group = self.cleaned_data['group']
             user.groups.add(group)
+
+            etablissement = self.cleaned_data.get('etablissement')
+            # Crée ou mets à jour le profile lié à l'utilisateur
+            Profile.objects.update_or_create(user=user, defaults={'etablissement': etablissement})
         
         return user
     

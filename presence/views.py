@@ -4,7 +4,7 @@ from openpyxl.utils import get_column_letter
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
-from .models import Licence, Presence, Session, Ville, Etablissement
+from .models import Licence, Presence, Session, Ville, Etablissement, User
 from .forms import PresenceForm, SessionForm, LicenceForm, VilleForm, EtablissementForm, GroupForm
 from django.utils.timezone import localdate, localtime, now
 from datetime import datetime, timedelta
@@ -400,3 +400,9 @@ def ajouter_role(request):
         form = GroupForm()
 
     return render(request, 'presence/ajouter_role.html', {'form': form})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def voir_utilisateurs(request):
+    users = User.objects.prefetch_related('groups').all()
+    return render(request, 'presence/voir_utilisateurs.html', {'users': users})

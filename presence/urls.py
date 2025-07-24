@@ -23,6 +23,7 @@ urlpatterns = [
     path('presence/', views.enregistrer_presence, name='enregistrer_presence'),
 
     # Connection 
+    path('utilisateurs/', views.voir_utilisateurs, name='voir_utilisateurs'),
     path('ajouter-utilisateur/', views.ajouter_utilisateur_prof, name='ajouter_utilisateur_prof'),
     path('ajouter-ville/', views.ajouter_ville, name='ajouter_ville'),
     path('ajouter-etablissement/', views.ajouter_etablissement, name='ajouter_etablissement'),
