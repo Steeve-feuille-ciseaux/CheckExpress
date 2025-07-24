@@ -49,7 +49,7 @@ v0.17.1 -> formulaire au superuser pour ajouter ville et établissement
 v0.17.2 -> formulaire au superuser pour ajouter role
 v0.17.3 -> visuel générale des utilisateur
 v0.17.4 -> menu paramètres -> début crud -> ville, user, établissement, role
-
+v0.17.4.1 -> UI Mobile : voir_utilisateurs.html
 next step : 
 - inclure tuto d'installation
 - !!! ajuste les message d'information validation, modification, créer, suppression !!!

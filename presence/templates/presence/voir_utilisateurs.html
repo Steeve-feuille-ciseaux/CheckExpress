@@ -1,51 +1,605 @@
 {% extends 'presence/base.html' %}
+
+{% load static %}
+
 {% block title %}Utilisateurs{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <style>
+        /* Styles pour la liste des utilisateurs mobile - Mobile-First 2025 */
+        .mobile-users {
+            padding: 0;
+            max-width: 100%;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        /* En-tête de page avec gradient moderne */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 1rem 1.5rem;
+            margin-bottom: 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 1.75rem;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Boutons d'action principaux - Touch-friendly 2025 */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0 1rem 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 1rem;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            min-width: 90px;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .action-btn:active::before {
+            left: 100%;
+        }
+
+        .action-btn-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* Grille des utilisateurs */
+        .users-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 0 1rem;
+        }
+
+        /* Carte utilisateur avec design moderne */
+        .user-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .user-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* En-tête de la carte avec amélioration UX */
+        .user-header {
+            padding: 1.5rem 1.5rem 1rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+            position: relative;
+        }
+
+        .user-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.2;
+        }
+
+        .user-email {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Contenu de la carte */
+        .user-content {
+            padding: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .info-icon {
+            font-size: 1.1rem;
+            color: #666;
+            width: 20px;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .info-value.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Badge pour les rôles - Design moderne */
+        .role-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .role-badge {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            color: #667eea;
+            padding: 0.4rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-badge.empty {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+            border-color: rgba(107, 114, 128, 0.2);
+        }
+
+        /* Actions de la carte - Touch-friendly */
+        .user-actions {
+            padding: 1.25rem 1.5rem;
+            background: #f9fafb;
+            border-top: 1px solid #f3f4f6;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .user-action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            padding: 0.875rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 44px; /* Taille minimum recommandée pour le touch */
+        }
+
+        .user-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .user-action-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Message vide avec design moderne */
+        .no-users-container {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .no-users-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.6;
+            filter: grayscale(1);
+        }
+
+        .no-users-title {
+            margin: 0 0 1rem 0;
+            color: #374151;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .no-users-text {
+            color: #6b7280;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Statistiques avec design glassmorphism */
+        .users-stats {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin: 1rem;
+            padding: 1.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stats-label {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin: 0.5rem 0 0;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .user-card:nth-child(2) { animation-delay: 0.1s; }
+        .user-card:nth-child(3) { animation-delay: 0.2s; }
+        .user-card:nth-child(4) { animation-delay: 0.3s; }
+
+        /* Responsive amélioré pour 2025 */
+        @media (max-width: 480px) {
+            .page-header {
+                padding: 1.5rem 1rem 1.25rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .action-buttons {
+                margin: 0 1rem 1rem;
+                padding: 0.75rem;
+            }
+            
+            .action-btn {
+                min-width: 80px;
+                padding: 0.875rem 0.75rem;
+            }
+            
+            .action-btn-icon {
+                font-size: 1.25rem;
+            }
+            
+            .users-grid {
+                padding: 0 0.75rem;
+            }
+            
+            .user-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .user-action-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .page-header {
+                padding: 1.25rem 0.75rem 1rem;
+            }
+            
+            .action-buttons {
+                margin: 0 0.75rem 1rem;
+                padding: 0.5rem;
+                gap: 0.375rem;
+            }
+            
+            .action-btn {
+                min-width: 70px;
+                padding: 0.75rem 0.5rem;
+                font-size: 0.75rem;
+            }
+            
+            .users-grid {
+                padding: 0 0.5rem;
+            }
+            
+            .user-header {
+                padding: 1.25rem 1.25rem 0.75rem;
+            }
+            
+            .user-content {
+                padding: 0.75rem 1.25rem;
+            }
+            
+            .user-actions {
+                padding: 1rem 1.25rem;
+            }
+            
+            .info-item {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+            
+            .info-icon {
+                align-self: flex-start;
+            }
+        }
+
+        /* Dark mode support pour 2025 */
+        @media (prefers-color-scheme: dark) {
+            .mobile-users {
+                background: #0f172a;
+            }
+            
+            .user-card {
+                background: #1e293b;
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+            
+            .user-header {
+                background: rgba(102, 126, 234, 0.1);
+                border-bottom-color: rgba(102, 126, 234, 0.2);
+            }
+            
+            .user-actions {
+                background: #0f172a;
+            }
+            
+            .user-name {
+                color: #f8fafc;
+            }
+            
+            .info-value {
+                color: #e2e8f0;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-<h2>Liste des utilisateurs</h2>
+<div class="mobile-users">
+    <!-- En-tête de page -->
+    <div class="page-header">
+        <h2 class="page-title">👥 Liste des utilisateurs</h2>
+    </div>
 
-<div class="action-buttons" style="margin-bottom: 20px;">
-    <a href="{% url 'gestion_ville' %}" class="btn">Ville</a>
-    <a href="{% url 'gestion_etablissement' %}" class="btn">Établissement</a>
-    <a href="{% url 'gestion_role' %}" class="btn">Rôle</a>
+    <!-- Statistiques -->
+    {% if users %}
+    <div class="users-stats">
+        <p class="stats-number">{{ users|length }}</p>
+        <p class="stats-label">utilisateur{{ users|length|pluralize }} au total</p>
+    </div>
+    {% endif %}
+
+    <!-- Boutons d'action -->
+    <div class="action-buttons">
+        <a href="{% url 'gestion_ville' %}" class="action-btn">
+            <span class="action-btn-icon">🏙️</span>
+            Ville
+        </a>
+        <a href="{% url 'gestion_etablissement' %}" class="action-btn">
+            <span class="action-btn-icon">🏢</span>
+            Établissement
+        </a>
+        <a href="{% url 'gestion_role' %}" class="action-btn">
+            <span class="action-btn-icon">👔</span>
+            Rôle
+        </a>
+    </div>
+
+    <!-- Liste des utilisateurs -->
+    {% if users %}
+        <div class="users-grid">
+            {% for user in users %}
+                <div class="user-card">
+                    <!-- En-tête utilisateur -->
+                    <div class="user-header">
+                        <h3 class="user-name">{{ user.username }}</h3>
+                        <p class="user-email">{{ user.email|default:"Pas d'email" }}</p>
+                    </div>
+
+                    <!-- Informations utilisateur -->
+                    <div class="user-content">
+                        <div class="user-info">
+                            <!-- Rôles -->
+                            <div class="info-item">
+                                <span class="info-icon">👔</span>
+                                <div class="info-content">
+                                    <div class="info-label">Rôle(s)</div>
+                                    <div class="role-badges">
+                                        {% for group in user.groups.all %}
+                                            <span class="role-badge">{{ group.name }}</span>
+                                        {% empty %}
+                                            <span class="role-badge empty">Aucun rôle</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Établissement -->
+                            <div class="info-item">
+                                <span class="info-icon">🏢</span>
+                                <div class="info-content">
+                                    <div class="info-label">Établissement</div>
+                                    <div class="info-value{% if not user.profile.etablissement %} empty{% endif %}">
+                                        {{ user.profile.etablissement.name|default:"Non défini" }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ville -->
+                            <div class="info-item">
+                                <span class="info-icon">🏙️</span>
+                                <div class="info-content">
+                                    <div class="info-label">Ville</div>
+                                    <div class="info-value{% if not user.profile.etablissement.ville %} empty{% endif %}">
+                                        {{ user.profile.etablissement.ville.name|default:"Non défini" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="user-actions">
+                        <a href="{% url 'user_detail' user.id %}" class="user-action-btn btn-view">
+                            <span>👁️</span>
+                            Voir
+                        </a>
+                        <a href="{% url 'user_edit' user.id %}" class="user-action-btn btn-edit">
+                            <span>✏️</span>
+                            Modifier
+                        </a>
+                        <a href="{% url 'user_delete' user.id %}" class="user-action-btn btn-delete">
+                            <span>🗑️</span>
+                            Supprimer
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-users-container">
+            <div class="no-users-icon">👤</div>
+            <h3 class="no-users-title">Aucun utilisateur trouvé</h3>
+            <p class="no-users-text">Il n'y a actuellement aucun utilisateur dans le système.</p>
+        </div>
+    {% endif %}
 </div>
-
-<table class="styled-table">
-    <thead>
-        <tr>
-            <th>Nom d'utilisateur</th>
-            <th>Email</th>
-            <th>Rôle</th>
-            <th>Établissement</th>
-            <th>Ville</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                    {% for group in user.groups.all %}
-                        {{ group.name }}{% if not forloop.last %}, {% endif %}
-                    {% empty %}
-                        Aucun
-                    {% endfor %}
-                </td>
-                <td>{{ user.profile.etablissement.name|default:"Non défini" }}</td>
-                <td>{{ user.profile.etablissement.ville.name|default:"Non défini" }}</td>
-                <td>
-                    <a href="{% url 'user_detail' user.id %}" class="btn-small">Voir</a>
-                    <a href="{% url 'user_edit' user.id %}" class="btn-small">Modifier</a>
-                    <a href="{% url 'user_delete' user.id %}" class="btn btn-sm btn-danger">Supprimer</a>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="6">Aucun utilisateur trouvé.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
 {% endblock %}
