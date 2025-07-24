@@ -24,6 +24,8 @@ urlpatterns = [
 
     # Connection 
     path('ajouter-utilisateur/', views.ajouter_utilisateur_prof, name='ajouter_utilisateur_prof'),
+    path('ajouter-ville/', views.ajouter_ville, name='ajouter_ville'),
+    path('ajouter-etablissement/', views.ajouter_etablissement, name='ajouter_etablissement'),
     path('login/', auth_views.LoginView.as_view(template_name='presence/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='accueil'), name='logout'),
 ]

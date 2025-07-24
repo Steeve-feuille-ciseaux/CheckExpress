@@ -1,5 +1,5 @@
 from django import forms
-from .models import Session, Licence
+from .models import Session, Licence, Ville, Etablissement
 from django.utils.html import format_html
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
@@ -77,3 +77,16 @@ class UserCreationWithGroupForm(UserCreationForm):
             group = self.cleaned_data['group']
             user.groups.add(group)
         return user
+    
+class VilleForm(forms.ModelForm):
+    class Meta:
+        model = Ville
+        fields = ['name']
+
+class EtablissementForm(forms.ModelForm):
+    class Meta:
+        model = Etablissement
+        fields = ['name', 'ville', 'adresse']
+        labels = {
+            'adresse': 'Adresse (facultatif)',
+        }

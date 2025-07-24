@@ -42,3 +42,17 @@ class Session(models.Model):
 
     def __str__(self):
         return f"Session du {self.date} ({self.heure_debut} - {self.heure_fin})"
+
+class Ville(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Etablissement(models.Model):
+    name = models.CharField(max_length=100)
+    ville = models.ForeignKey(Ville, on_delete=models.CASCADE, related_name='etablissements')
+    adresse = models.CharField(max_length=255, blank=True, null=True)  # champ facultatif
+
+    def __str__(self):
+        return self.name

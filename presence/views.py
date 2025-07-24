@@ -4,8 +4,8 @@ from openpyxl.utils import get_column_letter
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
-from .models import Licence, Presence, Session
-from .forms import PresenceForm, SessionForm, LicenceForm
+from .models import Licence, Presence, Session, Ville, Etablissement
+from .forms import PresenceForm, SessionForm, LicenceForm, VilleForm, EtablissementForm
 from django.utils.timezone import localdate, localtime, now
 from datetime import datetime, timedelta
 from django.db.models import Count, Max
@@ -360,3 +360,29 @@ def ajouter_utilisateur_prof(request):
         form = UserCreationWithGroupForm()
 
     return render(request, 'presence/ajouter_utilisateur.html', {'form': form})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def ajouter_ville(request):
+    if request.method == 'POST':
+        form = VilleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Ville ajoutée avec succès.")
+            return redirect('accueil')
+    else:
+        form = VilleForm()
+    return render(request, 'presence/ajouter_ville.html', {'form': form})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def ajouter_etablissement(request):
+    if request.method == 'POST':
+        form = EtablissementForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Établissement ajouté avec succès.")
+            return redirect('accueil')
+    else:
+        form = EtablissementForm()
+    return render(request, 'presence/ajouter_etablissement.html', {'form': form})
