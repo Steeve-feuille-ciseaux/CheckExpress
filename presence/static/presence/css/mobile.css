@@ -1,6 +1,8 @@
-/* mobile.css - Version améliorée */
+/* ==================================================
+   MOBILE.CSS - DESIGN MODERNE & OPTIMISÉ 2025
+   ================================================== */
 
-/* Variables CSS pour la cohérence */
+/* ------------------ VARIABLES CSS ------------------ */
 :root {
     --primary-color: #2196F3;
     --secondary-color: #1976D2;
@@ -11,7 +13,7 @@
     --transition: 0.3s ease;
 }
 
-/* Reset et base pour mobile */
+/* -------------------- RESET -------------------- */
 * {
     box-sizing: border-box;
 }
@@ -26,7 +28,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Header mobile */
+/* -------------------- HEADER -------------------- */
 .mobile-header {
     position: fixed;
     top: 0;
@@ -43,7 +45,6 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    max-width: 100%;
 }
 
 .mobile-header h1 {
@@ -57,7 +58,7 @@ body {
     text-decoration: none;
 }
 
-/* Bouton burger amélioré */
+/* ---------------- BURGER BUTTON ---------------- */
 .burger-btn {
     background: none;
     border: none;
@@ -80,23 +81,21 @@ body {
     width: 25px;
     height: 3px;
     background: white;
-    transition: var(--transition);
     border-radius: 2px;
+    transition: var(--transition);
 }
 
 .burger-btn[aria-expanded="true"] .burger-line:nth-child(1) {
     transform: rotate(45deg) translate(6px, 6px);
 }
-
 .burger-btn[aria-expanded="true"] .burger-line:nth-child(2) {
     opacity: 0;
 }
-
 .burger-btn[aria-expanded="true"] .burger-line:nth-child(3) {
     transform: rotate(-45deg) translate(6px, -6px);
 }
 
-/* Menu overlay */
+/* ---------------- OVERLAY MENU ---------------- */
 .menu-overlay {
     position: fixed;
     top: 0;
@@ -109,13 +108,12 @@ body {
     visibility: hidden;
     transition: var(--transition);
 }
-
 .menu-overlay.active {
     opacity: 1;
     visibility: visible;
 }
 
-/* Navigation mobile */
+/* ---------------- MOBILE NAV ---------------- */
 .mobile-nav {
     position: fixed;
     top: 0;
@@ -125,11 +123,10 @@ body {
     max-width: 300px;
     background: white;
     z-index: 1002;
-    transition: left var(--transition);
     box-shadow: 2px 0 10px rgba(0,0,0,0.1);
     overflow-y: auto;
+    transition: left var(--transition);
 }
-
 .mobile-nav.active {
     left: 0;
 }
@@ -178,26 +175,24 @@ body {
     border-bottom: 1px solid var(--border-color);
 }
 
-.nav-list li:last-child {
-    border-bottom: none;
-}
-
-.nav-list a, .logout-form button {
+.nav-list a,
+.logout-form button {
     display: flex;
     align-items: center;
     padding: 1rem;
     color: var(--text-color);
     text-decoration: none;
-    transition: var(--transition);
-    width: 100%;
-    border: none;
     background: none;
+    border: none;
     font-size: 1rem;
-    text-align: left;
     cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+    width: 100%;
 }
 
-.nav-list a:hover, .logout-form button:hover {
+.nav-list a:hover,
+.logout-form button:hover {
     background: #f0f0f0;
     color: var(--primary-color);
 }
@@ -206,47 +201,63 @@ body {
     margin-right: 0.75rem;
     font-size: 1.2rem;
     width: 24px;
-    display: inline-block;
 }
 
-.nav-divider {
-    height: 1px;
-    background: var(--border-color);
-    margin: 0.5rem 0;
-}
-
-.logout-item {
-    border-top: 2px solid var(--border-color);
-}
-
-.logout-form {
-    margin: 0;
-}
-
-/* Contenu principal */
+/* ---------------- MAIN CONTENT ---------------- */
 .main-content {
-    margin-top: 70px; /* Hauteur du header fixe */
+    margin-top: 70px;
+    padding-bottom: 50px;
     min-height: calc(100vh - 120px);
-    padding-bottom: 50px; /* Espace pour le footer */
 }
 
 .content-container {
     padding: 1rem;
 }
 
-/* Messages d'alerte améliorés */
-.messages {
-    margin: 0;
-    padding: 0;
+.content-container input,
+.content-container select,
+.content-container textarea {
+    font-size: 16px;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color var(--transition);
 }
 
+.content-container input:focus,
+.content-container select:focus,
+.content-container textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.content-container button[type="submit"] {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.content-container button[type="submit"]:hover {
+    background: var(--secondary-color);
+}
+
+/* ---------------- ALERTS ---------------- */
 .alert {
     display: flex;
     align-items: flex-start;
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 8px;
-    position: relative;
     animation: slideIn 0.3s ease;
 }
 
@@ -282,7 +293,6 @@ body {
 .alert-icon {
     margin-right: 0.75rem;
     font-size: 1.2rem;
-    flex-shrink: 0;
 }
 
 .alert-close {
@@ -301,7 +311,7 @@ body {
     opacity: 1;
 }
 
-/* Footer mobile */
+/* ---------------- FOOTER ---------------- */
 .mobile-footer {
     position: fixed;
     bottom: 0;
@@ -320,49 +330,7 @@ body {
     color: #666;
 }
 
-/* Améliorations pour les formulaires mobiles */
-.content-container form {
-    max-width: 100%;
-}
-
-.content-container input,
-.content-container select,
-.content-container textarea {
-    font-size: 16px; /* Évite le zoom sur iOS */
-    padding: 0.75rem;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    width: 100%;
-    box-sizing: border-box;
-    transition: border-color var(--transition);
-}
-
-.content-container input:focus,
-.content-container select:focus,
-.content-container textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-.content-container button[type="submit"] {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.875rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.content-container button[type="submit"]:hover {
-    background: var(--secondary-color);
-}
-
-/* Tableaux responsives */
+/* ---------------- TABLE RESPONSIVE ---------------- */
 .content-container table {
     width: 100%;
     border-collapse: collapse;
@@ -370,56 +338,67 @@ body {
     font-size: 0.875rem;
 }
 
-.content-container table th,
-.content-container table td {
+.content-container th,
+.content-container td {
     padding: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border: 1px solid var(--border-color);
     text-align: left;
 }
 
-.content-container table th {
-    background: #f8f9fa;
-    font-weight: 600;
-}
+@media (max-width: 600px) {
+    .content-container table,
+    .content-container thead,
+    .content-container tbody,
+    .content-container th,
+    .content-container td,
+    .content-container tr {
+        display: block;
+    }
 
-/* Amélioration de l'accessibilité */
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+    .content-container thead tr {
+        display: none;
+    }
+
+    .content-container td {
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .content-container td::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 45%;
+        padding-left: 1rem;
+        font-weight: bold;
+        white-space: nowrap;
     }
 }
 
-/*
- Support du mode sombre 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background-color: #1a1a1a;
-        --text-color: #e0e0e0;
-        --border-color: #333;
-    }
-    
-    .mobile-nav {
-        background: #2d2d2d;
-    }
-    
-    .mobile-footer {
-        background: #2d2d2d;
-        border-top-color: #333;
-    }
-    
-    .nav-list a:hover, .logout-form button:hover {
-        background: #333;
-    }
-}
- */
-.login-title {
-    margin-top: 1.5rem; /* ou 2rem si besoin */
+/* ---------------- USER CARD ---------------- */
+.user-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 1rem;
+    margin-bottom: 1rem;
 }
 
-.mobile-sessions .today-section .section-title {
-    margin-top: 2rem; /* ou essaye 1.5rem si besoin */
+/* ---------------- ACTION BUTTONS ---------------- */
+.action-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    border: none;
+    border-radius: 4px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
 }
 
-
+.action-btn:hover {
+    background: var(--secondary-color);
+}
