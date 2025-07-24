@@ -1,0 +1,12 @@
+{% extends 'presence/base.html' %}
+{% block title %}Créer un rôle{% endblock %}
+
+{% block content %}
+<h2>Créer un rôle (groupe)</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.name.label_tag }} {{ form.name }}
+    <button type="submit">Créer le rôle</button>
+</form>
+
+{% endblock %}

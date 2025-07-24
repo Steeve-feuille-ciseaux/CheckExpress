@@ -46,10 +46,11 @@ v0.15.10.3 -> Deploie local réussie + next objectif
 v0.16.0 -> Champs themes non obligatoire + impossible de supprimer où modifier une session 24h plus tard
 v0.17.0 -> formulaire au superuser pour ajouter prof et prof assistant
 v0.17.1 -> formulaire au superuser pour ajouter ville et établissement
+v0.17.2 -> formulaire au superuser pour ajouter role
 
 next step : 
 - inclure tuto d'installation
-- ajuste les message d'information validation, modification, créer, suppression
+- !!! ajuste les message d'information validation, modification, créer, suppression !!!
 - ajout Makefile
 - poursuivre gestionnaire prof et prof assistant
 - Modifier mots de passe -> superuser valide les user puis les users change leur mots de passe

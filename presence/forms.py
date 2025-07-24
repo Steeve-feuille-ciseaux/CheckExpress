@@ -2,7 +2,7 @@ from django import forms
 from .models import Session, Licence, Ville, Etablissement
 from django.utils.html import format_html
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 
 
 class PresenceForm(forms.Form):
@@ -58,11 +58,13 @@ class LicenceForm(forms.ModelForm):
             self.initial['date_naissance'] = self.instance.date_naissance.strftime('%Y-%m-%d')
 
 class UserCreationWithGroupForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True, label="Adresse email")
+    
     group = forms.ModelChoiceField(
-        queryset=Group.objects.filter(name__in=['Prof', 'Prof assistant']),
+        queryset=Group.objects.all(),  # ou filtrer ici si besoin
         required=True,
-        label="Rôle (groupe)"
+        label="Rôle (groupe)",
+        help_text="Sélectionnez le rôle de l'utilisateur"
     )
 
     class Meta:
@@ -72,10 +74,12 @@ class UserCreationWithGroupForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
+        
         if commit:
             user.save()
             group = self.cleaned_data['group']
             user.groups.add(group)
+        
         return user
     
 class VilleForm(forms.ModelForm):
@@ -90,3 +94,8 @@ class EtablissementForm(forms.ModelForm):
         labels = {
             'adresse': 'Adresse (facultatif)',
         }
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name']

@@ -5,13 +5,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
 from .models import Licence, Presence, Session, Ville, Etablissement
-from .forms import PresenceForm, SessionForm, LicenceForm, VilleForm, EtablissementForm
+from .forms import PresenceForm, SessionForm, LicenceForm, VilleForm, EtablissementForm, GroupForm
 from django.utils.timezone import localdate, localtime, now
 from datetime import datetime, timedelta
 from django.db.models import Count, Max
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import Group
 from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test
 from .forms import UserCreationWithGroupForm
 
 
@@ -386,3 +386,17 @@ def ajouter_etablissement(request):
     else:
         form = EtablissementForm()
     return render(request, 'presence/ajouter_etablissement.html', {'form': form})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def ajouter_role(request):
+    if request.method == 'POST':
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Rôle (groupe) ajouté avec succès.")
+            return redirect('accueil')
+    else:
+        form = GroupForm()
+
+    return render(request, 'presence/ajouter_role.html', {'form': form})
