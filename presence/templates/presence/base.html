@@ -44,6 +44,7 @@
                 <li><a href="{% url 'liste_licencies' %}"><span class="nav-icon">👥</span>Licenciés</a></li>
                 <li><a href="{% url 'modifier_session_du_jour' %}"><span class="nav-icon">📋</span>Marquer présence</a></li>
                 <li><a href="{% url 'creer_session' %}"><span class="nav-icon">🗓️</span>Créer une session</a></li>
+                <li><a href="{% url 'user_detail' user.id %}"><span class="nav-icon">🙍‍♂️</span>Mon profil</a></li>
                 {% if user.is_superuser %}
                     <li><a href="{% url 'voir_utilisateurs' %}"><span class="nav-icon">⚙️</span> Paramètres</a></li>
                 {% endif %}

@@ -44,71 +44,73 @@
     {% if users %}
         <div class="users-grid">
             {% for user in users %}
-                <div class="user-card">
-                    <!-- En-tête utilisateur -->
-                    <div class="user-header">
-                        <h3 class="user-name">{{ user.username }}</h3>
-                        <p class="user-email">{{ user.email|default:"Pas d'email" }}</p>
-                    </div>
+                {% if user != request.user %}
+                    <div class="user-card">
+                        <!-- En-tête utilisateur -->
+                        <div class="user-header">
+                            <h3 class="user-name">{{ user.username }}</h3>
+                            <p class="user-email">{{ user.email|default:"Pas d'email" }}</p>
+                        </div>
 
-                    <!-- Informations utilisateur -->
-                    <div class="user-content">
-                        <div class="user-info">
-                            <!-- Rôles -->
-                            <div class="info-item">
-                                <span class="info-icon">👔</span>
-                                <div class="info-content">
-                                    <div class="info-label">Rôle(s)</div>
-                                    <div class="role-badges">
-                                        {% for group in user.groups.all %}
-                                            <span class="role-badge">{{ group.name }}</span>
-                                        {% empty %}
-                                            <span class="role-badge empty">Aucun rôle</span>
-                                        {% endfor %}
+                        <!-- Informations utilisateur -->
+                        <div class="user-content">
+                            <div class="user-info">
+                                <!-- Rôles -->
+                                <div class="info-item">
+                                    <span class="info-icon">👔</span>
+                                    <div class="info-content">
+                                        <div class="info-label">Rôle(s)</div>
+                                        <div class="role-badges">
+                                            {% for group in user.groups.all %}
+                                                <span class="role-badge">{{ group.name }}</span>
+                                            {% empty %}
+                                                <span class="role-badge empty">Aucun rôle</span>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Établissement -->
-                            <div class="info-item">
-                                <span class="info-icon">🏢</span>
-                                <div class="info-content">
-                                    <div class="info-label">Établissement</div>
-                                    <div class="info-value{% if not user.profile.etablissement %} empty{% endif %}">
-                                        {{ user.profile.etablissement.name|default:"Non défini" }}
+                                <!-- Établissement -->
+                                <div class="info-item">
+                                    <span class="info-icon">🏢</span>
+                                    <div class="info-content">
+                                        <div class="info-label">Établissement</div>
+                                        <div class="info-value{% if not user.profile.etablissement %} empty{% endif %}">
+                                            {{ user.profile.etablissement.name|default:"Non défini" }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Ville -->
-                            <div class="info-item">
-                                <span class="info-icon">🏙️</span>
-                                <div class="info-content">
-                                    <div class="info-label">Ville</div>
-                                    <div class="info-value{% if not user.profile.etablissement.ville %} empty{% endif %}">
-                                        {{ user.profile.etablissement.ville.name|default:"Non défini" }}
+                                <!-- Ville -->
+                                <div class="info-item">
+                                    <span class="info-icon">🏙️</span>
+                                    <div class="info-content">
+                                        <div class="info-label">Ville</div>
+                                        <div class="info-value{% if not user.profile.etablissement.ville %} empty{% endif %}">
+                                            {{ user.profile.etablissement.ville.name|default:"Non défini" }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Actions -->
-                    <div class="user-actions">
-                        <a href="{% url 'user_detail' user.id %}" class="user-action-btn btn-view">
-                            <span>👁️</span>
-                            Voir
-                        </a>
-                        <a href="{% url 'user_edit' user.id %}" class="user-action-btn btn-edit">
-                            <span>✏️</span>
-                            Modifier
-                        </a>
-                        <a href="{% url 'user_delete' user.id %}" class="user-action-btn btn-delete">
-                            <span>🗑️</span>
-                            Supprimer
-                        </a>
+                        <!-- Actions -->
+                        <div class="user-actions">
+                            <a href="{% url 'user_detail' user.id %}" class="user-action-btn btn-view">
+                                <span>👁️</span>
+                                Voir
+                            </a>
+                            <a href="{% url 'user_edit' user.id %}" class="user-action-btn btn-edit">
+                                <span>✏️</span>
+                                Modifier
+                            </a>
+                            <a href="{% url 'user_delete' user.id %}" class="user-action-btn btn-delete">
+                                <span>🗑️</span>
+                                Supprimer
+                            </a>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
             {% endfor %}
         </div>
     {% else %}

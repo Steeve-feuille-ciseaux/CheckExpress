@@ -13,6 +13,10 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import Group
 from django.contrib import messages
 from .forms import UserCreationWithGroupForm
+from django.contrib.auth.forms import SetPasswordForm
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 def accueil(request):
@@ -348,11 +352,10 @@ def export_licencies_excel(request):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def voir_utilisateurs(request):
-    users = User.objects.prefetch_related('groups').all()
+    users = User.objects.prefetch_related('groups').filter(is_superuser=False).exclude(id=request.user.id)
     return render(request, 'presence/voir_utilisateurs.html', {'users': users})
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
 def user_detail(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     return render(request, 'presence/user_detail.html', {'user_obj': user})
@@ -411,6 +414,56 @@ def user_delete(request, user_id):
         return redirect('voir_utilisateurs')
 
     return render(request, 'presence/user_confirm_delete.html', {'user_obj': user_obj})
+
+class SetPasswordForSelfView(LoginRequiredMixin, FormView):
+    template_name = 'presence/set_password.html'
+    form_class = SetPasswordForm
+    success_url = reverse_lazy('user_detail')
+
+    def get_form(self, form_class=None):
+        return self.form_class(user=self.request.user, **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, "Mot de passe mis à jour avec succès.")
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['target_user'] = self.request.user  # Ajoute l'utilisateur au contexte
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('user_detail', kwargs={'user_id': self.request.user.id})
+    
+class SetPasswordForOtherUserView(LoginRequiredMixin, UserPassesTestMixin, FormView):
+    template_name = 'presence/set_password.html'
+    form_class = SetPasswordForm
+
+    def dispatch(self, request, *args, **kwargs):
+        self.target_user = get_object_or_404(User, pk=self.kwargs['user_id'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.target_user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['target_user'] = self.target_user
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, f"Le mot de passe de {self.target_user.username} a été mis à jour.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('user_detail', kwargs={'user_id': self.target_user.id})
 
 # gestion ville
 @login_required

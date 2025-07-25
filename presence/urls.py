@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from .views import SetPasswordForOtherUserView
 
 urlpatterns = [
     path('', views.accueil, name='accueil'),
@@ -28,6 +29,9 @@ urlpatterns = [
     path('ajouter-utilisateur/', views.ajouter_utilisateur_prof, name='ajouter_utilisateur_prof'),
     path('utilisateur/<int:user_id>/modifier/', views.user_edit, name='user_edit'),
     path('users/<int:user_id>/delete/', views.user_delete, name='user_delete'),
+    
+    path('utilisateur/<int:user_id>/changer-mdp/', SetPasswordForOtherUserView.as_view(), name='user_password_change'),
+    path('utilisateur/mot-de-passe/', views.SetPasswordForSelfView.as_view(), name='password_change'),
 
     # Ville
     path('gestion/ville/', views.gestion_ville, name='gestion_ville'),
@@ -40,6 +44,7 @@ urlpatterns = [
     path('ajouter-etablissement/', views.ajouter_etablissement, name='ajouter_etablissement'),
     path('etablissements/modifier/<int:etablissement_id>/', views.modifier_etablissement, name='modifier_etablissement'),
     path('etablissements/supprimer/<int:etablissement_id>/', views.supprimer_etablissement, name='supprimer_etablissement'),
+    path('utilisateur/<int:user_id>/', views.user_detail, name='detail_utilisateur'),
 
     # Role
     path('gestion/role/', views.gestion_role, name='gestion_role'),

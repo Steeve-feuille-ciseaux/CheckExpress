@@ -1,6 +1,6 @@
 {% extends "presence/base.html" %}
 
-{% block title %}Détail de l'utilisateur{% endblock %}
+{% block title %}Mon profil{% endblock %}
 
 {% block content %}
   <h2>👤 Détail de l'utilisateur : {{ user_obj.username }}</h2>
@@ -19,5 +19,17 @@
     <li><strong>Date d’inscription :</strong> {{ user_obj.date_joined|date:"d/m/Y à H:i" }}</li>
   </ul>
 
-  <a href="{% url 'voir_utilisateurs' %}" class="btn-cancel">⬅ Retour</a>
+  <div class="button-group">
+    <a href="{% if request.user == user_obj %}
+                {% url 'password_change' %}
+            {% else %}
+                {% url 'user_password_change' user_obj.id %}
+            {% endif %}" class="btn-primary">
+        🔒 Changer le mot de passe
+    </a>
+  </div>
+
+  <a href="{% if request.user == user_obj %}{% url 'accueil' %}{% else %}{% url 'voir_utilisateurs' %}{% endif %}" class="btn-cancel">
+    ⬅ Retour
+  </a>
 {% endblock %}

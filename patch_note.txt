@@ -56,12 +56,15 @@ v0.17.5.2 -> UI Mobile : voir_utilisateurs.html -> Crud role
 v0.17.5.3 -> UI Mobile : voir_utilisateurs.html -> Crud établissement
 v0.17.5.4 -> UI Mobile : voir_utilisateurs.html -> Crud ville
 v0.17.6 -> UI Mobile : voir_utilisateurs.html -> achevé
+v0.17.6.1 -> UI Mobile :ignoré le superuser dans le total des utilisateur
+v0.17.7 -> changement de mots de passe user 
 
 next step : 
 - inclure tuto d'installation
 - !!! ajuste les message d'information validation, modification, créer, suppression !!!
 - ajout Makefile
-- poursuivre gestionnaire prof et prof assistant
+- ajout onglet profil pour changer son mot de passe et voir ses propre infos
+- dans l'export excel ajouter le dojo + ville
 - MAJ mobile -> voir_session.html
 
 **  Bug repérer sur les session a revenir **
