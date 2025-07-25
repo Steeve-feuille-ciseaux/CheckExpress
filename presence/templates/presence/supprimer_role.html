@@ -1,0 +1,17 @@
+{% extends 'presence/base.html' %}
+{% load static %}
+
+{% block title %}Supprimer un rôle{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Confirmer la suppression</h2>
+    <p>Es-tu sûr de vouloir supprimer le rôle : <strong>{{ group.name }}</strong> ?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger">🗑️ Supprimer</button>
+        <a href="{% url 'gestion_role' %}" class="btn-cancel">❌ Annuler</a>
+    </form>
+</div>
+{% endblock %}

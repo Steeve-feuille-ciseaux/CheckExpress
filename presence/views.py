@@ -472,3 +472,32 @@ def ajouter_role(request):
         form = GroupForm()
 
     return render(request, 'presence/ajouter_role.html', {'form': form})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def modifier_role(request, role_id):
+    group = get_object_or_404(Group, pk=role_id)
+
+    if request.method == 'POST':
+        form = GroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Rôle mis à jour avec succès.")
+            return redirect('gestion_role')
+    else:
+        form = GroupForm(instance=group)
+
+    return render(request, 'presence/modifier_role.html', {'form': form, 'group': group})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def supprimer_role(request, role_id):
+    group = get_object_or_404(Group, pk=role_id)
+
+    if request.method == 'POST':
+        group.delete()
+        messages.success(request, "Rôle supprimé avec succès.")
+        return redirect('gestion_role')
+
+    return render(request, 'presence/supprimer_role.html', {'group': group})

@@ -27,7 +27,10 @@
             <tbody>
                 {% for groupe in groupes %}
                     <tr>
-                        <td>{{ groupe.name }}</td>
+                        <td>{{ groupe.name }}
+                            <a href="{% url 'modifier_role' groupe.id %}" class="btn-edit">✏️</a>
+                            <a href="{% url 'supprimer_role' groupe.id %}" class="btn-delete">🗑️</a>
+                        </td>
                     </tr>
                 {% empty %}
                     <tr>
