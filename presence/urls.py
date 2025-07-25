@@ -32,6 +32,8 @@ urlpatterns = [
     # Ville
     path('gestion/ville/', views.gestion_ville, name='gestion_ville'),
     path('ajouter-ville/', views.ajouter_ville, name='ajouter_ville'),
+    path('villes/modifier/<int:ville_id>/', views.modifier_ville, name='modifier_ville'),
+    path('villes/supprimer/<int:ville_id>/', views.supprimer_ville, name='supprimer_ville'),
     
     # Dojo
     path('gestion/etablissement/', views.gestion_etablissement, name='gestion_etablissement'),

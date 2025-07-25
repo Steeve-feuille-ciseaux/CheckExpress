@@ -22,16 +22,20 @@
             <thead>
                 <tr>
                     <th>Nom de la ville</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for ville in villes %}
                     <tr>
-                        <td>{{ ville.name }}</td>
+                        <td>{{ ville.name }}
+                            <a href="{% url 'modifier_ville' ville.id %}" class="btn-edit">✏️ Modifier</a>
+                            <a href="{% url 'supprimer_ville' ville.id %}" class="btn-delete">🗑️ Supprimer</a>
+                        </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td class="empty-state">Aucune ville enregistrée.</td>
+                        <td colspan="2" class="empty-state">Aucune ville enregistrée.</td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -1,0 +1,20 @@
+{% extends 'presence/base.html' %}
+{% load static %}
+
+{% block title %}Modifier la ville{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Modifier la ville : {{ ville.name }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="form-buttons">
+            <button type="submit" class="btn-primary">💾 Enregistrer</button>
+            <a href="{% url 'gestion_ville' %}" class="btn-cancel">❌ Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

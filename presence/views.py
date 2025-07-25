@@ -427,10 +427,39 @@ def ajouter_ville(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Ville ajoutée avec succès.")
-            return redirect('accueil')
+            return redirect('gestion_ville')
     else:
         form = VilleForm()
     return render(request, 'presence/ajouter_ville.html', {'form': form})
+
+@user_passes_test(lambda u: u.is_superuser)
+def modifier_ville(request, ville_id):
+    ville = get_object_or_404(Ville, pk=ville_id)
+
+    if request.method == 'POST':
+        form = VilleForm(request.POST, instance=ville)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Ville modifiée avec succès.")
+            return redirect('gestion_ville')
+    else:
+        form = VilleForm(instance=ville)
+
+    return render(request, 'presence/modifier_ville.html', {'form': form, 'ville': ville})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def supprimer_ville(request, ville_id):
+    ville = get_object_or_404(Ville, pk=ville_id)
+
+    if request.method == 'POST':
+        ville.delete()
+        messages.success(request, "Ville supprimée avec succès.")
+        return redirect('gestion_ville')
+
+    return render(request, 'presence/supprimer_ville.html', {'ville': ville})
+
 
 # gestion établissement
 @login_required
