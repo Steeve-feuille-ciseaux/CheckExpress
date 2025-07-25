@@ -1,11 +1,34 @@
 {% extends 'presence/base.html' %}
+
+{% load static %}
+
 {% block title %}Ajouter une ville{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/formulaire_parametre.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>Ajouter une ville</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Ajouter</button>
-</form>
+<div class="form-container">
+    <h2>Ajouter une ville</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
+
+        <div class="form-buttons">
+            <button type="submit" class="btn-primary">
+                ✅ Ajouter la ville
+            </button>
+            <a href="{% url 'gestion_ville' %}" class="btn-cancel">
+                ❌ Annuler
+            </a>
+        </div>
+    </form>
+</div>
 {% endblock %}

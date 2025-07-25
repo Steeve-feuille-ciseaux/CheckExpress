@@ -1,11 +1,44 @@
 {% extends 'presence/base.html' %}
+
+{% load static %}
+
 {% block title %}Ajouter un établissement{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/formulaire_parametre.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>Ajouter un établissement</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Ajouter</button>
-</form>
+<div class="form-container">
+    <h2>Ajouter un établissement</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
+
+        <div class="form-group">
+            {{ form.ville.label_tag }}
+            {{ form.ville }}
+        </div>
+
+        <div class="form-group">
+            {{ form.adresse.label_tag }}
+            {{ form.adresse }}
+        </div>
+
+        <div class="form-buttons">
+            <button type="submit" class="btn-primary">
+                ✅ Ajouter
+            </button>
+            <a href="{% url 'gestion_etablissement' %}" class="btn-cancel">
+                ❌ Annuler
+            </a>
+        </div>
+    </form>
+</div>
 {% endblock %}

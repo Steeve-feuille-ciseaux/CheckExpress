@@ -3,13 +3,22 @@
 
 {% block title %}Modifier un rôle{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/formulaire_parametre.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="form-container">
-    <h2>Modifier le rôle : {{ group.name }}</h2>
+    <h2>Modifier le rôle</h2>
 
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
 
         <div class="form-buttons">
             <button type="submit" class="btn-primary">💾 Enregistrer</button>

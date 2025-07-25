@@ -1,17 +1,34 @@
-{% extends 'presence/base.html' %}
+{% extends "presence/base.html" %}
 {% load static %}
 
-{% block title %}Supprimer un établissement{% endblock %}
+{% block title %}Confirmation de suppression - Établissement{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/confirme_delete.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Confirmation de suppression</h2>
-    <p>Es-tu sûr de vouloir supprimer <strong>{{ etablissement.name }}</strong> ?</p>
+<div class="container confirmation-container">
+    <div class="confirmation-box">
+        <h2 class="confirmation-title">⚠️ Suppression d'un établissement</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn-danger">🗑️ Supprimer</button>
-        <a href="{% url 'gestion_etablissement' %}" class="btn-cancel">❌ Annuler</a>
-    </form>
+        <p class="confirmation-text">
+            Êtes-vous sûr de vouloir <strong>supprimer définitivement</strong> l’établissement suivant ?
+        </p>
+
+        <div class="licencie-highlight">
+            🏫 {{ etablissement.name }}<br>
+            🏙️ Ville : {{ etablissement.ville.name }}
+        </div>
+
+        <form method="post" class="confirmation-form">
+            {% csrf_token %}
+            <div class="confirmation-buttons">
+                <button type="submit" class="btn-confirm">❌ Supprimer</button>
+                <a href="{% url 'gestion_etablissement' %}" class="btn-cancel">Annuler</a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
