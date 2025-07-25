@@ -1,28 +1,45 @@
 {% extends "presence/base.html" %}
 
+{% load static %}
+
 {% block title %}Gestion des Villes{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/gestion_page.css' %}">
+{% endblock %}
+
 {% block content %}
-  <h2>🏙️ Gestion des villes</h2>
+<div class="gestion-container">
+    <h2 class="gestion-title">Gestion des villes</h2>
 
-  <a href="{% url 'ajouter_ville' %}" class="btn">➕ Ajouter une ville</a>
+    <a href="{% url 'ajouter_ville' %}" class="btn-action-primary">
+        ➕ Ajouter une ville
+    </a>
 
-  <table class="styled-table">
-    <thead>
-      <tr>
-        <th>Nom</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for ville in villes %}
-        <tr>
-          <td>{{ ville.name }}</td>
-        </tr>
-      {% empty %}
-        <tr><td>Aucune ville enregistrée.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <div class="table-container">
+        <table class="table-moderne">
+            <thead>
+                <tr>
+                    <th>Nom de la ville</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ville in villes %}
+                    <tr>
+                        <td>{{ ville.name }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td class="empty-state">Aucune ville enregistrée.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-  <a href="{% url 'voir_utilisateurs' %}" class="btn-cancel">⬅ Retour</a>
+    <a href="{% url 'voir_utilisateurs' %}" class="btn-retour">
+        ⬅ Retour aux paramètres
+    </a>
+</div>
 {% endblock %}

@@ -1,32 +1,49 @@
 {% extends "presence/base.html" %}
 
+{% load static %}
+
 {% block title %}Gestion des Établissements{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/gestion_page.css' %}">
+{% endblock %}
+
 {% block content %}
-  <h2>🏫 Gestion des établissements</h2>
+<div class="gestion-container">
+    <h2 class="gestion-title">Gestion des établissements</h2>
 
-  <a href="{% url 'ajouter_etablissement' %}" class="btn">➕ Ajouter un établissement</a>
+    <a href="{% url 'ajouter_etablissement' %}" class="btn-action-primary">
+        ➕ Ajouter un établissement
+    </a>
 
-  <table class="styled-table">
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Ville</th>
-        <th>Adresse</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for etablissement in etablissements %}
-        <tr>
-          <td>{{ etablissement.name }}</td>
-          <td>{{ etablissement.ville.name }}</td>
-          <td>{{ etablissement.adresse|default:"-" }}</td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="3">Aucun établissement enregistré.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <div class="table-container">
+        <table class="table-moderne">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Ville</th>
+                    <th>Adresse</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for etablissement in etablissements %}
+                    <tr>
+                        <td>{{ etablissement.name }}</td>
+                        <td>{{ etablissement.ville.name }}</td>
+                        <td>{{ etablissement.adresse|default:"-" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="empty-state">Aucun établissement enregistré.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-  <a href="{% url 'voir_utilisateurs' %}" class="btn-cancel">⬅ Retour</a>
+    <a href="{% url 'voir_utilisateurs' %}" class="btn-retour">
+        ⬅ Retour aux paramètres
+    </a>
+</div>
 {% endblock %}

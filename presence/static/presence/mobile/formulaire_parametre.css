@@ -1,0 +1,170 @@
+        /* CSS pour corriger le positionnement du h2 */
+        @media screen and (max-width: 768px) {
+            .form-container {
+                padding: 1rem;
+                margin-top: 0;
+            }
+            
+            .form-container h2 {
+                font-size: 1.5rem !important;
+                margin: 1rem 0 1.5rem 0 !important;
+                padding: 0.75rem 0 !important;
+                text-align: center;
+                position: relative;
+                z-index: 1;
+            }
+            
+            /* Correction spécifique pour éviter le chevauchement avec la navbar */
+            .main-content {
+                margin-top: 70px !important;
+                padding-top: 1rem !important;
+            }
+            
+            /* Messages au-dessus de la navbar */
+            .messages {
+                position: fixed !important;
+                top: 70px !important;
+                left: 0;
+                right: 0;
+                z-index: 1050 !important;
+                margin: 0;
+                padding: 0 1rem;
+            }
+        }
+        
+        @media screen and (min-width: 769px) {
+            .form-container h2 {
+                margin: 2rem 0 !important;
+                font-size: 1.75rem !important;
+                text-align: center;
+            }
+        }
+        
+        /* Styles pour le formulaire */
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .form-group {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input {
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        /* Conteneur des boutons */
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Bouton principal */
+        .btn-primary {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        /* Bouton annuler */
+        .btn-cancel {
+            flex: 1;
+            background: #f8f9fa;
+            color: #6b7280;
+            text-decoration: none;
+            border: 2px solid #e5e7eb;
+            padding: 0.875rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-cancel:hover {
+            background: #e5e7eb;
+            border-color: #d1d5db;
+            color: #374151;
+            text-decoration: none;
+        }
+        
+        /* Responsive pour mobile */
+        @media screen and (max-width: 768px) {
+            .form-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .btn-primary,
+            .btn-cancel {
+                width: 100%;
+                padding: 1rem 1.5rem;
+            }
+        }
+        
+        /* Très petits écrans */
+        @media screen and (max-width: 360px) {
+            .form-container {
+                margin: 0.75rem;
+                padding: 1.25rem;
+            }
+            
+            .form-container h2 {
+                font-size: 1.3rem !important;
+            }
+        }

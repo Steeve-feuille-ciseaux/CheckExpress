@@ -1,12 +1,34 @@
 {% extends 'presence/base.html' %}
+
+{% load static %}
+
 {% block title %}Créer un rôle{% endblock %}
 
-{% block content %}
-<h2>Créer un rôle (groupe)</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.name.label_tag }} {{ form.name }}
-    <button type="submit">Créer le rôle</button>
-</form>
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/formulaire_parametre.css' %}">
+{% endblock %}
 
+{% block content %}
+<div class="form-container">
+    <h2>Créer un rôle</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
+        
+        <div class="form-buttons">
+            <button type="submit" class="btn-primary">
+                ✅ Créer le rôle
+            </button>
+            <a href="{% url 'gestion_role' %}" class="btn-cancel">
+                ❌ Annuler
+            </a>
+        </div>
+    </form>
+</div>
 {% endblock %}

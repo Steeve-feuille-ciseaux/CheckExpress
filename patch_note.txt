@@ -51,6 +51,7 @@ v0.17.3 -> visuel générale des utilisateur
 v0.17.4 -> menu paramètres -> début crud -> ville, user, établissement, role
 v0.17.4.1 -> UI Mobile : voir_utilisateurs.html
 v0.17.5 -> UI Mobile : voir_utilisateurs.html -> cleaning du css 
+v0.17.5.1 -> UI Mobile : voir_utilisateurs.html -> update ville, role et établissement 
 
 next step : 
 - inclure tuto d'installation
