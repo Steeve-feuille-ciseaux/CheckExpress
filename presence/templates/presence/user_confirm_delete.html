@@ -7,6 +7,6 @@
   <form method="post">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger">Oui, supprimer</button>
-    <a href="{% url 'voir_utilisateurs' %}" class="btn btn-secondary">Annuler</a>
+    <a href="javascript:history.back()" class="btn-cancel">Annuler</a>
   </form>
 {% endblock %}

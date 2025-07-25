@@ -1,41 +1,108 @@
 {% extends "presence/base.html" %}
 
+{% load static %}
+
 {% block title %}Mon profil{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/user.css' %}?v=1">
+{% endblock %}
+
 {% block content %}
-  <h2>👤 Détail de l'utilisateur : {{ user_obj.username }}</h2>
+<div class="profile-container">
+    <h2 class="profile-title">👤 {{ user_obj.username }}</h2>
 
-  <ul>
-    <li><strong>Email :</strong> {{ user_obj.email }}</li>
-    <li><strong>Groupes :</strong>
-        {% for group in user_obj.groups.all %}
-            {{ group.name }}{% if not forloop.last %}, {% endif %}
-        {% empty %}
-            Aucun
-        {% endfor %}
-    </li>
-    <li><strong>Établissement :</strong> {{ user_obj.profile.etablissement.name|default:"Non défini" }}</li>
-    <li><strong>Ville :</strong> {{ user_obj.profile.etablissement.ville.name|default:"Non défini" }}</li>
-    <li><strong>Date d’inscription :</strong> {{ user_obj.date_joined|date:"d/m/Y à H:i" }}</li>
-  </ul>
+    <div class="profile-card">
+        <div class="profile-content">
+            <div class="profile-info">
+                <div class="info-item">
+                    <div class="info-icon">📧</div>
+                    <div class="info-content">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ user_obj.email|default:"Non défini" }}</div>
+                    </div>
+                </div>
 
-  <div class="button-group">
-      <a href="{% if request.user == user_obj %}
-                  {% url 'password_change' %}
-              {% else %}
-                  {% url 'user_password_change' user_obj.id %}
-              {% endif %}" class="btn-primary">
-          🔒 Changer le mot de passe
-      </a>
+                <div class="info-item">
+                    <div class="info-icon">👥</div>
+                    <div class="info-content">
+                        <div class="info-label">Groupes</div>
+                        <div class="groups-badges">
+                            {% for group in user_obj.groups.all %}
+                                <span class="group-badge">{{ group.name }}</span>
+                            {% empty %}
+                                <span class="group-badge empty">Aucun</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
 
-      {% if request.user == user_obj or request.user.is_superuser %}
-        <a href="{% url 'user_edit' user_obj.id %}" class="btn-secondary">
-            ✏️ Modifier le profil
-        </a>
-      {% endif %}
-  </div>
+                <div class="info-item">
+                    <div class="info-icon">🏫</div>
+                    <div class="info-content">
+                        <div class="info-label">Établissement</div>
+                        <div class="info-value{% if not user_obj.profile.etablissement %} empty{% endif %}">
+                            {{ user_obj.profile.etablissement.name|default:"Non défini" }}
+                        </div>
+                    </div>
+                </div>
 
-  <a href="{% if request.user == user_obj %}{% url 'accueil' %}{% else %}{% url 'voir_utilisateurs' %}{% endif %}" class="btn-cancel">
-    ⬅ Retour
-  </a>
+                <div class="info-item">
+                    <div class="info-icon">🏙️</div>
+                    <div class="info-content">
+                        <div class="info-label">Ville</div>
+                        <div class="info-value{% if not user_obj.profile.etablissement.ville %} empty{% endif %}">
+                            {{ user_obj.profile.etablissement.ville.name|default:"Non défini" }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">📅</div>
+                    <div class="info-content">
+                        <div class="info-label">Inscription</div>
+                        <div class="info-value">{{ user_obj.date_joined|date:"d/m/Y H:i" }}</div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">🔑</div>
+                    <div class="info-content">
+                        <div class="info-label">Dernière connexion</div>
+                        <div class="info-value">{{ user_obj.last_login|date:"d/m/Y H:i"|default:"Jamais" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <div class="button-group">
+                <a href="{% if request.user == user_obj %}
+                            {% url 'password_change' %}
+                        {% else %}
+                            {% url 'user_password_change' user_obj.id %}
+                        {% endif %}" class="btn-primary">
+                    Changer le Mot de passe
+                </a>
+
+                {% if request.user == user_obj or request.user.is_superuser %}
+                <a href="{% url 'user_edit' user_obj.id %}" class="btn-secondary">
+                    Modifier les infos
+                </a>
+                {% endif %}
+
+                {% if request.user.is_superuser %}
+                <a href="{% url 'user_delete' user_obj.id %}" class="btn-delete">
+                    Supprimer le profil
+                </a>
+                {% endif %}
+            </div>
+
+            <a href="{% if request.user == user_obj %}{% url 'accueil' %}{% else %}{% url 'voir_utilisateurs' %}{% endif %}" class="btn-cancel">
+                ⬅ Retour
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}

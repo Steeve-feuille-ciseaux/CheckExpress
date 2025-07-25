@@ -59,6 +59,7 @@ v0.17.6 -> UI Mobile : voir_utilisateurs.html -> achevé
 v0.17.6.1 -> UI Mobile :ignoré le superuser dans le total des utilisateur
 v0.17.7 -> changer mots de passe user séparément des infos
 v0.17.8 -> changer infos user séparément du mots de passe
+v0.17.8.1 -> UI Mobile : user_detail.html
 
 next step : 
 - inclure tuto d'installation
