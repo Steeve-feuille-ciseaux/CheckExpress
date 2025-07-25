@@ -293,10 +293,24 @@ def export_licencies_excel(request):
         if font:
             cell.font = font
 
+    # Coordonnées utiles
+    right_col = start_col + 3  # Colonne E (B=2 +3 = 5)
+    left_col = start_col       # Colonne B
+
+    # Infos utilisateur connecté
+    profile = getattr(user, 'profile', None)
+    etablissement = profile.etablissement.name if profile and profile.etablissement else "Non défini"
+    role = user.groups.first().name if user.groups.exists() else "Aucun rôle"
+
     # Ligne 1 à 3 : infos à gauche (col B), sans fusion
     ws.cell(row=1, column=start_col, value=f"Exporté par : {user.get_full_name() or user.username}").alignment = left_align
-    ws.cell(row=2, column=start_col, value=f"Date : {export_date}").alignment = left_align
-    ws.cell(row=3, column=start_col, value=f"Heure : {export_time}").alignment = left_align
+    ws.cell(row=2, column=left_col, value=f"Rôle : {role}").alignment = left_align
+    ws.cell(row=3, column=left_col, value=f"Établissement : {etablissement}").alignment = left_align
+
+    # Ligne 1 à 2 : infos à droite (col E), sans fusion
+    right_align = Alignment(horizontal='right', vertical='center')
+    ws.cell(row=1, column=right_col, value=f"Date : {export_date}").alignment = right_align
+    ws.cell(row=2, column=right_col, value=f"Heure : {export_time}").alignment = right_align
 
     # Ligne 4 : ligne vide (espace)
     # Ligne 5 : titre "Suivi de présence" centré sur colonnes B à E

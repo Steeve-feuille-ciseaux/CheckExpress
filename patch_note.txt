@@ -60,14 +60,15 @@ v0.17.6.1 -> UI Mobile :ignoré le superuser dans le total des utilisateur
 v0.17.7 -> changer mots de passe user séparément des infos
 v0.17.8 -> changer infos user séparément du mots de passe
 v0.17.8.1 -> UI Mobile : user_detail.html
+v0.18.0 -> Ajout role + établissement de l'export licence
 
 next step : 
+- ajout Makefile
 - inclure tuto d'installation
 - !!! ajuste les message d'information validation, modification, créer, suppression !!!
-- ajout Makefile
-- ajout onglet profil pour changer son mot de passe et voir ses propre infos
 - dans l'export excel ajouter le dojo + ville
 - MAJ mobile -> voir_session.html
+- MAJ mobile ->  user_detail.html
 
 **  Bug repérer sur les session a revenir **
 
