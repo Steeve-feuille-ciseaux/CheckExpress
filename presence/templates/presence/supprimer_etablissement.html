@@ -1,0 +1,17 @@
+{% extends 'presence/base.html' %}
+{% load static %}
+
+{% block title %}Supprimer un établissement{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Confirmation de suppression</h2>
+    <p>Es-tu sûr de vouloir supprimer <strong>{{ etablissement.name }}</strong> ?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger">🗑️ Supprimer</button>
+        <a href="{% url 'gestion_etablissement' %}" class="btn-cancel">❌ Annuler</a>
+    </form>
+</div>
+{% endblock %}

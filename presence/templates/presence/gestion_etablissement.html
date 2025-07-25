@@ -24,18 +24,23 @@
                     <th>Nom</th>
                     <th>Ville</th>
                     <th>Adresse</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for etablissement in etablissements %}
                     <tr>
-                        <td>{{ etablissement.name }}</td>
+                        <td><strong>{{ etablissement.name }}</strong></td>
                         <td>{{ etablissement.ville.name }}</td>
                         <td>{{ etablissement.adresse|default:"-" }}</td>
+                        <td>
+                            <a href="{% url 'modifier_etablissement' etablissement.id %}" class="btn-edit">✏️ Modifier</a>
+                            <a href="{% url 'supprimer_etablissement' etablissement.id %}" class="btn-delete">🗑️ Supprimer</a>
+                        </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="3" class="empty-state">Aucun établissement enregistré.</td>
+                        <td colspan="4" class="empty-state">Aucun établissement enregistré.</td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -452,6 +452,35 @@ def ajouter_etablissement(request):
         form = EtablissementForm()
     return render(request, 'presence/ajouter_etablissement.html', {'form': form})
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def modifier_etablissement(request, etablissement_id):
+    etablissement = get_object_or_404(Etablissement, pk=etablissement_id)
+
+    if request.method == 'POST':
+        form = EtablissementForm(request.POST, instance=etablissement)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Établissement modifié avec succès.")
+            return redirect('gestion_etablissement')
+    else:
+        form = EtablissementForm(instance=etablissement)
+
+    return render(request, 'presence/modifier_etablissement.html', {'form': form, 'etablissement': etablissement})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def supprimer_etablissement(request, etablissement_id):
+    etablissement = get_object_or_404(Etablissement, pk=etablissement_id)
+
+    if request.method == 'POST':
+        etablissement.delete()
+        messages.success(request, "Établissement supprimé avec succès.")
+        return redirect('gestion_etablissement')
+
+    return render(request, 'presence/supprimer_etablissement.html', {'etablissement': etablissement})
+
 # gestion role
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
