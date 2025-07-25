@@ -58,40 +58,19 @@ class LicenceForm(forms.ModelForm):
             self.initial['date_naissance'] = self.instance.date_naissance.strftime('%Y-%m-%d')
 
 class UserCreationWithGroupForm(UserCreationForm):
-    email = forms.EmailField(required=True, label="Adresse email")
-    
-    group = forms.ModelChoiceField(
-        queryset=Group.objects.all(),  # tu peux filtrer ici si besoin
-        required=True,
-        label="Rôle (groupe)",
-        help_text="Sélectionnez le rôle de l'utilisateur"
-    )
-    
-    etablissement = forms.ModelChoiceField(
-        queryset=Etablissement.objects.all(),
-        required=False,
-        label="Établissement",
-        help_text="Sélectionnez l'établissement de l'utilisateur"
-    )
+    group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
+    etablissement = forms.ModelChoiceField(queryset=Etablissement.objects.all(), required=False)
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'group', 'etablissement', 'password1', 'password2')
+        fields = ['username', 'email']  # pas de password ici
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-
-        if commit:
-            user.save()
-
-            group = self.cleaned_data['group']
-            user.groups.set([group])  # Remplace tous les groupes existants
-
-            etablissement = self.cleaned_data.get('etablissement')
-            Profile.objects.update_or_create(user=user, defaults={'etablissement': etablissement})
-
-        return user
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            # Mode édition : retire les champs de mot de passe
+            self.fields.pop('password1', None)
+            self.fields.pop('password2', None)
     
 class VilleForm(forms.ModelForm):
     class Meta:
@@ -110,3 +89,35 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = ['name']
+
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField(required=True, label="Adresse email")
+    
+    group = forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+        required=True,
+        label="Rôle (groupe)"
+    )
+
+    etablissement = forms.ModelChoiceField(
+        queryset=Etablissement.objects.all(),
+        required=False,
+        label="Établissement"
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'group', 'etablissement')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        
+        if commit:
+            user.save()
+            user.groups.set([self.cleaned_data['group']])
+
+            etablissement = self.cleaned_data.get('etablissement')
+            Profile.objects.update_or_create(user=user, defaults={'etablissement': etablissement})
+
+        return user

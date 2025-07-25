@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
 from .models import Licence, Presence, Session, Ville, Etablissement, User
-from .forms import PresenceForm, SessionForm, LicenceForm, VilleForm, EtablissementForm, GroupForm
+from .forms import PresenceForm, SessionForm, LicenceForm, VilleForm, EtablissementForm, GroupForm, UserUpdateForm
 from django.utils.timezone import localdate, localtime, now
 from datetime import datetime, timedelta
 from django.db.models import Count, Max
@@ -384,14 +384,17 @@ def user_edit(request, user_id):
     profile = getattr(user_obj, 'profile', None)
 
     if request.method == 'POST':
-        form = UserCreationWithGroupForm(request.POST, instance=user_obj)
+        form = UserUpdateForm(request.POST, instance=user_obj)
         if form.is_valid():
             form.save()
             messages.success(request, "Utilisateur mis à jour avec succès.")
             return redirect('voir_utilisateurs')
     else:
-        initial = {'etablissement': profile.etablissement if profile else None, 'group': user_obj.groups.first()}
-        form = UserCreationWithGroupForm(instance=user_obj, initial=initial)
+        initial = {
+            'etablissement': profile.etablissement if profile else None,
+            'group': user_obj.groups.first()
+        }
+        form = UserUpdateForm(instance=user_obj, initial=initial)
 
     return render(request, 'presence/user_edit.html', {
         'form': form,

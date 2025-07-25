@@ -57,7 +57,8 @@ v0.17.5.3 -> UI Mobile : voir_utilisateurs.html -> Crud établissement
 v0.17.5.4 -> UI Mobile : voir_utilisateurs.html -> Crud ville
 v0.17.6 -> UI Mobile : voir_utilisateurs.html -> achevé
 v0.17.6.1 -> UI Mobile :ignoré le superuser dans le total des utilisateur
-v0.17.7 -> changement de mots de passe user 
+v0.17.7 -> changer mots de passe user séparément des infos
+v0.17.8 -> changer infos user séparément du mots de passe
 
 next step : 
 - inclure tuto d'installation

@@ -20,13 +20,19 @@
   </ul>
 
   <div class="button-group">
-    <a href="{% if request.user == user_obj %}
-                {% url 'password_change' %}
-            {% else %}
-                {% url 'user_password_change' user_obj.id %}
-            {% endif %}" class="btn-primary">
-        🔒 Changer le mot de passe
-    </a>
+      <a href="{% if request.user == user_obj %}
+                  {% url 'password_change' %}
+              {% else %}
+                  {% url 'user_password_change' user_obj.id %}
+              {% endif %}" class="btn-primary">
+          🔒 Changer le mot de passe
+      </a>
+
+      {% if request.user == user_obj or request.user.is_superuser %}
+        <a href="{% url 'user_edit' user_obj.id %}" class="btn-secondary">
+            ✏️ Modifier le profil
+        </a>
+      {% endif %}
   </div>
 
   <a href="{% if request.user == user_obj %}{% url 'accueil' %}{% else %}{% url 'voir_utilisateurs' %}{% endif %}" class="btn-cancel">
