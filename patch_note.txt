@@ -76,7 +76,6 @@ next step :
 - ajout export tous les utilisateur + tous les licenciers
 - Renseigne le nombre de session créer par l'utilisateur par année
 - exporté uniquement les licencie qui possède le même établissement
-- ne peut pas créer un session antérieur
 
 **  Bug repérer sur les session a revenir **
 

@@ -12,6 +12,7 @@ class PresenceForm(forms.Form):
             self.fields[f'licence_{licence.id}'] = forms.BooleanField(
                 label=f"{licence.prenom} {licence.nom}", required=False
             )
+            
 class SessionForm(forms.ModelForm):
     presences = forms.ModelMultipleChoiceField(
         queryset=Licence.objects.all(),

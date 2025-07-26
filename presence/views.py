@@ -95,27 +95,26 @@ def creer_session(request):
 
 @login_required
 def liste_sessions(request):
-    today = localdate()
+    profile = getattr(request.user, 'profile', None)
+    etablissement = profile.etablissement if profile else None
 
-    if request.user.is_superuser:
-        base_queryset = Session.objects.all()
+    if etablissement:
+        sessions_today = Session.objects.filter(date=datetime.today(), etablissement=etablissement)
+        sessions_futures = Session.objects.filter(date__gt=datetime.today(), etablissement=etablissement).order_by('date')
+        sessions_passees = Session.objects.filter(date__lt=datetime.today(), etablissement=etablissement).order_by('-date')
     else:
-        profile = getattr(request.user, 'profile', None)
-        if profile and profile.etablissement:
-            base_queryset = Session.objects.filter(etablissement=profile.etablissement)
-        else:
-            base_queryset = Session.objects.none()
+        # Si pas d'établissement, on peut afficher aucune session ou toutes, selon ta logique
+        sessions_today = Session.objects.none()
+        sessions_futures = Session.objects.none()
+        sessions_passees = Session.objects.none()
 
-    sessions_today = base_queryset.filter(date=today).order_by('heure_debut')
-    sessions_futures = base_queryset.filter(date__gt=today).order_by('date', 'heure_debut')
-    sessions_passees = base_queryset.filter(date__lt=today).order_by('-date', '-heure_debut')
-
-    return render(request, 'presence/liste_sessions.html', {
+    context = {
         'sessions_today': sessions_today,
         'sessions_futures': sessions_futures,
         'sessions_passees': sessions_passees,
-        'today': today,
-    })
+        'today': datetime.today(),
+    }
+    return render(request, 'presence/liste_sessions.html', context)
 
 def voir_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
@@ -156,7 +155,7 @@ def modifier_session_du_jour(request):
     today = localdate()
     now = localtime().time()
 
-    # Rechercher la session du jour qui est en cours (heure_debut <= now < heure_fin)
+    # Rechercher la session du jour en cours
     session = (
         Session.objects
         .filter(date=today, heure_debut__lte=now, heure_fin__gt=now)
@@ -164,7 +163,7 @@ def modifier_session_du_jour(request):
         .first()
     )
 
-    # Si aucune session "en cours", afficher la plus proche à venir aujourd'hui
+    # Si aucune session en cours, prendre la plus proche à venir
     if not session:
         session = (
             Session.objects
@@ -173,7 +172,7 @@ def modifier_session_du_jour(request):
             .first()
         )
 
-    # Si toujours rien, afficher la première de la journée passée
+    # Si toujours aucune session, prendre la première de la journée passée
     if not session:
         session = (
             Session.objects
@@ -182,22 +181,37 @@ def modifier_session_du_jour(request):
             .first()
         )
     
-    # Si aucune session "en cours", créer un pour aujourd'hui
+    # Si aucune session du jour, créer une nouvelle session par défaut (non sauvegardée encore)
     if not session:
-        today = localdate()
+        from datetime import timedelta, datetime
+
+        now_datetime = datetime.combine(today, now)
+        heure_fin = (now_datetime + timedelta(hours=2)).time()
+
+        # Création d'une instance non sauvegardée
+        session = Session(
+            date=today,
+            heure_debut=now,
+            heure_fin=heure_fin,
+            created_by=request.user,  # Important ici
+        )
+        form = SessionForm(instance=session)
+
         return render(request, 'presence/session_du_jour.html', {
+            'form': form,
             'session': None,
             'today': today,
             'now': now,
         })
 
-    if not session:
-        return render(request, 'presence/session_du_jour.html', {'session': None})
-
+    # POST = modification d’une session existante
     if request.method == 'POST':
         form = SessionForm(request.POST, instance=session)
         if form.is_valid():
             session = form.save(commit=False)
+            # Forcer created_by au user connecté (écrase la valeur existante)
+            session.created_by = request.user
+            # Mettre checked_by aussi au user connecté
             session.checked_by = request.user
             session.save()
             form.save_m2m()
