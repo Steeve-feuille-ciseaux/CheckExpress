@@ -51,7 +51,7 @@ def enregistrer_presence(request):
 @login_required
 def creer_session(request):
     if request.method == 'POST':
-        form = SessionForm(request.POST)
+        form = SessionForm(request.POST, user=request.user)
         if form.is_valid():
             session = form.save(commit=False)
             session.created_by = request.user
@@ -59,7 +59,6 @@ def creer_session(request):
             # Vérification que la date n'est pas antérieure à aujourd'hui
             if session.date < now().date():
                 messages.error(request, "La date de la session ne peut pas être antérieure à aujourd'hui.")
-                # On renvoie le formulaire avec l'erreur
                 return render(request, 'presence/creer_session.html', {'form': form})
 
             # Associer l'établissement automatiquement depuis le profil utilisateur
@@ -82,14 +81,12 @@ def creer_session(request):
             try:
                 heure_debut_obj = datetime.strptime(heure_debut_from_get, "%H:%M")
                 initial["heure_debut"] = heure_debut_obj.time()
-
-                # Ajouter 2h à l'heure de début
                 heure_fin_obj = (heure_debut_obj + timedelta(hours=2)).time()
                 initial["heure_fin"] = heure_fin_obj
             except ValueError:
-                pass  # format invalide, on ignore
+                pass
 
-        form = SessionForm(initial=initial)
+        form = SessionForm(initial=initial, user=request.user)
 
     return render(request, 'presence/creer_session.html', {'form': form})
 
@@ -124,21 +121,16 @@ def voir_session(request, pk):
 def modifier_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
 
-    # Date et heure de la session (on combine date + heure_debut)
     session_datetime = datetime.combine(session.date, session.heure_debut)
-
-    # Convertir en timezone-aware si nécessaire
     if timezone.is_naive(session_datetime):
         session_datetime = timezone.make_aware(session_datetime)
 
-    # Vérifier si plus de 24h sont passées
     if now() > session_datetime + timedelta(hours=24):
         messages.error(request, "Impossible de modifier une session de plus de 24h.")
         return redirect('liste_sessions')
 
-    # Logique existante
     if request.method == 'POST':
-        form = SessionForm(request.POST, instance=session)
+        form = SessionForm(request.POST, instance=session, user=request.user)
         if form.is_valid():
             session = form.save(commit=False)
             session.checked_by = request.user
@@ -146,33 +138,30 @@ def modifier_session(request, pk):
             form.save_m2m()
             return redirect('liste_sessions')
     else:
-        form = SessionForm(instance=session)
+        form = SessionForm(instance=session, user=request.user)
 
     return render(request, 'presence/modifier_session.html', {'form': form, 'session': session})
 
 @login_required
 def modifier_session_du_jour(request):
     today = localdate()
-    now = localtime().time()
+    now_time = localtime().time()
 
-    # Rechercher la session du jour en cours
     session = (
         Session.objects
-        .filter(date=today, heure_debut__lte=now, heure_fin__gt=now)
+        .filter(date=today, heure_debut__lte=now_time, heure_fin__gt=now_time)
         .order_by('heure_debut')
         .first()
     )
 
-    # Si aucune session en cours, prendre la plus proche à venir
     if not session:
         session = (
             Session.objects
-            .filter(date=today, heure_debut__gte=now)
+            .filter(date=today, heure_debut__gte=now_time)
             .order_by('heure_debut')
             .first()
         )
 
-    # Si toujours aucune session, prendre la première de la journée passée
     if not session:
         session = (
             Session.objects
@@ -180,44 +169,37 @@ def modifier_session_du_jour(request):
             .order_by('heure_debut')
             .first()
         )
-    
-    # Si aucune session du jour, créer une nouvelle session par défaut (non sauvegardée encore)
-    if not session:
-        from datetime import timedelta, datetime
 
-        now_datetime = datetime.combine(today, now)
+    if not session:
+        now_datetime = datetime.combine(today, now_time)
         heure_fin = (now_datetime + timedelta(hours=2)).time()
 
-        # Création d'une instance non sauvegardée
         session = Session(
             date=today,
-            heure_debut=now,
+            heure_debut=now_time,
             heure_fin=heure_fin,
-            created_by=request.user,  # Important ici
+            created_by=request.user,
         )
-        form = SessionForm(instance=session)
+        form = SessionForm(instance=session, user=request.user)
 
         return render(request, 'presence/session_du_jour.html', {
             'form': form,
             'session': None,
             'today': today,
-            'now': now,
+            'now': now_time,
         })
 
-    # POST = modification d’une session existante
     if request.method == 'POST':
-        form = SessionForm(request.POST, instance=session)
+        form = SessionForm(request.POST, instance=session, user=request.user)
         if form.is_valid():
             session = form.save(commit=False)
-            # Forcer created_by au user connecté (écrase la valeur existante)
             session.created_by = request.user
-            # Mettre checked_by aussi au user connecté
             session.checked_by = request.user
             session.save()
             form.save_m2m()
             return redirect('liste_sessions')
     else:
-        form = SessionForm(instance=session)
+        form = SessionForm(instance=session, user=request.user)
 
     return render(request, 'presence/session_du_jour.html', {'form': form, 'session': session})
 

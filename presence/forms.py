@@ -15,7 +15,7 @@ class PresenceForm(forms.Form):
             
 class SessionForm(forms.ModelForm):
     presences = forms.ModelMultipleChoiceField(
-        queryset=Licence.objects.all(),
+        queryset=Licence.objects.none(),  # initialement vide
         widget=forms.CheckboxSelectMultiple,
         required=False,
         label="Licenciés présents"
@@ -31,10 +31,17 @@ class SessionForm(forms.ModelForm):
             'theme': forms.Textarea(attrs={'rows': 3}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Récupérer tous les objets Licence dans l'ordre du queryset
+        # Si user est fourni, filtrer les licences par établissement
+        if user and hasattr(user, 'profile') and user.profile.etablissement:
+            etablissement = user.profile.etablissement
+            self.fields['presences'].queryset = Licence.objects.filter(etablissement=etablissement)
+        else:
+            # Sinon queryset vide ou toutes les licences si tu préfères
+            self.fields['presences'].queryset = Licence.objects.none()
+        
         self.licences = list(self.fields['presences'].queryset)
 
 class LicenceForm(forms.ModelForm):
