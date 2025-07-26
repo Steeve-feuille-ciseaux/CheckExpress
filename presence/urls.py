@@ -13,6 +13,7 @@ urlpatterns = [
     path('session-du-jour/', views.modifier_session_du_jour, name='modifier_session_du_jour'),
     path('session/modifier/<int:pk>/', views.modifier_session, name='modifier_session'),
     path('sessions/<int:pk>/supprimer/', views.confirmer_suppression_session, name='confirmer_suppression_session'),
+    path("sessions/check-rapide/", views.check_rapide, name="check_rapide"),
 
     # Licencier
     path('licencies/ajouter/', views.ajouter_licencie, name='ajouter_licencie'),

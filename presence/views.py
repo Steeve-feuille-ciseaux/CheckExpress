@@ -15,7 +15,7 @@ from django.contrib import messages
 from .forms import UserCreationWithGroupForm
 from django.contrib.auth.forms import SetPasswordForm
 from django.views.generic.edit import FormView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
@@ -202,6 +202,33 @@ def modifier_session_du_jour(request):
         form = SessionForm(instance=session, user=request.user)
 
     return render(request, 'presence/session_du_jour.html', {'form': form, 'session': session})
+
+@login_required
+def check_rapide(request):
+    today = localdate()
+    now_time = localtime().time()
+    now_datetime = datetime.combine(today, now_time)
+    heure_fin = (now_datetime + timedelta(hours=2)).time()
+
+    profile = getattr(request.user, 'profile', None)
+    etablissement = profile.etablissement if profile else None
+
+    # Création de la session en base avec les infos pré-remplies
+    session = Session.objects.create(
+        date=today,
+        heure_debut=now_time,
+        heure_fin=heure_fin,
+        created_by=request.user,
+        checked_by=request.user,
+        etablissement=etablissement,
+    )
+
+    # Redirection vers le formulaire de création avec date et heure_debut en GET pour pré-remplissage
+    url = (
+        reverse('creer_session') +
+        f"?date={today.strftime('%Y-%m-%d')}&heure_debut={now_time.strftime('%H:%M')}"
+    )
+    return redirect(url)
 
 @login_required
 def confirmer_suppression_session(request, pk):
