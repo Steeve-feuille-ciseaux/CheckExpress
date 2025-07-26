@@ -26,7 +26,7 @@
             {% csrf_token %}
             <div class="confirmation-buttons">
                 <button type="submit" class="btn-confirm">❌ Supprimer</button>
-                <a href="{% url 'liste_sessions' %}" class="btn-cancel">Annuler</a>
+                <a href="javascript:history.back()" class="btn-cancel">Annuler</a>
             </div>
         </form>
     </div>

@@ -1,0 +1,97 @@
+{% extends "presence/base.html" %}
+{% load static %}
+
+{% block title %}Détail licencié{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/parametre.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="mobile-users">
+    <div class="page-header">
+        <h2 class="page-title">🧾 Détails du licencié</h2>
+    </div>
+
+    <div class="users-stats">
+        <p class="stats-number">{{ licencie.nom }} {{ licencie.prenom }}</p>
+        <p class="stats-label">{{ licencie.grade }}</p>
+    </div>
+
+    <div class="users-grid">
+        <div class="user-card">
+            <div class="user-header">
+                <h3 class="user-name">{{ licencie.nom }} {{ licencie.prenom }}</h3>
+                <p class="user-email">{{ licencie.email|default:"Aucun email" }}</p>
+            </div>
+
+            <div class="user-content">
+                <div class="user-info">
+
+                    <div class="info-item">
+                        <span class="info-icon">🎓</span>
+                        <div class="info-content">
+                            <div class="info-label">Grade</div>
+                            <div class="info-value">{{ licencie.grade|default:"Non défini" }}</div>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-icon">📅</span>
+                        <div class="info-content">
+                            <div class="info-label">Dernière présence</div>
+                            <div class="info-value">
+                                {% if licencie.last_session_date %}
+                                    {{ licencie.last_session_date|date:"d/m/Y" }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-icon">👣</span>
+                        <div class="info-content">
+                            <div class="info-label">Nombre de présences</div>
+                            <div class="info-value">{{ licencie.nb_presences }}</div>
+                        </div>
+                    </div>
+
+                    {% if licencie.etablissement %}
+                    <div class="info-item">
+                        <span class="info-icon">🏢</span>
+                        <div class="info-content">
+                            <div class="info-label">Établissement</div>
+                            <div class="info-value">{{ licencie.etablissement.name }}</div>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-icon">🏙️</span>
+                        <div class="info-content">
+                            <div class="info-label">Ville</div>
+                            <div class="info-value">
+                                {{ licencie.etablissement.ville.name|default:"Non définie" }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="user-actions">
+                <a href="{% url 'modifier_licencie' licencie.id %}" class="user-action-btn btn-edit">
+                    ✏️ Modifier
+                </a>
+                <form action="{% url 'supprimer_licencie' licencie.id %}" method="get" style="display:inline;">
+                    <button type="submit" class="user-action-btn btn-delete">❌ Supprimer</button>
+                </form>
+                <br>
+                <a href="javascript:history.back()" class="btn-cancel">Retour</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

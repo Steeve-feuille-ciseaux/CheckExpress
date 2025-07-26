@@ -288,6 +288,26 @@ def liste_licencies(request):
     })
 
 @login_required
+def detail_licencie(request, licencie_id):
+    # Annoter avec la dernière session par rapport au nom correct de la relation
+    licencie = Licence.objects.annotate(
+        last_session_date=Max('sessions__date')  # <-- correction ici
+    ).filter(pk=licencie_id).first()
+
+    # Protection d'accès si non superuser
+    if not licencie:
+        return render(request, '404.html', status=404)  # En cas de non existence
+
+    if not request.user.is_superuser:
+        user_etab = getattr(request.user.profile, 'etablissement', None)
+        if user_etab and licencie.etablissement != user_etab:
+            return render(request, '403.html')  # Ou: return HttpResponseForbidden()
+
+    return render(request, 'presence/detail_licencie.html', {
+        'licencie': licencie
+    })
+
+@login_required
 def modifier_licencie(request, licencie_id):
     licencie = get_object_or_404(Licence, pk=licencie_id)
 

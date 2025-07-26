@@ -18,6 +18,7 @@ urlpatterns = [
     # Licencier
     path('licencies/ajouter/', views.ajouter_licencie, name='ajouter_licencie'),
     path('licencies/', views.liste_licencies, name='liste_licencies'),
+    path('licencie/<int:licencie_id>/', views.detail_licencie, name='detail_licencie'),
     path('licencie/modifier/<int:licencie_id>/', views.modifier_licencie, name='modifier_licencie'),
     path('licencie/supprimer/<int:licencie_id>/', views.supprimer_licencie, name='supprimer_licencie'),
     path('licencies/export/', views.export_licencies_excel, name='export_licencies_excel'),
