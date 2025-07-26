@@ -213,22 +213,46 @@ def confirmer_suppression_session(request, pk):
         return redirect('liste_sessions')
 
     return render(request, 'presence/confirmer_suppression_session.html', {'session': session})
+
 # Licencier
+@login_required
 def ajouter_licencie(request):
     if request.method == 'POST':
         form = LicenceForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('liste_licencies')  # nom de la page liste licenciés
+            licence = form.save(commit=False)
+
+            # Associer automatiquement l'établissement depuis le profil utilisateur
+            profile = getattr(request.user, 'profile', None)
+            if profile and profile.etablissement:
+                licence.etablissement = profile.etablissement
+
+            licence.save()
+            return redirect('liste_licencies')
     else:
         form = LicenceForm()
+
     return render(request, 'presence/ajouter_licencie.html', {'form': form})
 
+@login_required
 def liste_licencies(request):
-    licencies = Licence.objects.annotate(
-        nb_presences=Count('sessions'),
-        last_session_date=Max('sessions__date')
-    )
+    user = request.user
+
+    if user.is_superuser:
+        licencies = Licence.objects.annotate(
+            nb_presences=Count('sessions'),
+            last_session_date=Max('sessions__date')
+        )
+    else:
+        profile = getattr(user, 'profile', None)
+        if profile and profile.etablissement:
+            licencies = Licence.objects.filter(etablissement=profile.etablissement).annotate(
+                nb_presences=Count('sessions'),
+                last_session_date=Max('sessions__date')
+            )
+        else:
+            licencies = Licence.objects.none()  # Aucun si pas d’établissement associé
+
     return render(request, 'presence/liste_licencies.html', {'licencies': licencies})
 
 @login_required

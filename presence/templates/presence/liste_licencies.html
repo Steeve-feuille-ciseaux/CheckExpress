@@ -25,6 +25,17 @@
         </div>
     </div>
 
+    <!-- 👇 Affichage conditionnel de l’établissement -->
+    <div class="etablissement-info">
+        {% if request.user.is_superuser %}
+            <p><strong>Affichage de tous les licenciés.</strong></p>
+        {% elif request.user.profile.etablissement %}
+            <p><strong>Établissement :</strong> {{ request.user.profile.etablissement.name }}</p>
+        {% else %}
+            <p><strong>Attention :</strong> Aucun établissement associé à votre compte.</p>
+        {% endif %}
+    </div>
+
     {% if licencies %}
         <!-- Version bureau/tablette -->
         <div class="table-container desktop-view">
@@ -36,6 +47,7 @@
                         <th>Grade</th>
                         <th>Participation</th>
                         <th>Dernière présence</th>
+                        <th>Établissement</th>
                         {% if user.is_authenticated %}
                             <th>Actions</th>
                         {% endif %}
@@ -53,6 +65,13 @@
                                     {{ licencie.last_session_date|date:"d/m/Y" }}
                                 {% else %}
                                     &mdash;
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if licencie.etablissement %}
+                                    {{ licencie.etablissement.name }}
+                                {% else %}
+                                    <em>Non renseigné</em>
                                 {% endif %}
                             </td>
                             {% if user.is_authenticated %}
@@ -91,6 +110,16 @@
                         <div>
                             <span class="info-label">Participation :</span>
                             <span class="info-value">{{ licencie.nb_presences }}</span>
+                        </div>
+                        <div>
+                            <span class="info-label">Établissement :</span>
+                            <span class="info-value">
+                                {% if licencie.etablissement %}
+                                    {{ licencie.etablissement.name }}
+                                {% else %}
+                                    <em>Non renseigné</em>
+                                {% endif %}
+                            </span>
                         </div>
                         <div>
                             <span class="info-label">Dernière présence :</span>

@@ -62,11 +62,12 @@ v0.17.8 -> changer infos user séparément du mots de passe
 v0.17.8.1 -> UI Mobile : user_detail.html
 v0.18.0 -> Ajout role + établissement de l'export licence
 v0.18.0.1 -> Correction redirection lien après l'ajoute d'un role, établissement, ville
+v0.18.1 -> relier un élève a l'établissement de l'user qui l'a ajouter
 
 next step : 
 - ajout Makefile
 - inclure tuto d'installation
-- !!! ajuste les message d'information validation, modification, créer, suppression !!!
+- !!! ajuste les message d'information validation, modification, créer, suppression !!! -> liste_utilisateur
 - MAJ mobile -> voir_session.html
 - MAJ mobile ->  user_detail.html
 - ajout export tous les utilisateur + tous les licenciers
