@@ -10,7 +10,6 @@ urlpatterns = [
     path('session/creer/', views.creer_session, name='creer_session'),
     path('sessions/', views.liste_sessions, name='liste_sessions'), 
     path('session/<int:pk>/', views.voir_session, name='voir_session'),
-    path('session-du-jour/', views.modifier_session_du_jour, name='modifier_session_du_jour'),
     path('session/modifier/<int:pk>/', views.modifier_session, name='modifier_session'),
     path('sessions/<int:pk>/supprimer/', views.confirmer_suppression_session, name='confirmer_suppression_session'),
     path("sessions/check-rapide/", views.check_rapide, name="check_rapide"),
@@ -53,6 +52,10 @@ urlpatterns = [
     path('ajouter-role/', views.ajouter_role, name='ajouter_role'),
     path('roles/modifier/<int:role_id>/', views.modifier_role, name='modifier_role'),
     path('roles/supprimer/<int:role_id>/', views.supprimer_role, name='supprimer_role'),
+
+    # Export data
+    path('export/', views.export_page, name='export_page'),
+    path('export/<str:mode>/', views.export_donnees_excel, name='export_donnees_excel'),
     
     path('login/', auth_views.LoginView.as_view(template_name='presence/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='accueil'), name='logout'),

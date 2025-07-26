@@ -1,16 +1,17 @@
 import openpyxl
+from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.utils import timezone
-from .models import Licence, Presence, Session, Ville, Etablissement, User
+from .models import Licence, Presence, Session, Ville, Etablissement, User, Profile
 from .forms import PresenceForm, SessionForm, LicenceForm, VilleForm, EtablissementForm, GroupForm, UserUpdateForm
 from django.utils.timezone import localdate, localtime, now
 from datetime import datetime, timedelta
 from django.db.models import Count, Max
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.contrib import messages
 from .forms import UserCreationWithGroupForm
 from django.contrib.auth.forms import SetPasswordForm
@@ -130,67 +131,6 @@ def modifier_session(request, pk):
         form = SessionForm(instance=session, user=request.user)
 
     return render(request, 'presence/modifier_session.html', {'form': form, 'session': session})
-
-@login_required
-def modifier_session_du_jour(request):
-    today = localdate()
-    now_time = localtime().time()
-
-    session = (
-        Session.objects
-        .filter(date=today, heure_debut__lte=now_time, heure_fin__gt=now_time)
-        .order_by('heure_debut')
-        .first()
-    )
-
-    if not session:
-        session = (
-            Session.objects
-            .filter(date=today, heure_debut__gte=now_time)
-            .order_by('heure_debut')
-            .first()
-        )
-
-    if not session:
-        session = (
-            Session.objects
-            .filter(date=today)
-            .order_by('heure_debut')
-            .first()
-        )
-
-    if not session:
-        now_datetime = datetime.combine(today, now_time)
-        heure_fin = (now_datetime + timedelta(hours=2)).time()
-
-        session = Session(
-            date=today,
-            heure_debut=now_time,
-            heure_fin=heure_fin,
-            created_by=request.user,
-        )
-        form = SessionForm(instance=session, user=request.user)
-
-        return render(request, 'presence/session_du_jour.html', {
-            'form': form,
-            'session': None,
-            'today': today,
-            'now': now_time,
-        })
-
-    if request.method == 'POST':
-        form = SessionForm(request.POST, instance=session, user=request.user)
-        if form.is_valid():
-            session = form.save(commit=False)
-            session.created_by = request.user
-            session.checked_by = request.user
-            session.save()
-            form.save_m2m()
-            return redirect('liste_sessions')
-    else:
-        form = SessionForm(instance=session, user=request.user)
-
-    return render(request, 'presence/session_du_jour.html', {'form': form, 'session': session})
 
 @login_required
 def check_rapide(request):
@@ -332,7 +272,11 @@ def supprimer_licencie(request, licencie_id):
 
     return render(request, 'presence/confirmer_suppression_licencie.html', {'licencie': licencie})
 
-# Export data 
+# Export data
+@login_required
+def export_page(request):
+    return render(request, 'presence/export_page.html')
+
 @login_required
 def export_licencies_excel(request):
     wb = openpyxl.Workbook()
@@ -435,6 +379,149 @@ def export_licencies_excel(request):
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = f'attachment; filename={filename}'
+    wb.save(response)
+    return response
+
+@login_required
+def export_donnees_excel(request, mode='all'):
+    """
+    mode : 'all' | 'users' | 'etablissement'
+    """
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Export"
+
+    now_str = localtime(now()).strftime('%Y%m%d_%H%M%S')
+    filename = f"Export_{mode}_{now_str}.xlsx"
+
+    # Styles
+    bold_font = Font(bold=True)
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill("solid", fgColor="4F81BD")
+    border = Border(
+        left=Side(style='thin'), right=Side(style='thin'),
+        top=Side(style='thin'), bottom=Side(style='thin')
+    )
+    center_align = Alignment(horizontal='center')
+
+    row = 1
+
+    def write_headers(headers, start_row):
+        for col_num, header in enumerate(headers, 1):
+            cell = ws.cell(row=start_row, column=col_num, value=header)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = center_align
+            cell.border = border
+
+    def write_row(data, start_row):
+        for col_num, value in enumerate(data, 1):
+            cell = ws.cell(row=start_row, column=col_num, value=value)
+            cell.alignment = center_align
+            cell.border = border
+
+    if mode == 'users':
+        ws.cell(row=row, column=1, value="Utilisateurs").font = Font(bold=True, size=14)
+        row += 2
+        headers = ['Nom', 'Prénom', 'Email', 'Établissement', 'Rôle', 'Sessions créées', 'Sessions validées']
+        write_headers(headers, row)
+        row += 1
+
+        users = User.objects.all()
+        for user in users:
+            etab = getattr(user.profile, 'etablissement', None)
+            role = user.groups.first().name if user.groups.exists() else "Aucun"
+            sessions_created = Session.objects.filter(created_by=user).count()
+            sessions_checked = Session.objects.filter(checked_by=user).count()
+            write_row([
+                user.last_name,
+                user.first_name,
+                user.email,
+                etab.name if etab else "Non défini",
+                role,
+                sessions_created,
+                sessions_checked,
+            ], row)
+            row += 1
+
+    elif mode == 'etablissement':
+        etablissements = Etablissement.objects.all()
+        for etab in etablissements:
+            ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=6)
+            ws.cell(row=row, column=1, value=f"Établissement : {etab.name}").font = Font(bold=True, size=14)
+            row += 2
+
+            # Licenciés
+            ws.cell(row=row, column=1, value="Licenciés").font = bold_font
+            row += 1
+            headers = ['Nom', 'Prénom', 'Grade']
+            write_headers(headers, row)
+            row += 1
+            licencies = Licence.objects.filter(etablissement=etab)
+            for licencie in licencies:
+                write_row([licencie.nom, licencie.prenom, licencie.grade], row)
+                row += 1
+
+            row += 1
+
+            # Utilisateurs
+            ws.cell(row=row, column=1, value="Utilisateurs").font = bold_font
+            row += 1
+            headers = ['Nom', 'Prénom', 'Email', 'Rôle', 'Sessions créées', 'Sessions validées']
+            write_headers(headers, row)
+            row += 1
+            users = User.objects.filter(profile__etablissement=etab)
+            for user in users:
+                role = user.groups.first().name if user.groups.exists() else "Aucun"
+                sessions_created = Session.objects.filter(created_by=user).count()
+                sessions_checked = Session.objects.filter(checked_by=user).count()
+                write_row([
+                    user.last_name,
+                    user.first_name,
+                    user.email,
+                    role,
+                    sessions_created,
+                    sessions_checked
+                ], row)
+                row += 1
+
+            row += 3  # espace entre établissements
+
+    else:  # mode == 'all'
+        ws.cell(row=row, column=1, value="Toutes les données").font = Font(bold=True, size=14)
+        row += 2
+
+        headers = ['Nom', 'Prénom', 'Grade', 'Établissement', 'Type']
+        write_headers(headers, row)
+        row += 1
+
+        for licencie in Licence.objects.select_related('etablissement'):
+            write_row([
+                licencie.nom,
+                licencie.prenom,
+                licencie.grade,
+                licencie.etablissement.name if licencie.etablissement else "Non défini",
+                "Licencié"
+            ], row)
+            row += 1
+
+        for user in User.objects.select_related('profile__etablissement'):
+            profile = getattr(user, 'profile', None)
+            etab = profile.etablissement.name if profile and profile.etablissement else "Non défini"
+            write_row([
+                user.last_name,
+                user.first_name,
+                "-",
+                etab,
+                "Utilisateur"
+            ], row)
+            row += 1
+
+    # Finalisation
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
 

@@ -1,0 +1,11 @@
+{% extends 'presence/base.html' %}
+
+{% block content %}
+<h2>Exporter les données</h2>
+
+<ul>
+  <li><a href="{% url 'export_donnees_excel' 'all' %}">📦 Export complet</a></li>
+  <li><a href="{% url 'export_donnees_excel' 'users' %}">👤 Export des utilisateurs</a></li>
+  <li><a href="{% url 'export_donnees_excel' 'etablissement' %}">🏫 Export par établissement</a></li>
+</ul>
+{% endblock %}
