@@ -72,6 +72,7 @@ v0.18.7 -> Bug corrigé check rapide
 v0.18.7.1 -> update template : creer_session.html
 v0.18.7.2 -> Bug nb participation licencie
 v0.18.8 -> UI Mobile : crud licencie
+v0.18.9 -> nombre de session créer par l'utilisateur
 
 next step : 
 - ajout Makefile

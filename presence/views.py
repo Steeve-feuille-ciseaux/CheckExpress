@@ -447,8 +447,16 @@ def voir_utilisateurs(request):
 
 @login_required
 def user_detail(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
-    return render(request, 'presence/user_detail.html', {'user_obj': user})
+    user_obj = get_object_or_404(User, pk=user_id)
+
+    nb_sessions_creees = Session.objects.filter(created_by=user_obj).count()
+    nb_sessions_checkees = Session.objects.filter(checked_by=user_obj).count()
+
+    return render(request, 'presence/user_detail.html', {
+        'user_obj': user_obj,
+        'nb_sessions_creees': nb_sessions_creees,
+        'nb_sessions_checkees': nb_sessions_checkees,
+    })
 
 @login_required
 def ajouter_utilisateur_prof(request):
