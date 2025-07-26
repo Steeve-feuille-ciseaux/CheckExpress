@@ -63,6 +63,7 @@ v0.17.8.1 -> UI Mobile : user_detail.html
 v0.18.0 -> Ajout role + établissement de l'export licence
 v0.18.0.1 -> Correction redirection lien après l'ajoute d'un role, établissement, ville
 v0.18.1 -> relier un élève a l'établissement de l'user qui l'a ajouter
+v0.18.2 -> filter les licencier selon leur établissement 
 
 next step : 
 - ajout Makefile
@@ -72,10 +73,7 @@ next step :
 - MAJ mobile ->  user_detail.html
 - ajout export tous les utilisateur + tous les licenciers
 - Renseigne le nombre de session créer par l'utilisateur par année
-- renseigne licencier par établissement
 - exporté uniquement les licencie qui possède le même établissement
-- lorsqu'un user ajoute un licencié, licencie est relié à l'établissement de l'user 
-- ajouter un filtre dans licence
 
 **  Bug repérer sur les session a revenir **
 

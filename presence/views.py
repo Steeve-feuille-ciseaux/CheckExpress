@@ -236,24 +236,24 @@ def ajouter_licencie(request):
 
 @login_required
 def liste_licencies(request):
-    user = request.user
+    licencies = Licence.objects.all()
 
-    if user.is_superuser:
-        licencies = Licence.objects.annotate(
-            nb_presences=Count('sessions'),
-            last_session_date=Max('sessions__date')
-        )
+    # Superuser : possibilité de filtrer
+    etablissements = None
+    if request.user.is_superuser:
+        etablissements = Etablissement.objects.all()
+        etablissement_id = request.GET.get('etablissement')
+        if etablissement_id:
+            licencies = licencies.filter(etablissement_id=etablissement_id)
     else:
-        profile = getattr(user, 'profile', None)
-        if profile and profile.etablissement:
-            licencies = Licence.objects.filter(etablissement=profile.etablissement).annotate(
-                nb_presences=Count('sessions'),
-                last_session_date=Max('sessions__date')
-            )
-        else:
-            licencies = Licence.objects.none()  # Aucun si pas d’établissement associé
+        # Filtrage auto pour utilisateurs non-superuser, selon leur profil
+        if hasattr(request.user, "profile") and request.user.profile.etablissement:
+            licencies = licencies.filter(etablissement=request.user.profile.etablissement)
 
-    return render(request, 'presence/liste_licencies.html', {'licencies': licencies})
+    return render(request, 'presence/liste_licencies.html', {
+        'licencies': licencies,
+        'etablissements': etablissements,
+    })
 
 @login_required
 def modifier_licencie(request, licencie_id):

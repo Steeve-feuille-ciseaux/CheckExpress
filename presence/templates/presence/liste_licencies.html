@@ -14,6 +14,22 @@
     <div class="header-row">
         <h2>👥 Liste des licenciés</h2>
         <div class="header-actions">
+
+            <!-- Filtre uniquement pour les superuser -->
+            {% if request.user.is_superuser %}
+                <form method="get" class="filter-form">
+                    <label for="etablissement">Filtrer par établissement :</label>
+                    <select name="etablissement" id="etablissement" onchange="this.form.submit()">
+                        <option value="">Tous</option>
+                        {% for etab in etablissements %}
+                            <option value="{{ etab.id }}" {% if request.GET.etablissement == etab.id|stringformat:"s" %}selected{% endif %}>
+                                {{ etab.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            {% endif %}
+
             <a href="{% url 'ajouter_licencie' %}" class="btn-submit btn-add" title="Ajouter un licencié">
                 <span class="btn-icon">➕</span>
                 <span class="btn-text">Ajouter</span>
@@ -47,7 +63,9 @@
                         <th>Grade</th>
                         <th>Participation</th>
                         <th>Dernière présence</th>
-                        <th>Établissement</th>
+                        {% if request.user.is_superuser %}
+                            <th>Établissement</th>
+                        {% endif %}
                         {% if user.is_authenticated %}
                             <th>Actions</th>
                         {% endif %}
@@ -67,13 +85,15 @@
                                     &mdash;
                                 {% endif %}
                             </td>
-                            <td>
-                                {% if licencie.etablissement %}
-                                    {{ licencie.etablissement.name }}
-                                {% else %}
-                                    <em>Non renseigné</em>
-                                {% endif %}
-                            </td>
+                            {% if request.user.is_superuser %}
+                                <td>
+                                    {% if licencie.etablissement %}
+                                        {{ licencie.etablissement.name }}
+                                    {% else %}
+                                        <em>Non renseigné</em>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
                             {% if user.is_authenticated %}
                                 <td>
                                     <div class="actions-group">
@@ -111,16 +131,18 @@
                             <span class="info-label">Participation :</span>
                             <span class="info-value">{{ licencie.nb_presences }}</span>
                         </div>
-                        <div>
-                            <span class="info-label">Établissement :</span>
-                            <span class="info-value">
-                                {% if licencie.etablissement %}
-                                    {{ licencie.etablissement.name }}
-                                {% else %}
-                                    <em>Non renseigné</em>
-                                {% endif %}
-                            </span>
-                        </div>
+                        {% if request.user.is_superuser %}
+                            <div>
+                                <span class="info-label">Établissement :</span>
+                                <span class="info-value">
+                                    {% if licencie.etablissement %}
+                                        {{ licencie.etablissement.name }}
+                                    {% else %}
+                                        <em>Non renseigné</em>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        {% endif %}
                         <div>
                             <span class="info-label">Dernière présence :</span>
                             <span class="info-value">
