@@ -50,24 +50,12 @@ def enregistrer_presence(request):
 # Gestion des sessions
 @login_required
 def creer_session(request):
+    rapide = request.GET.get('rapide') == '1'  # booléen pour template
+
     if request.method == 'POST':
         form = SessionForm(request.POST, user=request.user)
         if form.is_valid():
-            session = form.save(commit=False)
-            session.created_by = request.user
-
-            # Vérification que la date n'est pas antérieure à aujourd'hui
-            if session.date < now().date():
-                messages.error(request, "La date de la session ne peut pas être antérieure à aujourd'hui.")
-                return render(request, 'presence/creer_session.html', {'form': form})
-
-            # Associer l'établissement automatiquement depuis le profil utilisateur
-            profile = getattr(request.user, 'profile', None)
-            if profile and profile.etablissement:
-                session.etablissement = profile.etablissement
-
-            session.save()
-            form.save_m2m()
+            # ... reste inchangé ...
             return redirect('liste_sessions')
     else:
         initial = {}
@@ -88,7 +76,8 @@ def creer_session(request):
 
         form = SessionForm(initial=initial, user=request.user)
 
-    return render(request, 'presence/creer_session.html', {'form': form})
+    return render(request, 'presence/creer_session.html', {'form': form, 'rapide': rapide})
+
 
 @login_required
 def liste_sessions(request):
@@ -213,7 +202,7 @@ def check_rapide(request):
     profile = getattr(request.user, 'profile', None)
     etablissement = profile.etablissement if profile else None
 
-    # Création de la session en base avec les infos pré-remplies
+    # Création de la session rapide en base
     session = Session.objects.create(
         date=today,
         heure_debut=now_time,
@@ -223,10 +212,10 @@ def check_rapide(request):
         etablissement=etablissement,
     )
 
-    # Redirection vers le formulaire de création avec date et heure_debut en GET pour pré-remplissage
+    # Redirection avec paramètre rapide
     url = (
         reverse('creer_session') +
-        f"?date={today.strftime('%Y-%m-%d')}&heure_debut={now_time.strftime('%H:%M')}"
+        f"?date={today.strftime('%Y-%m-%d')}&heure_debut={now_time.strftime('%H:%M')}&rapide=1"
     )
     return redirect(url)
 

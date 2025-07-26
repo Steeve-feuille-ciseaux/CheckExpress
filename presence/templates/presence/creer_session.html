@@ -10,7 +10,13 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="session-heading">Créer une nouvelle session</h2>
+    <h2 class="session-heading">
+        {% if rapide %}
+            Créer une session rapidement
+        {% else %}
+            Créer une nouvelle session
+        {% endif %}
+    </h2>
 
     <form method="post" class="session-form">
         {% csrf_token %}

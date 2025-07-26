@@ -69,6 +69,7 @@ v0.18.4 -> affichage de l'établissement + restriction créer session à une dat
 v0.18.5 -> Bug corrigé mauvais user lors qu'un création rapide de session
 v0.18.6 -> Filtre licence selon leur établissement lors de l'appel / checking
 v0.18.7 -> Bug corrigé check rapide
+v0.18.7.1 -> update template : creer_session.html
 
 next step : 
 - ajout Makefile
