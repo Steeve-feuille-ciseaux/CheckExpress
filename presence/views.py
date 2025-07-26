@@ -55,6 +55,18 @@ def creer_session(request):
         if form.is_valid():
             session = form.save(commit=False)
             session.created_by = request.user
+
+            # Vérification que la date n'est pas antérieure à aujourd'hui
+            if session.date < now().date():
+                messages.error(request, "La date de la session ne peut pas être antérieure à aujourd'hui.")
+                # On renvoie le formulaire avec l'erreur
+                return render(request, 'presence/creer_session.html', {'form': form})
+
+            # Associer l'établissement automatiquement depuis le profil utilisateur
+            profile = getattr(request.user, 'profile', None)
+            if profile and profile.etablissement:
+                session.etablissement = profile.etablissement
+
             session.save()
             form.save_m2m()
             return redirect('liste_sessions')
@@ -70,29 +82,34 @@ def creer_session(request):
             try:
                 heure_debut_obj = datetime.strptime(heure_debut_from_get, "%H:%M")
                 initial["heure_debut"] = heure_debut_obj.time()
-                
+
                 # Ajouter 2h à l'heure de début
                 heure_fin_obj = (heure_debut_obj + timedelta(hours=2)).time()
                 initial["heure_fin"] = heure_fin_obj
             except ValueError:
-                pass  # en cas de format incorrect, on ignore et laisse vide
+                pass  # format invalide, on ignore
 
         form = SessionForm(initial=initial)
 
     return render(request, 'presence/creer_session.html', {'form': form})
 
+@login_required
 def liste_sessions(request):
     today = localdate()
-    
-    # Sessions d'aujourd'hui
-    sessions_today = Session.objects.filter(date=today).order_by('heure_debut')
-    
-    # Sessions futures (après aujourd'hui)
-    sessions_futures = Session.objects.filter(date__gt=today).order_by('date', 'heure_debut')
-    
-    # Sessions passées (avant aujourd'hui)
-    sessions_passees = Session.objects.filter(date__lt=today).order_by('-date', '-heure_debut')
-    
+
+    if request.user.is_superuser:
+        base_queryset = Session.objects.all()
+    else:
+        profile = getattr(request.user, 'profile', None)
+        if profile and profile.etablissement:
+            base_queryset = Session.objects.filter(etablissement=profile.etablissement)
+        else:
+            base_queryset = Session.objects.none()
+
+    sessions_today = base_queryset.filter(date=today).order_by('heure_debut')
+    sessions_futures = base_queryset.filter(date__gt=today).order_by('date', 'heure_debut')
+    sessions_passees = base_queryset.filter(date__lt=today).order_by('-date', '-heure_debut')
+
     return render(request, 'presence/liste_sessions.html', {
         'sessions_today': sessions_today,
         'sessions_futures': sessions_futures,

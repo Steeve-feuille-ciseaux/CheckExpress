@@ -64,6 +64,8 @@ v0.18.0 -> Ajout role + établissement de l'export licence
 v0.18.0.1 -> Correction redirection lien après l'ajoute d'un role, établissement, ville
 v0.18.1 -> relier un élève a l'établissement de l'user qui l'a ajouter
 v0.18.2 -> filter les licencier selon leur établissement 
+v0.18.3 -> lier les session à l'établissement
+v0.18.4 -> affichage de l'établissement + restriction créer session à une date antérieur impossible
 
 next step : 
 - ajout Makefile
@@ -74,6 +76,7 @@ next step :
 - ajout export tous les utilisateur + tous les licenciers
 - Renseigne le nombre de session créer par l'utilisateur par année
 - exporté uniquement les licencie qui possède le même établissement
+- ne peut pas créer un session antérieur
 
 **  Bug repérer sur les session a revenir **
 

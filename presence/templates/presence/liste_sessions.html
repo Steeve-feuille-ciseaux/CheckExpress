@@ -45,6 +45,13 @@
                                 </div>
                             {% endif %}
 
+                            {% if session.etablissement %}
+                                <div class="session-etablissement">
+                                    <span class="meta-label">Établissement :</span>
+                                    <span class="meta-value">{{ session.etablissement.name }}</span>
+                                </div>
+                            {% endif %}
+
                             <div class="session-stats">
                                 <div class="stat-item">
                                     <span class="stat-icon">👥</span>
@@ -146,6 +153,13 @@
                                 </div>
                             {% endif %}
 
+                            {% if session.etablissement %}
+                                <div class="session-etablissement">
+                                    <span class="meta-label">Établissement :</span>
+                                    <span class="meta-value">{{ session.etablissement.name }}</span>
+                                </div>
+                            {% endif %}
+
                             <div class="session-stats">
                                 <div class="stat-item">
                                     <span class="stat-icon">👥</span>
@@ -231,6 +245,13 @@
                             {% if session.theme %}
                                 <div class="session-theme">
                                     <strong>{{ session.theme|linebreaksbr }}</strong>
+                                </div>
+                            {% endif %}
+
+                            {% if session.etablissement %}
+                                <div class="session-etablissement">
+                                    <span class="meta-label">Établissement :</span>
+                                    <span class="meta-value">{{ session.etablissement.name }}</span>
                                 </div>
                             {% endif %}
 

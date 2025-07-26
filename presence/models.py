@@ -62,5 +62,7 @@ class Session(models.Model):
     created_by = models.ForeignKey(User, related_name='sessions_created', on_delete=models.SET_NULL, null=True, blank=True)
     checked_by = models.ForeignKey(User, related_name='sessions_checked', on_delete=models.SET_NULL, null=True, blank=True)
 
+    etablissement = models.ForeignKey(Etablissement, null=True, blank=True, on_delete=models.SET_NULL, related_name='sessions')
+
     def __str__(self):
         return f"Session du {self.date} ({self.heure_debut} - {self.heure_fin})"

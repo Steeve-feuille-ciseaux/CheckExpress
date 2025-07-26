@@ -4,19 +4,26 @@
 
 {% block content %}
 <div class="container">
-    <h2>📋 Détail de la session du <span class="highlight">{{ session.date }}</span></h2>
+    <h2>📋 Détail de la session du <span class="highlight">{{ session.date|date:"d/m/Y" }}</span></h2>
 
     <div class="session-box">
         <p><strong>Heure :</strong> {{ session.heure_debut }} - {{ session.heure_fin }}</p>
         <p><strong>Thème :</strong><br><em>{{ session.theme|linebreaksbr }}</em></p>
+
+        {% if session.etablissement %}
+            <p><strong>Établissement :</strong> {{ session.etablissement.name }}</p>
+        {% endif %}
+
         {% if session.created_by %}
             <p><strong>Créée par :</strong> {{ session.created_by.get_full_name|default:session.created_by.username }}</p>
         {% endif %}
+
         {% if session.checked_by %}
             <p><strong>Vérifiée par :</strong> {{ session.checked_by.get_full_name|default:session.checked_by.username }}</p>
         {% endif %}
+
         <p><strong>Licenciés présents :</strong></p>
-        {% if session.presences.all %}
+        {% if session.presences.exists %}
             <ul>
                 {% for licencie in session.presences.all %}
                     <li>{{ licencie.prenom }} {{ licencie.nom }}</li>
