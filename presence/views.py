@@ -546,7 +546,7 @@ def ajouter_etablissement(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Établissement ajouté avec succès.")
-            return redirect('accueil')
+            return redirect('gestion_etablissement')
     else:
         form = EtablissementForm()
     return render(request, 'presence/ajouter_etablissement.html', {'form': form})
@@ -595,7 +595,7 @@ def ajouter_role(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Rôle (groupe) ajouté avec succès.")
-            return redirect('accueil')
+            return redirect('gestion_role')
     else:
         form = GroupForm()
 
