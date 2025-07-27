@@ -75,6 +75,7 @@ v0.18.8 -> UI Mobile : crud licencie
 v0.18.9 -> nombre de session créer par l'utilisateur
 v0.19.0 -> Export data
 v0.19.1 -> UI Mobile : export_page.html
+v0.19.1.1 -> UI Mobile : update -> export_page.html
 
 next step : 
 - ajout Makefile

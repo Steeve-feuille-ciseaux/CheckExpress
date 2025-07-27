@@ -304,27 +304,36 @@
     .export-card {
         padding: 1.5rem 1rem;
         border-radius: 10px;
+        text-align: center;
     }
     
     .card-icon {
         width: 50px;
         height: 50px;
         font-size: 1.5rem;
-        margin-bottom: 1rem;
+        margin: 0 auto 1rem auto;
     }
     
     .card-title {
         font-size: 1.2rem;
         margin-bottom: 0.3rem;
+        text-align: center;
     }
     
     .card-description {
         font-size: 0.9rem;
         margin-bottom: 1rem;
+        text-align: center;
     }
     
     .card-features {
         margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .card-features ul {
+        display: inline-block;
+        text-align: left;
     }
     
     .card-features li {
@@ -335,6 +344,8 @@
     .export-btn {
         padding: 0.8rem 1rem;
         font-size: 0.95rem;
+        margin: 0 auto;
+        display: block;
     }
     
     .stats-section {
@@ -422,6 +433,7 @@
     
     .export-card {
         padding: 1rem 0.8rem;
+        text-align: center;
     }
     
     .card-icon {
@@ -429,15 +441,28 @@
         height: 45px;
         font-size: 1.3rem;
         border-radius: 8px;
+        margin: 0 auto 0.8rem auto;
     }
     
     .card-title {
         font-size: 1.1rem;
+        text-align: center;
     }
     
     .card-description {
         font-size: 0.85rem;
         line-height: 1.5;
+        text-align: center;
+    }
+    
+    .card-features {
+        text-align: center;
+    }
+    
+    .card-features ul {
+        display: inline-block;
+        text-align: left;
+        margin: 0 auto;
     }
     
     .card-features li {
@@ -453,6 +478,8 @@
         padding: 0.75rem;
         font-size: 0.9rem;
         border-radius: 6px;
+        margin: 0 auto;
+        display: block;
     }
     
     .stats-grid {
@@ -595,6 +622,64 @@
     }
     
     /* Augmenter la zone de touch pour les boutons */
+.export-btn {
+    width: auto; /* Changé de 100% à auto */
+    max-width: 280px; /* Largeur maximale */
+    background: linear-gradient(135deg, var(--card-color), var(--card-color-light));
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* Centre le bouton */
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    color: white;
+}
+
+.export-btn:active {
+    transform: translateY(0);
+}
+
+/* Ajustements pour mobile */
+@media (max-width: 768px) {
     .export-btn {
-        min-height: 44px; /* Taille recommandée Apple/Google */
+        width: auto;
+        max-width: 220px;
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+        margin: 0 auto;
+        display: block;
     }
+}
+
+@media (max-width: 480px) {
+    .export-btn {
+        max-width: 200px;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+        border-radius: 6px;
+        margin: 0 auto;
+        display: block;
+    }
+}
+
+/* Optimisations pour très petits écrans */
+@media (max-width: 375px) {
+    .export-btn {
+        max-width: 180px;
+        padding: 0.7rem;
+        font-size: 0.85rem;
+    }
+}
