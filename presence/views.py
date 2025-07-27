@@ -273,9 +273,14 @@ def supprimer_licencie(request, licencie_id):
     return render(request, 'presence/confirmer_suppression_licencie.html', {'licencie': licencie})
 
 # Export data
-@login_required
 def export_page(request):
-    return render(request, 'presence/export_page.html')
+    context = {
+        'total_licencies': Licence.objects.count(),
+        'total_sessions': Session.objects.count(),
+        'total_users': User.objects.filter(is_superuser=False).count(),
+        'total_etablissements': Etablissement.objects.count(),
+    }
+    return render(request, 'presence/export_page.html', context)
 
 @login_required
 def export_licencies_excel(request):
@@ -288,97 +293,223 @@ def export_licencies_excel(request):
     export_time = current_time.strftime('%H:%M:%S')
     user = request.user
 
-    # Styles
-    header_font = Font(bold=True, color="FFFFFF")
-    title_font = Font(bold=True, size=14)
-    header_fill = PatternFill("solid", fgColor="4F81BD")  # bleu clair
-    border = Border(
-        left=Side(style='thin'),
-        right=Side(style='thin'),
-        top=Side(style='thin'),
-        bottom=Side(style='thin')
+    # Styles améliorés
+    # Couleurs de l'identité visuelle
+    primary_color = "2E5BBA"  # Bleu principal
+    secondary_color = "4A90A4"  # Bleu-vert
+    accent_color = "E8F2FF"  # Bleu très clair
+    text_dark = "2C3E50"  # Gris foncé
+    text_light = "7F8C8D"  # Gris clair
+
+    # Polices et styles
+    title_font = Font(name="Calibri", bold=True, size=16, color=primary_color)
+    subtitle_font = Font(name="Calibri", bold=True, size=12, color=text_dark)
+    header_font = Font(name="Calibri", bold=True, size=11, color="FFFFFF")
+    data_font = Font(name="Calibri", size=10, color=text_dark)
+    info_font = Font(name="Calibri", size=9, color=text_light)
+    
+    # Remplissages
+    header_fill = PatternFill("solid", fgColor=primary_color)
+    accent_fill = PatternFill("solid", fgColor=accent_color)
+    alternate_fill = PatternFill("solid", fgColor="F8FAFC")  # Gris très clair pour lignes alternées
+    
+    # Bordures
+    thick_border = Border(
+        left=Side(style='medium', color=primary_color),
+        right=Side(style='medium', color=primary_color),
+        top=Side(style='medium', color=primary_color),
+        bottom=Side(style='medium', color=primary_color)
     )
+    thin_border = Border(
+        left=Side(style='thin', color='D5DBDB'),
+        right=Side(style='thin', color='D5DBDB'),
+        top=Side(style='thin', color='D5DBDB'),
+        bottom=Side(style='thin', color='D5DBDB')
+    )
+    
+    # Alignements
     center_align = Alignment(horizontal='center', vertical='center')
     left_align = Alignment(horizontal='left', vertical='center')
+    right_align = Alignment(horizontal='right', vertical='center')
 
-    # Largeur colonnes
-    column_widths = [20, 20, 18, 20]
-    start_col = 2  # Décalage à la colonne B pour marge à gauche
+    # Configuration des colonnes
+    column_config = {
+        'B': {'width': 22, 'header': 'Nom'},
+        'C': {'width': 22, 'header': 'Prénom'},
+        'D': {'width': 18, 'header': 'Grade'},
+        'E': {'width': 15, 'header': 'Participations'},
+        'F': {'width': 20, 'header': 'Dernière présence'}
+    }
 
-    def merge_and_center(row, text, col_start, col_end, font=None):
-        ws.merge_cells(start_row=row, start_column=col_start, end_row=row, end_column=col_end)
-        cell = ws.cell(row=row, column=col_start)
+    # Fonctions utilitaires
+    def merge_and_style(row, col_start, col_end, text, font, fill=None, alignment=center_align):
+        if col_start == col_end:
+            cell = ws.cell(row=row, column=col_start)
+        else:
+            ws.merge_cells(start_row=row, start_column=col_start, end_row=row, end_column=col_end)
+            cell = ws.cell(row=row, column=col_start)
+        
         cell.value = text
-        cell.alignment = center_align
-        if font:
-            cell.font = font
+        cell.font = font
+        cell.alignment = alignment
+        if fill:
+            cell.fill = fill
+        return cell
 
-    # Coordonnées utiles
-    right_col = start_col + 3  # Colonne E (B=2 +3 = 5)
-    left_col = start_col       # Colonne B
+    def apply_border_range(start_row, end_row, start_col, end_col, border):
+        for row in range(start_row, end_row + 1):
+            for col in range(start_col, end_col + 1):
+                ws.cell(row=row, column=col).border = border
 
-    # Infos utilisateur connecté
+    # Récupérer les informations utilisateur
     profile = getattr(user, 'profile', None)
     etablissement = profile.etablissement.name if profile and profile.etablissement else "Non défini"
     role = user.groups.first().name if user.groups.exists() else "Aucun rôle"
 
-    # Ligne 1 à 3 : infos à gauche (col B), sans fusion
-    ws.cell(row=1, column=start_col, value=f"Exporté par : {user.get_full_name() or user.username}").alignment = left_align
-    ws.cell(row=2, column=left_col, value=f"Rôle : {role}").alignment = left_align
-    ws.cell(row=3, column=left_col, value=f"Établissement : {etablissement}").alignment = left_align
+    # En-tête du document (lignes 1-6)
+    # Logo/Titre principal
+    merge_and_style(1, 2, 6, "RAPPORT DE SUIVI", title_font, accent_fill)
+    merge_and_style(2, 2, 6, "Présences des Licenciés", subtitle_font)
 
-    # Ligne 1 à 2 : infos à droite (col E), sans fusion
-    right_align = Alignment(horizontal='right', vertical='center')
-    ws.cell(row=1, column=right_col, value=f"Date : {export_date}").alignment = right_align
-    ws.cell(row=2, column=right_col, value=f"Heure : {export_time}").alignment = right_align
+    # Informations contextuelles (ligne 4)
+    ws.cell(row=4, column=2, value="Exporté par :").font = info_font
+    ws.cell(row=4, column=3, value=f"{user.get_full_name() or user.username}").font = data_font
+    
+    ws.cell(row=4, column=5, value="Date :").font = info_font
+    ws.cell(row=4, column=5).alignment = right_align
+    ws.cell(row=4, column=6, value=export_date).font = data_font
+    ws.cell(row=4, column=6).alignment = right_align
 
-    # Ligne 4 : ligne vide (espace)
-    # Ligne 5 : titre "Suivi de présence" centré sur colonnes B à E
-    merge_and_center(5, "Suivi de présence", start_col, start_col + 3, font=title_font)
+    ws.cell(row=5, column=2, value="Rôle :").font = info_font
+    ws.cell(row=5, column=3, value=role).font = data_font
+    
+    ws.cell(row=5, column=5, value="Heure :").font = info_font
+    ws.cell(row=5, column=5).alignment = right_align
+    ws.cell(row=5, column=6, value=export_time).font = data_font
+    ws.cell(row=5, column=6).alignment = right_align
 
-    # Ligne 6 : ligne vide (espace)
+    ws.cell(row=6, column=2, value="Établissement :").font = info_font
+    ws.cell(row=6, column=3, value=etablissement).font = data_font
 
-    # Ligne 7 : en-têtes du tableau
-    headers = ['Nom', 'Prénom', 'participation', 'Dernière présence']
-    for col_num, header in enumerate(headers, start_col):
-        cell = ws.cell(row=7, column=col_num, value=header)
+    # Ligne de séparation (ligne 7)
+    for col in range(2, 7):
+        cell = ws.cell(row=7, column=col)
+        cell.fill = PatternFill("solid", fgColor=primary_color)
+
+    # En-têtes du tableau (ligne 9)
+    header_row = 9
+    for col_letter, config in column_config.items():
+        col_num = ord(col_letter) - ord('A') + 1
+        cell = ws.cell(row=header_row, column=col_num, value=config['header'])
         cell.font = header_font
         cell.fill = header_fill
-        cell.border = border
         cell.alignment = center_align
+        cell.border = thick_border
 
-    # Récupérer les licenciés
+    # Récupérer et filtrer les licenciés selon les permissions
     licencies = Licence.objects.annotate(
         nb_presences=Count('sessions'),
         last_session_date=Max('sessions__date')
     )
 
-    # Remplir les données à partir de la ligne 8
-    for i, licencie in enumerate(licencies, start=8):
-        ws.cell(row=i, column=start_col, value=licencie.nom).alignment = center_align
-        ws.cell(row=i, column=start_col).border = border
+    # Filtrage selon l'établissement de l'utilisateur
+    if not request.user.is_superuser:
+        if hasattr(request.user, "profile") and request.user.profile.etablissement:
+            licencies = licencies.filter(etablissement=request.user.profile.etablissement)
 
-        ws.cell(row=i, column=start_col + 1, value=licencie.prenom).alignment = center_align
-        ws.cell(row=i, column=start_col + 1).border = border
+    # Données du tableau (à partir de la ligne 10)
+    data_start_row = 10
+    for i, licencie in enumerate(licencies):
+        row_num = data_start_row + i
+        is_alternate = i % 2 == 1
+        
+        # Données
+        data = [
+            licencie.nom,
+            licencie.prenom,
+            licencie.grade,
+            licencie.nb_presences,
+            licencie.last_session_date.strftime("%d/%m/%Y") if licencie.last_session_date else "Aucune"
+        ]
+        
+        for j, (col_letter, value) in enumerate(zip(column_config.keys(), data)):
+            col_num = ord(col_letter) - ord('A') + 1
+            cell = ws.cell(row=row_num, column=col_num, value=value)
+            cell.font = data_font
+            cell.border = thin_border
+            
+            # Alignement selon le type de données
+            if col_letter in ['D', 'E']:  # Grade et Participations
+                cell.alignment = center_align
+            elif col_letter == 'F':  # Date
+                cell.alignment = center_align
+            else:  # Nom et Prénom
+                cell.alignment = left_align
+            
+            # Couleur de fond alternée
+            if is_alternate:
+                cell.fill = alternate_fill
 
-        ws.cell(row=i, column=start_col + 2, value=licencie.nb_presences).alignment = center_align
-        ws.cell(row=i, column=start_col + 2).border = border
+    # Ligne de résumé (après les données)
+    summary_row = data_start_row + len(licencies) + 1
+    
+    # Ligne de séparation avant le résumé
+    for col in range(2, 7):
+        ws.cell(row=summary_row - 1, column=col).fill = PatternFill("solid", fgColor="BDC3C7")
+    
+    # Résumé
+    merge_and_style(summary_row, 2, 3, "TOTAL", Font(bold=True, size=11, color=primary_color), 
+                   accent_fill, right_align)
+    
+    total_cell = ws.cell(row=summary_row, column=4, value=f"{len(licencies)} licencié(s)")
+    total_cell.font = Font(bold=True, size=11, color=primary_color)
+    total_cell.alignment = center_align
+    total_cell.fill = accent_fill
+    total_cell.border = thin_border
 
-        last_session = licencie.last_session_date.strftime("%Y-%m-%d") if licencie.last_session_date else " "
-        ws.cell(row=i, column=start_col + 3, value=last_session).alignment = center_align
-        ws.cell(row=i, column=start_col + 3).border = border
+    total_participations = sum(licencie.nb_presences for licencie in licencies)
+    part_cell = ws.cell(row=summary_row, column=5, value=f"{total_participations}")
+    part_cell.font = Font(bold=True, size=11, color=primary_color)
+    part_cell.alignment = center_align
+    part_cell.fill = accent_fill
+    part_cell.border = thin_border
 
-    # Ajuster la largeur des colonnes (colonnes B à E)
-    for i, width in enumerate(column_widths, start_col):
-        ws.column_dimensions[get_column_letter(i)].width = width
+    # Pied de page
+    footer_row = summary_row + 3
+    merge_and_style(footer_row, 2, 6, 
+                   f"Document généré automatiquement le {export_date} à {export_time}", 
+                   Font(size=8, italic=True, color=text_light))
+
+    # Configuration des largeurs de colonnes
+    for col_letter, config in column_config.items():
+        ws.column_dimensions[col_letter].width = config['width']
+
+    # Marges et mise en page
+    ws.column_dimensions['A'].width = 2  # Marge gauche
+    ws.column_dimensions['G'].width = 2  # Marge droite
+
+    # Propriétés de la page
+    ws.page_setup.orientation = ws.ORIENTATION_PORTRAIT
+    ws.page_setup.paperSize = ws.PAPERSIZE_A4
+    ws.page_margins.left = 0.7
+    ws.page_margins.right = 0.7
+    ws.page_margins.top = 0.75
+    ws.page_margins.bottom = 0.75
+
+    # En-tête et pied de page pour l'impression
+    ws.oddHeader.center.text = "Suivi de Présence - Licenciés"
+    ws.oddHeader.center.font = "Calibri,Bold"
+    ws.oddFooter.center.text = "Page &P sur &N"
 
     # Génération du nom de fichier
-    filename = f"Kudo_{current_time.strftime('%d%m%Y')}_{current_time.strftime('%H%M%S')}.xlsx"
+    etablissement_clean = etablissement.replace(" ", "_").replace("/", "-")
+    filename = f"Licencies_{etablissement_clean}_{current_time.strftime('%d%m%Y_%H%M')}.xlsx"
 
+    # Réponse HTTP
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = f'attachment; filename={filename}'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
 

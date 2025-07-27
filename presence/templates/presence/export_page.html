@@ -1,11 +1,198 @@
 {% extends 'presence/base.html' %}
 
-{% block content %}
-<h2>Exporter les données</h2>
+{% load static %}
 
-<ul>
-  <li><a href="{% url 'export_donnees_excel' 'all' %}">📦 Export complet</a></li>
-  <li><a href="{% url 'export_donnees_excel' 'users' %}">👤 Export des utilisateurs</a></li>
-  <li><a href="{% url 'export_donnees_excel' 'etablissement' %}">🏫 Export par établissement</a></li>
-</ul>
+{% block title %}Exports - {{ block.super }}{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/export_page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="export-container">
+    <!-- En-tête principal -->
+    <div class="export-header">
+        <h1>📊 <span class="desktop-only">Centre d'Export</span><span class="mobile-only">Exports</span></h1>
+        <p class="desktop-only">Générez et téléchargez vos rapports personnalisés au format Excel</p>
+        <p class="mobile-only">Téléchargez vos rapports Excel</p>
+    </div>
+
+    <!-- Section statistiques -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-number">{{ total_licencies|default:"0" }}</span>
+                <div class="stat-label">Licenciés</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ total_sessions|default:"0" }}</span>
+                <div class="stat-label">Sessions</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ total_users|default:"0" }}</span>
+                <div class="stat-label">Sensei</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ total_etablissements|default:"0" }}</span>
+                <div class="stat-label">Dojo</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grille des exports -->
+    <div class="export-grid">
+        <!-- Export complet -->
+        <div class="export-card complete fade-in-mobile">
+            <div class="card-icon">📦</div>
+            <h3 class="card-title">Export Complet</h3>
+            <p class="card-description">
+                <span class="desktop-only">Téléchargez toutes les données de votre système en un seul fichier Excel organisé.</span>
+                <span class="mobile-only">Toutes vos données en un fichier Excel.</span>
+            </p>
+            <div class="card-features desktop-only">
+                <ul>
+                    <li>Tous les licenciés et utilisateurs</li>
+                    <li>Données consolidées par établissement</li>
+                    <li>Historique complet des sessions</li>
+                    <li>Format prêt pour l'archivage</li>
+                </ul>
+            </div>
+            <div class="card-features mobile-only">
+                <ul>
+                    <li>Licenciés et utilisateurs</li>
+                    <li>Par établissement</li>
+                    <li>Historique sessions</li>
+                </ul>
+            </div>
+            <a href="{% url 'export_donnees_excel' 'all' %}" class="export-btn export-link">
+                <span class="desktop-only">Télécharger l'export complet</span>
+                <span class="mobile-only">Export complet</span>
+            </a>
+        </div>
+
+        <!-- Export utilisateurs -->
+        <div class="export-card users fade-in-mobile">
+            <div class="card-icon">👥</div>
+            <h3 class="card-title">Export Utilisateurs</h3>
+            <p class="card-description">
+                <span class="desktop-only">Obtenez la liste détaillée de tous les utilisateurs avec leurs rôles et statistiques.</span>
+                <span class="mobile-only">Liste des utilisateurs avec rôles et stats.</span>
+            </p>
+            <div class="card-features desktop-only">
+                <ul>
+                    <li>Informations personnelles complètes</li>
+                    <li>Rôles et permissions</li>
+                    <li>Statistiques d'activité</li>
+                    <li>Sessions créées et validées</li>
+                </ul>
+            </div>
+            <div class="card-features mobile-only">
+                <ul>
+                    <li>Infos personnelles</li>
+                    <li>Rôles et permissions</li>
+                    <li>Stats d'activité</li>
+                </ul>
+            </div>
+            <a href="{% url 'export_donnees_excel' 'users' %}" class="export-btn export-link">
+                <span class="desktop-only">Télécharger les utilisateurs</span>
+                <span class="mobile-only">Export utilisateurs</span>
+            </a>
+        </div>
+
+        <!-- Export par établissement -->
+        <div class="export-card establishment fade-in-mobile">
+            <div class="card-icon">🏫</div>
+            <h3 class="card-title">Par Établissement</h3>
+            <p class="card-description">
+                <span class="desktop-only">Données organisées par établissement avec licenciés et utilisateurs associés.</span>
+                <span class="mobile-only">Données par établissement avec licenciés.</span>
+            </p>
+            <div class="card-features desktop-only">
+                <ul>
+                    <li>Vue par établissement</li>
+                    <li>Licenciés et formateurs</li>
+                    <li>Statistiques détaillées</li>
+                    <li>Idéal pour les rapports de direction</li>
+                </ul>
+            </div>
+            <div class="card-features mobile-only">
+                <ul>
+                    <li>Vue par établissement</li>
+                    <li>Licenciés et formateurs</li>
+                    <li>Stats détaillées</li>
+                </ul>
+            </div>
+            <a href="{% url 'export_donnees_excel' 'etablissement' %}" class="export-btn export-link">
+                <span class="desktop-only">Télécharger par établissement</span>
+                <span class="mobile-only">Export établissements</span>
+            </a>
+        </div>
+
+        <!-- Export licenciés -->
+        <div class="export-card licencies fade-in-mobile">
+            <div class="card-icon">🥋</div>
+            <h3 class="card-title">Export Licenciés</h3>
+            <p class="card-description">
+                <span class="desktop-only">Rapport spécialisé sur les licenciés avec suivi de présence et progression.</span>
+                <span class="mobile-only">Licenciés avec suivi de présence.</span>
+            </p>
+            <div class="card-features desktop-only">
+                <ul>
+                    <li>Liste complète des licenciés</li>
+                    <li>Grades et niveaux</li>
+                    <li>Suivi de présence détaillé</li>
+                    <li>Dernière participation</li>
+                </ul>
+            </div>
+            <div class="card-features mobile-only">
+                <ul>
+                    <li>Liste complète</li>
+                    <li>Grades et niveaux</li>
+                    <li>Suivi présence</li>
+                </ul>
+            </div>
+            <a href="{% url 'export_licencies_excel' %}" class="export-btn export-link">
+                <span class="desktop-only">Télécharger les licenciés</span>
+                <span class="mobile-only">Export licenciés</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Section conseils -->
+    <div class="tips-section desktop-only">
+        <h3 class="tips-title">Conseils d'utilisation</h3>
+        <ul class="tips-list">
+            <li><strong>Format Excel :</strong> Tous les exports sont générés au format .xlsx compatible avec Excel et LibreOffice</li>
+            <li><strong>Données en temps réel :</strong> Les rapports reflètent l'état actuel de votre base de données</li>
+            <li><strong>Nom des fichiers :</strong> Chaque export inclut automatiquement la date et l'heure de génération</li>
+            <li><strong>Ouverture rapide :</strong> Double-cliquez sur le fichier téléchargé pour l'ouvrir directement</li>
+            <li><strong>Partage sécurisé :</strong> Les exports respectent vos permissions d'accès aux établissements</li>
+        </ul>
+    </div>
+
+    <!-- Version mobile simplifiée des conseils -->
+    <div class="tips-section mobile-only">
+        <h3 class="tips-title">À savoir</h3>
+        <ul class="tips-list">
+            <li><strong>Format :</strong> Fichiers Excel (.xlsx)</li>
+            <li><strong>Données :</strong> Mises à jour en temps réel</li>
+            <li><strong>Fichiers :</strong> Date/heure dans le nom</li>
+            <li><strong>Sécurité :</strong> Respect de vos permissions</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Overlay de chargement -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="spinner"></div>
+        <h3>Génération en cours...</h3>
+        <p>Préparation de votre fichier Excel, veuillez patienter.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'presence/mobile/export_page.js' %}"></script>
 {% endblock %}
