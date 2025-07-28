@@ -535,6 +535,7 @@ def export_donnees_excel(request, mode='all'):
     light_gray = "F2F2F2"   # Lignes alternées
     black_text = "000000"   # Texte noir
     
+    
     # Polices et styles
     title_font = Font(name="Calibri", bold=True, size=14, color=black_text)
     header_font = Font(name="Calibri", bold=True, size=11, color=white_text)
@@ -607,47 +608,125 @@ def export_donnees_excel(request, mode='all'):
             row += 1
 
     elif mode == 'etablissement':
-        etablissements = Etablissement.objects.all()
-        for etab in etablissements:
-            ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=6)
-            ws.cell(row=row, column=1, value=f"Établissement : {etab.name}").font = Font(bold=True, size=14)
-            row += 2
+            # Styles pour reproduire l'apparence professionnelle
+            etablissement_title_font = Font(name="Calibri", bold=True, size=16, color="2E5BBA")
+            section_title_font = Font(name="Calibri", bold=True, size=12, color=black_text)
+            
+            # Remplissage pour les titres d'établissement
+            etablissement_fill = PatternFill("solid", fgColor="E8F2FF")
+            
+            etablissements = Etablissement.objects.all().order_by('name')
+            
+            for etab_index, etab in enumerate(etablissements):
+                if etab_index > 0:
+                    row += 2  # Espace entre les établissements
+                    
+                # Titre de l'établissement avec style amélioré
+                ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=6)
+                etab_cell = ws.cell(row=row, column=1, value=f"🏫 {etab.name}")
+                etab_cell.font = etablissement_title_font
+                etab_cell.fill = etablissement_fill
+                etab_cell.alignment = center_align
+                etab_cell.border = thin_border
+                row += 2
 
-            # Licenciés
-            ws.cell(row=row, column=1, value="Licenciés").font = title_font
-            row += 1
-            headers = ['Nom', 'Prénom', 'Grade']
-            write_headers(headers, row)
-            row += 1
-            licencies = Licence.objects.filter(etablissement=etab).order_by('nom', 'prenom')
-            for i, licencie in enumerate(licencies):
-                write_row([licencie.nom, licencie.prenom, licencie.grade], row, is_alternate=(i % 2 == 1))
+                # SECTION PROFS/ASSISTANTS EN PREMIER
+                section_cell = ws.cell(row=row, column=1, value="👨‍🏫 Profs / Assistants")
+                section_cell.font = section_title_font
+                row += 1
+                
+                # En-têtes pour les profs/assistants
+                headers_profs = ['Nom', 'Prénom', 'Email', 'Rôle', 'Sessions créées', 'Sessions validées']
+                write_headers(headers_profs, row)
+                row += 1
+                
+                # Données des profs/assistants triées alphabétiquement
+                users = User.objects.filter(profile__etablissement=etab).order_by('last_name', 'first_name')
+                user_count = 0
+                for user in users:
+                    role = user.groups.first().name if user.groups.exists() else "Aucun rôle"
+                    sessions_created = Session.objects.filter(created_by=user).count()
+                    sessions_checked = Session.objects.filter(checked_by=user).count()
+                    write_row([
+                        user.last_name or "-",
+                        user.first_name or "-", 
+                        user.email or "-",
+                        role,
+                        sessions_created,
+                        sessions_checked
+                    ], row, is_alternate=(user_count % 2 == 1))
+                    row += 1
+                    user_count += 1
+                
+                # Si aucun prof/assistant
+                if user_count == 0:
+                    no_data_cell = ws.cell(row=row, column=1, value="Aucun professeur/assistant enregistré")
+                    no_data_cell.font = Font(name="Calibri", italic=True, size=10, color="7F8C8D")
+                    no_data_cell.alignment = center_align
+                    ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=6)
+                    row += 1
+
+                row += 2  # Espace entre les sections
+
+                # SECTION LICENCIÉS EN SECOND
+                section_cell = ws.cell(row=row, column=1, value="🥋 Licenciés")
+                section_cell.font = section_title_font
+                row += 1
+                
+                # En-têtes pour les licenciés
+                headers_licencies = ['Nom', 'Prénom', 'Grade', 'Date naissance', 'Participations', 'Dernière présence']
+                write_headers(headers_licencies, row)
+                row += 1
+                
+                # Données des licenciés triées alphabétiquement
+                licencies = Licence.objects.filter(etablissement=etab).annotate(
+                    nb_presences=Count('sessions'),
+                    last_session_date=Max('sessions__date')
+                ).order_by('nom', 'prenom')
+                
+                licencie_count = 0
+                for licencie in licencies:
+                    # Formatage de la date de naissance
+                    date_naissance = licencie.date_naissance.strftime("%d/%m/%Y") if licencie.date_naissance else "-"
+                    # Formatage de la dernière présence
+                    derniere_presence = licencie.last_session_date.strftime("%d/%m/%Y") if licencie.last_session_date else "Aucune"
+                    
+                    write_row([
+                        licencie.nom,
+                        licencie.prenom,
+                        licencie.grade,
+                        date_naissance,
+                        licencie.nb_presences,
+                        derniere_presence
+                    ], row, is_alternate=(licencie_count % 2 == 1))
+                    row += 1
+                    licencie_count += 1
+                
+                # Si aucun licencié
+                if licencie_count == 0:
+                    no_data_cell = ws.cell(row=row, column=1, value="Aucun licencié enregistré")
+                    no_data_cell.font = Font(name="Calibri", italic=True, size=10, color="7F8C8D")
+                    no_data_cell.alignment = center_align
+                    ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=6)
+                    row += 1
+
+                # Résumé pour l'établissement
+                row += 1
+                summary_cell = ws.cell(row=row, column=1, value=f"📊 Résumé : {user_count} prof(s)/assistant(s) • {licencie_count} licencié(s)")
+                summary_cell.font = Font(name="Calibri", bold=True, size=11, color="2E5BBA")
+                summary_cell.fill = PatternFill("solid", fgColor="F8FAFC")
+                summary_cell.alignment = center_align
+                summary_cell.border = thin_border
+                ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=6)
                 row += 1
 
-            row += 1
-
-            # Utilisateurs
-            ws.cell(row=row, column=1, value="Utilisateurs").font = title_font
-            row += 1
-            headers = ['Nom', 'Prénom', 'Email', 'Rôle', 'Sessions créées', 'Sessions validées']
-            write_headers(headers, row)
-            row += 1
-            users = User.objects.filter(profile__etablissement=etab).order_by('last_name', 'first_name')
-            for i, user in enumerate(users):
-                role = user.groups.first().name if user.groups.exists() else "Aucun"
-                sessions_created = Session.objects.filter(created_by=user).count()
-                sessions_checked = Session.objects.filter(checked_by=user).count()
-                write_row([
-                    user.last_name,
-                    user.first_name,
-                    user.email,
-                    role,
-                    sessions_created,
-                    sessions_checked
-                ], row, is_alternate=(i % 2 == 1))
-                row += 1
-
-            row += 3  # espace entre établissements
+            # Configuration des largeurs de colonnes optimisées
+            ws.column_dimensions['A'].width = 18   # Nom
+            ws.column_dimensions['B'].width = 18   # Prénom  
+            ws.column_dimensions['C'].width = 25   # Email/Grade
+            ws.column_dimensions['D'].width = 18   # Rôle/Date naissance
+            ws.column_dimensions['E'].width = 15   # Sessions créées/Participations
+            ws.column_dimensions['F'].width = 18   # Sessions validées/Dernière présence
 
     else:  # mode == 'all' - Reproduction exacte de l'image
         # Titre principal centré et fusionné

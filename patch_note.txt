@@ -77,6 +77,7 @@ v0.19.0 -> Export data
 v0.19.1 -> UI Mobile : export_page.html
 v0.19.1.1 -> UI Mobile : update -> export_page.html
 v0.19.2 -> Export data -> update export licenciés
+v0.19.3 -> Export data -> update export établissement
 
 next step : 
 - ajout Makefile
