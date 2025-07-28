@@ -525,39 +525,70 @@ def export_donnees_excel(request, mode='all'):
     ws = wb.active
     ws.title = "Export"
 
-    now_str = localtime(now()).strftime('%Y%m%d_%H%M%S')
+    current_time = localtime(now())
+    export_date = current_time.strftime('%d/%m/%Y')
+    export_time = current_time.strftime('%H:%M:%S')
+    user = request.user
+    now_str = current_time.strftime('%Y%m%d_%H%M%S')
     filename = f"Export_{mode}_{now_str}.xlsx"
 
-    # Styles pour reproduire l'image
-    # Couleurs exactes de l'image
-    header_blue = "4472C4"  # Bleu des en-têtes
+    # Styles améliorés - cohérents avec les autres exports
+    # Couleurs de l'identité visuelle
+    primary_color = "2E5BBA"  # Bleu principal
+    secondary_color = "4A90A4"  # Bleu-vert
+    accent_color = "E8F2FF"  # Bleu très clair
+    text_dark = "2C3E50"  # Gris foncé
+    text_light = "7F8C8D"  # Gris clair
+    header_blue = "4472C4"  # Bleu des en-têtes (pour compatibilité)
     white_text = "FFFFFF"   # Texte blanc
     light_gray = "F2F2F2"   # Lignes alternées
     black_text = "000000"   # Texte noir
     
-    
     # Polices et styles
-    title_font = Font(name="Calibri", bold=True, size=14, color=black_text)
+    title_font = Font(name="Calibri", bold=True, size=16, color=primary_color)
+    subtitle_font = Font(name="Calibri", bold=True, size=12, color=text_dark)
     header_font = Font(name="Calibri", bold=True, size=11, color=white_text)
-    data_font = Font(name="Calibri", size=11, color=black_text)
+    data_font = Font(name="Calibri", size=10, color=text_dark)
+    info_font = Font(name="Calibri", size=9, color=text_light)
     
     # Remplissages
-    header_fill = PatternFill("solid", fgColor=header_blue)
-    alternate_fill = PatternFill("solid", fgColor=light_gray)
+    header_fill = PatternFill("solid", fgColor=primary_color)
+    accent_fill = PatternFill("solid", fgColor=accent_color)
+    alternate_fill = PatternFill("solid", fgColor="F8FAFC")  # Gris très clair pour lignes alternées
     
-    # Bordures fines noires
+    # Bordures
+    thick_border = Border(
+        left=Side(style='medium', color=primary_color),
+        right=Side(style='medium', color=primary_color),
+        top=Side(style='medium', color=primary_color),
+        bottom=Side(style='medium', color=primary_color)
+    )
     thin_border = Border(
-        left=Side(style='thin', color=black_text),
-        right=Side(style='thin', color=black_text),
-        top=Side(style='thin', color=black_text),
-        bottom=Side(style='thin', color=black_text)
+        left=Side(style='thin', color='D5DBDB'),
+        right=Side(style='thin', color='D5DBDB'),
+        top=Side(style='thin', color='D5DBDB'),
+        bottom=Side(style='thin', color='D5DBDB')
     )
     
     # Alignements
     center_align = Alignment(horizontal='center', vertical='center')
     left_align = Alignment(horizontal='left', vertical='center')
+    right_align = Alignment(horizontal='right', vertical='center')
 
-    row = 1
+    # Fonctions utilitaires
+    def merge_and_style(row, col_start, col_end, text, font, fill=None, alignment=center_align):
+        if col_start == col_end:
+            cell = ws.cell(row=row, column=col_start)
+        else:
+            ws.merge_cells(start_row=row, start_column=col_start, end_row=row, end_column=col_end)
+            cell = ws.cell(row=row, column=col_start)
+        
+        cell.value = text
+        cell.font = font
+        cell.alignment = alignment
+        if fill:
+            cell.fill = fill
+        return cell
 
     def write_headers(headers, start_row):
         for col_num, header in enumerate(headers, 1):
@@ -565,7 +596,7 @@ def export_donnees_excel(request, mode='all'):
             cell.font = header_font
             cell.fill = header_fill
             cell.alignment = center_align
-            cell.border = thin_border
+            cell.border = thick_border
 
     def write_row(data, start_row, is_alternate=False):
         for col_num, value in enumerate(data, 1):
@@ -574,14 +605,21 @@ def export_donnees_excel(request, mode='all'):
             cell.border = thin_border
             
             # Alignement selon la colonne
-            if col_num in [3]:  # Grade - centré
+            if col_num in [3, 5]:  # Grade et Type - centré
                 cell.alignment = center_align
-            else:  # Nom, Prénom, Établissement, Type - à gauche
+            else:  # Nom, Prénom, Établissement - à gauche
                 cell.alignment = left_align
             
             # Couleur de fond alternée
             if is_alternate:
                 cell.fill = alternate_fill
+
+    # Récupérer les informations utilisateur
+    profile = getattr(user, 'profile', None)
+    etablissement = profile.etablissement.name if profile and profile.etablissement else "Non défini"
+    role = user.groups.first().name if user.groups.exists() else "Aucun rôle"
+
+    row = 1
 
     if mode == 'users':
             # Titre principal centré et fusionné
@@ -661,9 +699,9 @@ def export_donnees_excel(request, mode='all'):
             
             for col_num, value in enumerate(summary_data, 1):
                 cell = ws.cell(row=row, column=col_num, value=value)
-                cell.font = Font(bold=True, size=11, color=header_blue)
+                cell.font = Font(bold=True, size=11, color=primary_color)
                 cell.alignment = center_align
-                cell.fill = PatternFill("solid", fgColor="E8F2FF")
+                cell.fill = accent_fill
                 cell.border = thin_border
 
             # Statistiques supplémentaires
@@ -817,61 +855,185 @@ def export_donnees_excel(request, mode='all'):
             ws.column_dimensions['E'].width = 15   # Sessions créées/Participations
             ws.column_dimensions['F'].width = 18   # Sessions validées/Dernière présence
 
-    else:  # mode == 'all' - Reproduction exacte de l'image
-        # Titre principal centré et fusionné
-        ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=5)
-        title_cell = ws.cell(row=1, column=1, value="Tous licenciés")
-        title_cell.font = title_font
-        title_cell.alignment = center_align
-        
-        row = 3  # Ligne vide après le titre
-        
-        # En-têtes exactement comme dans l'image
-        headers = ['Nom', 'Prénom', 'Grade', 'Établissement', 'Type']
-        write_headers(headers, row)
-        row += 1
+    else:  # mode == 'all' - Version améliorée avec style professionnel
+        # En-tête du document décalé d'une colonne (colonnes C à G)
+        # Titre principal avec style amélioré
+        merge_and_style(1, 3, 7, "EXPORT COMPLET", title_font, accent_fill)
+        merge_and_style(2, 3, 7, "Licenciés et Utilisateurs", subtitle_font)
 
-        # Compteur pour les lignes alternées
-        data_row_count = 0
+        # Informations contextuelles décalées (ligne 4)
+        ws.cell(row=4, column=3, value="Exporté par :").font = info_font
+        ws.cell(row=4, column=4, value=f"{user.get_full_name() or user.username}").font = data_font
+        
+        ws.cell(row=4, column=6, value="Date :").font = info_font
+        ws.cell(row=4, column=6).alignment = right_align
+        ws.cell(row=4, column=7, value=export_date).font = data_font
+        ws.cell(row=4, column=7).alignment = right_align
 
-        # D'abord tous les licenciés - triés par nom alphabétique
-        licencies = Licence.objects.select_related('etablissement').order_by('nom', 'prenom')
+        ws.cell(row=5, column=3, value="Rôle :").font = info_font
+        ws.cell(row=5, column=4, value=role).font = data_font
+        
+        ws.cell(row=5, column=6, value="Heure :").font = info_font
+        ws.cell(row=5, column=6).alignment = right_align
+        ws.cell(row=5, column=7, value=export_time).font = data_font
+        ws.cell(row=5, column=7).alignment = right_align
+
+        ws.cell(row=6, column=3, value="Établissement :").font = info_font
+        ws.cell(row=6, column=4, value=etablissement).font = data_font
+
+        # En-têtes du tableau remontées (ligne 7) avec nouvelle colonne Participations
+        header_row = 7
+        headers = ['Nom', 'Prénom', 'Grade', 'Établissement', 'Participations', 'Type']
+        
+        # Écriture des en-têtes décalés d'une colonne (colonne B à G)
+        for col_num, header in enumerate(headers, 2):  # Commence à la colonne B (2)
+            cell = ws.cell(row=header_row, column=col_num, value=header)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = center_align
+            cell.border = thick_border
+        
+        row = 8  # Première ligne de données
+
+        # Préparer les données pour tri uniforme
+        all_persons = []
+        
+        # Récupérer tous les licenciés avec annotations
+        licencies = Licence.objects.select_related('etablissement').annotate(
+            nb_presences=Count('sessions')
+        )
+        
         for licencie in licencies:
-            write_row([
-                licencie.nom,
-                licencie.prenom,
-                licencie.grade,
-                licencie.etablissement.name if licencie.etablissement else "Non défini",
-                "Licencié"
-            ], row, is_alternate=(data_row_count % 2 == 1))
-            row += 1
-            data_row_count += 1
+            all_persons.append({
+                'nom': licencie.nom,
+                'prenom': licencie.prenom,
+                'grade': licencie.grade,
+                'etablissement': licencie.etablissement.name if licencie.etablissement else "Non défini",
+                'participations': licencie.nb_presences,
+                'type': "🥋 Licencié",
+                'is_licencie': True
+            })
 
-        # Puis tous les utilisateurs - triés par nom alphabétique
-        users = User.objects.select_related('profile__etablissement').order_by('last_name', 'first_name')
-        for user in users:
-            profile = getattr(user, 'profile', None)
+        # Récupérer tous les utilisateurs
+        users = User.objects.select_related('profile__etablissement')
+        
+        for user_obj in users:
+            profile = getattr(user_obj, 'profile', None)
             etab = profile.etablissement.name if profile and profile.etablissement else "Non défini"
-            write_row([
-                user.last_name,
-                user.first_name,
-                "-",  # Pas de grade pour les utilisateurs
-                etab,
-                "Utilisateur"
-            ], row, is_alternate=(data_row_count % 2 == 1))
+            user_role = user_obj.groups.first().name if user_obj.groups.exists() else "Aucun rôle"
+            sessions_created = Session.objects.filter(created_by=user_obj).count()
+            
+            all_persons.append({
+                'nom': user_obj.last_name or "-",
+                'prenom': user_obj.first_name or "-",
+                'grade': f"👨‍🏫 {user_role}",
+                'etablissement': etab,
+                'participations': sessions_created,  # Sessions créées pour les utilisateurs
+                'type': "👤 Utilisateur",
+                'is_licencie': False
+            })
+
+        # Tri alphabétique uniforme par nom puis prénom
+        all_persons.sort(key=lambda x: (x['nom'].lower(), x['prenom'].lower()))
+
+        # Compteurs
+        licencie_count = sum(1 for p in all_persons if p['is_licencie'])
+        user_count = sum(1 for p in all_persons if not p['is_licencie'])
+
+        # Écriture des données avec lignes alternées
+        for data_row_count, person in enumerate(all_persons):
+            data = [
+                person['nom'],
+                person['prenom'],
+                person['grade'],
+                person['etablissement'],
+                person['participations'],
+                person['type']
+            ]
+            
+            # Écriture décalée d'une colonne (colonne B à G)
+            for col_offset, value in enumerate(data):
+                col_num = col_offset + 2  # Décalage d'une colonne
+                cell = ws.cell(row=row, column=col_num, value=value)
+                cell.font = data_font
+                cell.border = thin_border
+                
+                # Alignement selon la colonne
+                if col_num in [4, 6, 7]:  # Grade, Participations, Type - centré
+                    cell.alignment = center_align
+                else:  # Nom, Prénom, Établissement - à gauche
+                    cell.alignment = left_align
+                
+                # Couleur de fond alternée
+                if data_row_count % 2 == 1:
+                    cell.fill = alternate_fill
+            
             row += 1
-            data_row_count += 1
 
-    # Configuration exacte des largeurs de colonnes comme dans l'image
-    ws.column_dimensions['A'].width = 15   # Nom
-    ws.column_dimensions['B'].width = 15   # Prénom  
-    ws.column_dimensions['C'].width = 15   # Grade
-    ws.column_dimensions['D'].width = 20   # Établissement
-    ws.column_dimensions['E'].width = 12   # Type
+        # Ligne de séparation avant le résumé
+        row += 1
+        for col in range(2, 8):  # Décalé d'une colonne
+            ws.cell(row=row, column=col).fill = PatternFill("solid", fgColor="BDC3C7")
+        row += 1
+        
+        # Ligne de résumé statistique décalée
+        summary_data = [
+            "TOTAL",
+            f"{len(all_persons)} personnes",
+            "-",
+            "-",
+            f"{sum(p['participations'] for p in all_persons)}",
+            f"{licencie_count} licenciés • {user_count} utilisateurs"
+        ]
+        
+        for col_offset, value in enumerate(summary_data):
+            col_num = col_offset + 2  # Décalage d'une colonne
+            cell = ws.cell(row=row, column=col_num, value=value)
+            cell.font = Font(bold=True, size=11, color=primary_color)
+            cell.alignment = center_align if col_num in [2, 3, 6, 7] else left_align
+            cell.fill = accent_fill
+            cell.border = thin_border
 
-    # Hauteur des lignes
-    for row_num in range(1, row + 1):
-        ws.row_dimensions[row_num].height = 20
+        # Statistiques détaillées décalées
+        row += 2
+        merge_and_style(row, 3, 7, 
+                       f"📊 Répartition : {licencie_count} licenciés et {user_count} utilisateurs", 
+                       Font(name="Calibri", bold=True, size=11, color=secondary_color),
+                       PatternFill("solid", fgColor="F8FAFC"))
+
+        # Pied de page décalé
+        footer_row = row + 3
+        merge_and_style(footer_row, 3, 7, 
+                       f"Document généré automatiquement le {export_date} à {export_time}", 
+                       Font(size=8, italic=True, color=text_light))
+
+        # Configuration des largeurs de colonnes optimisées avec décalage
+        column_config = {
+            'A': 2,    # Marge gauche
+            'B': 18,   # Nom
+            'C': 18,   # Prénom  
+            'D': 22,   # Grade/Rôle
+            'E': 18,   # Établissement
+            'F': 15,   # Participations
+            'G': 15,   # Type
+            'H': 2     # Marge droite
+        }
+
+        for col_letter, width in column_config.items():
+            ws.column_dimensions[col_letter].width = width
+
+        # Propriétés de la page
+        ws.page_setup.orientation = ws.ORIENTATION_PORTRAIT
+        ws.page_setup.paperSize = ws.PAPERSIZE_A4
+        ws.page_margins.left = 0.7
+        ws.page_margins.right = 0.7
+        ws.page_margins.top = 0.75
+        ws.page_margins.bottom = 0.75
+
+        # En-tête et pied de page pour l'impression
+        ws.oddHeader.center.text = "Export Complet - Licenciés et Utilisateurs"
+        ws.oddHeader.center.font = "Calibri,Bold"
+        ws.oddFooter.center.text = "Page &P sur &N"
 
     # Finalisation
     response = HttpResponse(
