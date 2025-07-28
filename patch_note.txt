@@ -76,6 +76,7 @@ v0.18.9 -> nombre de session créer par l'utilisateur
 v0.19.0 -> Export data
 v0.19.1 -> UI Mobile : export_page.html
 v0.19.1.1 -> UI Mobile : update -> export_page.html
+v0.19.2 -> Export data -> update export licenciés
 
 next step : 
 - ajout Makefile

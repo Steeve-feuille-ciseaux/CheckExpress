@@ -417,6 +417,9 @@ def export_licencies_excel(request):
         if hasattr(request.user, "profile") and request.user.profile.etablissement:
             licencies = licencies.filter(etablissement=request.user.profile.etablissement)
 
+    # Tri alphabétique par nom puis prénom
+    licencies = licencies.order_by('nom', 'prenom')
+
     # Données du tableau (à partir de la ligne 10)
     data_start_row = 10
     for i, licencie in enumerate(licencies):
@@ -525,15 +528,33 @@ def export_donnees_excel(request, mode='all'):
     now_str = localtime(now()).strftime('%Y%m%d_%H%M%S')
     filename = f"Export_{mode}_{now_str}.xlsx"
 
-    # Styles
-    bold_font = Font(bold=True)
-    header_font = Font(bold=True, color="FFFFFF")
-    header_fill = PatternFill("solid", fgColor="4F81BD")
-    border = Border(
-        left=Side(style='thin'), right=Side(style='thin'),
-        top=Side(style='thin'), bottom=Side(style='thin')
+    # Styles pour reproduire l'image
+    # Couleurs exactes de l'image
+    header_blue = "4472C4"  # Bleu des en-têtes
+    white_text = "FFFFFF"   # Texte blanc
+    light_gray = "F2F2F2"   # Lignes alternées
+    black_text = "000000"   # Texte noir
+    
+    # Polices et styles
+    title_font = Font(name="Calibri", bold=True, size=14, color=black_text)
+    header_font = Font(name="Calibri", bold=True, size=11, color=white_text)
+    data_font = Font(name="Calibri", size=11, color=black_text)
+    
+    # Remplissages
+    header_fill = PatternFill("solid", fgColor=header_blue)
+    alternate_fill = PatternFill("solid", fgColor=light_gray)
+    
+    # Bordures fines noires
+    thin_border = Border(
+        left=Side(style='thin', color=black_text),
+        right=Side(style='thin', color=black_text),
+        top=Side(style='thin', color=black_text),
+        bottom=Side(style='thin', color=black_text)
     )
-    center_align = Alignment(horizontal='center')
+    
+    # Alignements
+    center_align = Alignment(horizontal='center', vertical='center')
+    left_align = Alignment(horizontal='left', vertical='center')
 
     row = 1
 
@@ -543,13 +564,23 @@ def export_donnees_excel(request, mode='all'):
             cell.font = header_font
             cell.fill = header_fill
             cell.alignment = center_align
-            cell.border = border
+            cell.border = thin_border
 
-    def write_row(data, start_row):
+    def write_row(data, start_row, is_alternate=False):
         for col_num, value in enumerate(data, 1):
             cell = ws.cell(row=start_row, column=col_num, value=value)
-            cell.alignment = center_align
-            cell.border = border
+            cell.font = data_font
+            cell.border = thin_border
+            
+            # Alignement selon la colonne
+            if col_num in [3]:  # Grade - centré
+                cell.alignment = center_align
+            else:  # Nom, Prénom, Établissement, Type - à gauche
+                cell.alignment = left_align
+            
+            # Couleur de fond alternée
+            if is_alternate:
+                cell.fill = alternate_fill
 
     if mode == 'users':
         ws.cell(row=row, column=1, value="Utilisateurs").font = Font(bold=True, size=14)
@@ -558,8 +589,8 @@ def export_donnees_excel(request, mode='all'):
         write_headers(headers, row)
         row += 1
 
-        users = User.objects.all()
-        for user in users:
+        users = User.objects.all().order_by('last_name', 'first_name')
+        for i, user in enumerate(users):
             etab = getattr(user.profile, 'etablissement', None)
             role = user.groups.first().name if user.groups.exists() else "Aucun"
             sessions_created = Session.objects.filter(created_by=user).count()
@@ -572,7 +603,7 @@ def export_donnees_excel(request, mode='all'):
                 role,
                 sessions_created,
                 sessions_checked,
-            ], row)
+            ], row, is_alternate=(i % 2 == 1))
             row += 1
 
     elif mode == 'etablissement':
@@ -583,26 +614,26 @@ def export_donnees_excel(request, mode='all'):
             row += 2
 
             # Licenciés
-            ws.cell(row=row, column=1, value="Licenciés").font = bold_font
+            ws.cell(row=row, column=1, value="Licenciés").font = title_font
             row += 1
             headers = ['Nom', 'Prénom', 'Grade']
             write_headers(headers, row)
             row += 1
-            licencies = Licence.objects.filter(etablissement=etab)
-            for licencie in licencies:
-                write_row([licencie.nom, licencie.prenom, licencie.grade], row)
+            licencies = Licence.objects.filter(etablissement=etab).order_by('nom', 'prenom')
+            for i, licencie in enumerate(licencies):
+                write_row([licencie.nom, licencie.prenom, licencie.grade], row, is_alternate=(i % 2 == 1))
                 row += 1
 
             row += 1
 
             # Utilisateurs
-            ws.cell(row=row, column=1, value="Utilisateurs").font = bold_font
+            ws.cell(row=row, column=1, value="Utilisateurs").font = title_font
             row += 1
             headers = ['Nom', 'Prénom', 'Email', 'Rôle', 'Sessions créées', 'Sessions validées']
             write_headers(headers, row)
             row += 1
-            users = User.objects.filter(profile__etablissement=etab)
-            for user in users:
+            users = User.objects.filter(profile__etablissement=etab).order_by('last_name', 'first_name')
+            for i, user in enumerate(users):
                 role = user.groups.first().name if user.groups.exists() else "Aucun"
                 sessions_created = Session.objects.filter(created_by=user).count()
                 sessions_checked = Session.objects.filter(checked_by=user).count()
@@ -613,40 +644,66 @@ def export_donnees_excel(request, mode='all'):
                     role,
                     sessions_created,
                     sessions_checked
-                ], row)
+                ], row, is_alternate=(i % 2 == 1))
                 row += 1
 
             row += 3  # espace entre établissements
 
-    else:  # mode == 'all'
-        ws.cell(row=row, column=1, value="Toutes les données").font = Font(bold=True, size=14)
-        row += 2
-
+    else:  # mode == 'all' - Reproduction exacte de l'image
+        # Titre principal centré et fusionné
+        ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=5)
+        title_cell = ws.cell(row=1, column=1, value="Tous licenciés")
+        title_cell.font = title_font
+        title_cell.alignment = center_align
+        
+        row = 3  # Ligne vide après le titre
+        
+        # En-têtes exactement comme dans l'image
         headers = ['Nom', 'Prénom', 'Grade', 'Établissement', 'Type']
         write_headers(headers, row)
         row += 1
 
-        for licencie in Licence.objects.select_related('etablissement'):
+        # Compteur pour les lignes alternées
+        data_row_count = 0
+
+        # D'abord tous les licenciés - triés par nom alphabétique
+        licencies = Licence.objects.select_related('etablissement').order_by('nom', 'prenom')
+        for licencie in licencies:
             write_row([
                 licencie.nom,
                 licencie.prenom,
                 licencie.grade,
                 licencie.etablissement.name if licencie.etablissement else "Non défini",
                 "Licencié"
-            ], row)
+            ], row, is_alternate=(data_row_count % 2 == 1))
             row += 1
+            data_row_count += 1
 
-        for user in User.objects.select_related('profile__etablissement'):
+        # Puis tous les utilisateurs - triés par nom alphabétique
+        users = User.objects.select_related('profile__etablissement').order_by('last_name', 'first_name')
+        for user in users:
             profile = getattr(user, 'profile', None)
             etab = profile.etablissement.name if profile and profile.etablissement else "Non défini"
             write_row([
                 user.last_name,
                 user.first_name,
-                "-",
+                "-",  # Pas de grade pour les utilisateurs
                 etab,
                 "Utilisateur"
-            ], row)
+            ], row, is_alternate=(data_row_count % 2 == 1))
             row += 1
+            data_row_count += 1
+
+    # Configuration exacte des largeurs de colonnes comme dans l'image
+    ws.column_dimensions['A'].width = 15   # Nom
+    ws.column_dimensions['B'].width = 15   # Prénom  
+    ws.column_dimensions['C'].width = 15   # Grade
+    ws.column_dimensions['D'].width = 20   # Établissement
+    ws.column_dimensions['E'].width = 12   # Type
+
+    # Hauteur des lignes
+    for row_num in range(1, row + 1):
+        ws.row_dimensions[row_num].height = 20
 
     # Finalisation
     response = HttpResponse(

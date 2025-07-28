@@ -193,6 +193,7 @@
 </div>
 
 {% block javascript %}
+    {{ block.super }}
     <script src="{% static 'presence/mobile/export_page.js' %}"></script>
 {% endblock %}
 
