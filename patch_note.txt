@@ -88,6 +88,7 @@ next step :
 - Poursuivre Export data -> nettoyé les export code 
 
 **  Bug repérer sur les session a revenir **
+- format export user, ignore les tailles des colognes -> code correct
 
 ** cmd récurrent *
 python -m venv env

@@ -584,28 +584,117 @@ def export_donnees_excel(request, mode='all'):
                 cell.fill = alternate_fill
 
     if mode == 'users':
-        ws.cell(row=row, column=1, value="Utilisateurs").font = Font(bold=True, size=14)
-        row += 2
-        headers = ['Nom', 'Prénom', 'Email', 'Établissement', 'Rôle', 'Sessions créées', 'Sessions validées']
-        write_headers(headers, row)
-        row += 1
-
-        users = User.objects.all().order_by('last_name', 'first_name')
-        for i, user in enumerate(users):
-            etab = getattr(user.profile, 'etablissement', None)
-            role = user.groups.first().name if user.groups.exists() else "Aucun"
-            sessions_created = Session.objects.filter(created_by=user).count()
-            sessions_checked = Session.objects.filter(checked_by=user).count()
-            write_row([
-                user.last_name,
-                user.first_name,
-                user.email,
-                etab.name if etab else "Non défini",
-                role,
-                sessions_created,
-                sessions_checked,
-            ], row, is_alternate=(i % 2 == 1))
+            # Titre principal centré et fusionné
+            ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=7)
+            title_cell = ws.cell(row=1, column=1, value="👨‍🏫 Tous les Profs / Assistants")
+            title_cell.font = title_font
+            title_cell.alignment = center_align
+            
+            row = 3  # Ligne vide après le titre
+            
+            # En-têtes exactement comme dans l'image mais adaptés aux utilisateurs
+            headers = ['Nom', 'Prénom', 'Email', 'Établissement', 'Rôle', 'Sessions créées', 'Sessions validées']
+            write_headers(headers, row)
             row += 1
+
+            # Récupération et tri des utilisateurs
+            users = User.objects.select_related('profile__etablissement').prefetch_related('groups').order_by('last_name', 'first_name')
+            
+            # Compteur pour les lignes alternées
+            user_count = 0
+            total_sessions_created = 0
+            total_sessions_checked = 0
+
+            for user in users:
+                profile = getattr(user, 'profile', None)
+                etab = profile.etablissement.name if profile and profile.etablissement else "Non défini"
+                role = user.groups.first().name if user.groups.exists() else "Aucun rôle"
+                sessions_created = Session.objects.filter(created_by=user).count()
+                sessions_checked = Session.objects.filter(checked_by=user).count()
+                
+                # Cumul pour les statistiques
+                total_sessions_created += sessions_created
+                total_sessions_checked += sessions_checked
+                
+                # Écriture des données avec contenu centré
+                data = [
+                    user.last_name or "-",
+                    user.first_name or "-",
+                    user.email or "-",
+                    etab,
+                    role,
+                    sessions_created,
+                    sessions_checked,
+                ]
+                
+                for col_num, value in enumerate(data, 1):
+                    cell = ws.cell(row=row, column=col_num, value=value)
+                    cell.font = data_font
+                    cell.border = thin_border
+                    
+                    # TOUT LE CONTENU CENTRÉ
+                    cell.alignment = center_align
+                    
+                    # Couleur de fond alternée
+                    if user_count % 2 == 1:
+                        cell.fill = alternate_fill
+                
+                row += 1
+                user_count += 1
+
+            # Ligne de séparation avant le résumé
+            row += 1
+            for col in range(1, 8):
+                ws.cell(row=row, column=col).fill = PatternFill("solid", fgColor="BDC3C7")
+            row += 1
+            
+            # Ligne de résumé statistique
+            summary_data = [
+                "TOTAL",
+                f"{user_count} membre(s)",
+                "-",
+                "-", 
+                "-",
+                f"{total_sessions_created}",
+                f"{total_sessions_checked}"
+            ]
+            
+            for col_num, value in enumerate(summary_data, 1):
+                cell = ws.cell(row=row, column=col_num, value=value)
+                cell.font = Font(bold=True, size=11, color=header_blue)
+                cell.alignment = center_align
+                cell.fill = PatternFill("solid", fgColor="E8F2FF")
+                cell.border = thin_border
+
+            # Statistiques supplémentaires
+            row += 2
+            stats_info = [
+                f"📊 Statistiques générales :",
+                f"• Moyenne sessions créées par membre : {total_sessions_created/user_count:.1f}" if user_count > 0 else "• Aucun membre",
+                f"• Moyenne sessions validées par membre : {total_sessions_checked/user_count:.1f}" if user_count > 0 else "",
+                f"• Total activité : {total_sessions_created + total_sessions_checked} actions"
+            ]
+            
+            for info in stats_info:
+                if info:  # Éviter les lignes vides
+                    ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=7)
+                    info_cell = ws.cell(row=row, column=1, value=info)
+                    info_cell.font = Font(name="Calibri", size=10, color="7F8C8D")
+                    info_cell.alignment = left_align
+                    row += 1
+
+            # Configuration des largeurs de colonnes selon l'image (plus larges pour lisibilité)
+            ws.column_dimensions['A'].width = 25.3   # Nom
+            ws.column_dimensions['B'].width = 21.7   # Prénom
+            ws.column_dimensions['C'].width = 34.1   # Email
+            ws.column_dimensions['D'].width = 19.1   # Établissement
+            ws.column_dimensions['E'].width = 14.4   # Rôle
+            ws.column_dimensions['F'].width = 14.1   # Sessions créées
+            ws.column_dimensions['G'].width = 14.1   # Sessions validées
+
+            # Hauteur des lignes identique à l'image
+            for row_num in range(1, row + 1):
+                ws.row_dimensions[row_num].height = 18
 
     elif mode == 'etablissement':
             # Styles pour reproduire l'apparence professionnelle
