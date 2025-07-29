@@ -13,14 +13,22 @@
 <div class="mobile-users">
     <!-- En-tête de page -->
     <div class="page-header">
-        <h2 class="page-title">👥 Liste des utilisateurs</h2>
+        <h2 class="page-title">👥 Liste des profs</h2>
     </div>
 
     <!-- Statistiques -->
     {% if users %}
-    <div class="users-stats">
-        <p class="stats-number">{{ users|length }}</p>
-        <p class="stats-label">utilisateur{{ users|length|pluralize }} au total</p>
+    <div class="stats-row">
+        <div class="users-stats">
+            <p class="stats-number">{{ users|length }}</p>
+            <p class="stats-label">Prof{{ users|length|pluralize }}</p>
+        </div>
+        <div class="users-stats">
+            <a href="{% url 'ajouter_utilisateur_prof' %}" class="stats-add-btn">
+                <span class="action-btn-icon">➕</span>
+                Ajouter
+            </a>
+        </div>
     </div>
     {% endif %}
 

@@ -3,7 +3,7 @@
 
 {% block content %}
   <div class="container">
-    <h2>➕ Ajouter un utilisateur Prof / Prof assistant</h2>
+    <h2>Ajouter un Prof</h2>
 
     {% if form.non_field_errors %}
     <div class="form-errors">
@@ -70,11 +70,11 @@
         {% endif %}
       </p>
 
-      <button type="submit" class="btn-submit">Créer l'utilisateur</button>
+      <button type="submit" class="btn-submit">Créer un prof</button>
     </form>
 
     <div class="cancel-wrapper">
-      <a href="{% url 'accueil' %}" class="btn-cancel">Annuler</a>
+      <a href="{% url 'voir_utilisateurs' %}" class="btn-cancel">Annuler</a>
     </div>
   </div>
 {% endblock %}

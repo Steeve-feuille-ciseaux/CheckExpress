@@ -81,6 +81,7 @@ v0.19.3 -> Export data -> update export établissement
 v0.19.4 -> Export data -> update export user
 v0.20.0 -> Export data Finalisé
 v0.20.1 -> Bouton Ajouté un licencié replacé
+v0.20.2 -> Bouton Ajouté un prof replacé
 
 next step : 
 - Remettre le bouton ajoute prof / prof assistant * juste le bouton pas la feature *  
