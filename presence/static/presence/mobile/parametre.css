@@ -1,4 +1,4 @@
-/* Styles pour la liste des utilisateurs mobile - Mobile-First 2025 */
+/* Mobile Users - Mobile First 2025 */
 .mobile-users {
     padding: 0;
     max-width: 100%;
@@ -6,7 +6,7 @@
     min-height: 100vh;
 }
 
-/* En-tête de page avec gradient moderne */
+/* Page Header */
 .page-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 2rem 1rem 1.5rem;
@@ -23,7 +23,7 @@
     text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Boutons d'action principaux - Touch-friendly 2025 */
+/* Action Buttons */
 .action-buttons {
     display: flex;
     gap: 0.5rem;
@@ -87,7 +87,7 @@
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
-/* Grille des utilisateurs */
+/* Users Grid */
 .users-grid {
     display: flex;
     flex-direction: column;
@@ -95,7 +95,7 @@
     padding: 0 1rem;
 }
 
-/* Carte utilisateur avec design moderne */
+/* User Card */
 .user-card {
     background: white;
     border-radius: 20px;
@@ -105,7 +105,12 @@
     border: 1px solid rgba(255, 255, 255, 0.18);
     position: relative;
     -webkit-tap-highlight-color: transparent;
+    animation: fadeInUp 0.6s ease-out;
 }
+
+.user-card:nth-child(2) { animation-delay: 0.1s; }
+.user-card:nth-child(3) { animation-delay: 0.2s; }
+.user-card:nth-child(4) { animation-delay: 0.3s; }
 
 .user-card:active {
     transform: scale(0.98);
@@ -122,7 +127,6 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-/* En-tête de la carte avec amélioration UX */
 .user-header {
     padding: 1.5rem 1.5rem 1rem;
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
@@ -145,7 +149,6 @@
     font-weight: 500;
 }
 
-/* Contenu de la carte */
 .user-content {
     padding: 1rem;
 }
@@ -193,7 +196,7 @@
     font-style: italic;
 }
 
-/* Badge pour les rôles - Design moderne */
+/* Role Badges */
 .role-badges {
     display: flex;
     flex-wrap: wrap;
@@ -201,7 +204,7 @@
 }
 
 .role-badge {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
     color: #667eea;
     padding: 0.4rem 0.8rem;
     border-radius: 16px;
@@ -218,7 +221,7 @@
     border-color: rgba(107, 114, 128, 0.2);
 }
 
-/* Actions de la carte - Touch-friendly */
+/* User Actions */
 .user-actions {
     padding: 1.25rem 1.5rem;
     background: #f9fafb;
@@ -243,7 +246,7 @@
     position: relative;
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
-    min-height: 44px; /* Taille minimum recommandée pour le touch */
+    min-height: 44px;
 }
 
 .user-action-btn::before {
@@ -285,13 +288,12 @@
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
 }
 
-/* Message vide avec design moderne */
+/* Empty State */
 .no-users-container {
     text-align: center;
     padding: 4rem 2rem;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border-radius: 24px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     margin: 1rem;
@@ -319,17 +321,28 @@
     line-height: 1.6;
 }
 
-/* Statistiques avec design glassmorphism */
+/* Stats Row & Cards */
+.stats-row {
+    display: flex;
+    justify-content: space-between; /* 👈 Ajout ici */
+    gap: 1rem;
+    margin: 1rem;
+    align-items: stretch; /* 👌 utile pour hauteur homogène */
+}
+
 .users-stats {
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    margin: 1rem;
     padding: 1.5rem 1rem;
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.1);
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.18);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .stats-number {
@@ -341,6 +354,7 @@
     background-clip: text;
     margin: 0;
     text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    line-height: 1;
 }
 
 .stats-label {
@@ -350,7 +364,53 @@
     font-weight: 500;
 }
 
-/* Animations */
+.stats-add-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    width: 100%;
+    height: 100%;
+    min-height: 80px;
+}
+
+.stats-add-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.stats-add-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+
+.stats-add-btn:active::before {
+    left: 100%;
+}
+
+.stats-add-btn .action-btn-icon {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Animation */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -362,130 +422,89 @@
     }
 }
 
-.user-card {
-    animation: fadeInUp 0.6s ease-out;
-}
-
-.user-card:nth-child(2) { animation-delay: 0.1s; }
-.user-card:nth-child(3) { animation-delay: 0.2s; }
-.user-card:nth-child(4) { animation-delay: 0.3s; }
-
-/* Responsive amélioré pour 2025 */
+/* Responsive */
 @media (max-width: 480px) {
     .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem 1rem 1.5rem;
         margin-bottom: 1rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
-
-    .page-title {
-        margin: 0;
-        font-size: 1.75rem;
-        color: white;
-        font-weight: 700;
-        text-align: center;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    
     .action-buttons {
-        margin: 0 1rem 1rem;
         padding: 0.75rem;
     }
-    
     .action-btn {
         min-width: 80px;
         padding: 0.875rem 0.75rem;
     }
-    
-    .action-btn-icon {
-        font-size: 1.25rem;
-    }
-    
     .users-grid {
         padding: 0 0.75rem;
     }
-    
     .user-actions {
         flex-direction: column;
-        gap: 0.5rem;
     }
-    
-    .user-action-btn {
-        width: 100%;
+    .stats-row {
+        flex-wrap: nowrap;
+    }
+    .stats-number {
+        font-size: 2rem;
+    }
+    .stats-add-btn {
+        min-height: 60px;
+        font-size: 0.75rem;
+    }
+
+    .users-stats:first-child {
+        flex-grow: 1;
+    }
+
+    .users-stats:last-child {
+        flex-shrink: 0;
     }
 }
 
 @media (max-width: 360px) {
-    .page-header {
-        padding: 1.25rem 0.75rem 1rem;
-    }
-    
-    .action-buttons {
-        margin: 0 0.75rem 1rem;
-        padding: 0.5rem;
-        gap: 0.375rem;
-    }
-    
-    .action-btn {
-        min-width: 70px;
-        padding: 0.75rem 0.5rem;
-        font-size: 0.75rem;
-    }
-    
-    .users-grid {
-        padding: 0 0.5rem;
-    }
-    
-    .user-header {
-        padding: 1.25rem 1.25rem 0.75rem;
-    }
-    
-    .user-content {
-        padding: 0.75rem 1.25rem;
-    }
-    
-    .user-actions {
-        padding: 1rem 1.25rem;
-    }
-    
-    .info-item {
-        flex-direction: column;
+    .stats-row {
+        margin: 1rem 0.5rem;
         gap: 0.5rem;
-        align-items: flex-start;
     }
-    
-    .info-icon {
-        align-self: flex-start;
+    .stats-number {
+        font-size: 1.75rem;
+    }
+    .stats-label {
+        font-size: 0.85rem;
+    }
+    .stats-add-btn {
+        min-height: 50px;
+        font-size: 0.7rem;
     }
 }
 
-/* Dark mode support pour 2025 */
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
     .mobile-users {
         background: #0f172a;
     }
-    
     .user-card {
         background: #1e293b;
         border-color: rgba(255, 255, 255, 0.1);
     }
-    
     .user-header {
         background: rgba(102, 126, 234, 0.1);
         border-bottom-color: rgba(102, 126, 234, 0.2);
     }
-    
     .user-actions {
         background: #0f172a;
     }
-    
     .user-name {
         color: #f8fafc;
     }
-    
     .info-value {
         color: #e2e8f0;
+    }
+    .users-stats {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    .stats-label {
+        color: #94a3b8;
     }
 }
 

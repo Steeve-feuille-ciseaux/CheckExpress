@@ -15,11 +15,32 @@
         <h2 class="page-title">👥 Liste des licenciés</h2>
     </div>
 
-    <!-- Statistiques -->
+    <!-- Statistiques côte à côte -->
     {% if licencies %}
-    <div class="users-stats">
-        <p class="stats-number">{{ licencies|length }}</p>
-        <p class="stats-label">licencié{{ licencies|length|pluralize }} au total</p>
+    <div class="stats-row">
+        <div class="users-stats">
+            <p class="stats-number">{{ licencies|length }}</p>
+            <p class="stats-label">licencié{{ licencies|length|pluralize }}</p>
+        </div>
+        <div class="users-stats">
+            <a href="{% url 'ajouter_licencie' %}" class="stats-add-btn">
+                <span class="action-btn-icon">➕</span>
+                Ajouter
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <div class="stats-row">
+        <div class="users-stats">
+            <p class="stats-number">0</p>
+            <p class="stats-label">aucun licencié</p>
+        </div>
+        <div class="users-stats">
+            <a href="{% url 'ajouter_licencie' %}" class="stats-add-btn">
+                <span class="action-btn-icon">➕</span>
+                Ajouter
+            </a>
+        </div>
     </div>
     {% endif %}
 
@@ -124,7 +145,7 @@
         <div class="no-users-container">
             <div class="no-users-icon">👤</div>
             <h3 class="no-users-title">Aucun licencié trouvé</h3>
-            <p class="no-users-text">Aucun licencié n’a encore été enregistré.</p>
+            <p class="no-users-text">Aucun licencié n'a encore été enregistré.</p>
         </div>
     {% endif %}
 </div>

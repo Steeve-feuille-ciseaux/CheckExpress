@@ -80,9 +80,10 @@ v0.19.2 -> Export data -> update export licenciés
 v0.19.3 -> Export data -> update export établissement
 v0.19.4 -> Export data -> update export user
 v0.20.0 -> Export data Finalisé
+v0.20.1 -> Bouton Ajouté un licencié replacé
 
 next step : 
-- Remettre les bouton ajout de licence et ajoute prof / prof assistant * juste le bouton pas la feature * 
+- Remettre le bouton ajoute prof / prof assistant * juste le bouton pas la feature *  
 - !!! ajuste les message d'information validation, modification, créer, suppression !!! -> liste_utilisateur
 - MAJ mobile -> voir_session.html
 - MAJ mobile ->  user_detail.html
