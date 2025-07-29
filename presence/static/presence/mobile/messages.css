@@ -1,0 +1,67 @@
+/* Positionnement global des messages */
+.messages {
+    position: fixed !important;
+    top: 70px !important;
+    left: 0;
+    right: 0;
+    z-index: 1050 !important;
+    margin: 0;
+    padding: 0 1rem;
+}
+
+/* Messages pour bureau */
+.desktop-container .messages {
+    margin-bottom: 2rem;
+}
+
+/* Styles généraux pour les messages */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border-left: 4px solid;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Types de messages */
+.alert-success {
+    background: #d4edda;
+    border-left-color: #28a745;
+    color: #155724;
+}
+
+.alert-error {
+    background: #f8d7da;
+    border-left-color: #dc3545;
+    color: #721c24;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    border-left-color: #ffc107;
+    color: #856404;
+}
+
+.alert-info {
+    background: #d1ecf1;
+    border-left-color: #17a2b8;
+    color: #0c5460;
+}
+
+/* Icône de message */
+.alert-icon {
+    margin-right: 0.5rem;
+}
+
+/* Bouton de fermeture */
+.alert-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: inherit;
+    cursor: pointer;
+    margin-left: auto;
+}

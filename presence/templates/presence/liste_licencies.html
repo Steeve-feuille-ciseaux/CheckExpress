@@ -17,32 +17,37 @@
 
     <!-- Statistiques côte à côte -->
     {% if licencies %}
-    <div class="stats-row">
-        <div class="users-stats">
-            <p class="stats-number">{{ licencies|length }}</p>
-            <p class="stats-label">licencié{{ licencies|length|pluralize }}</p>
+        <div class="stats-row">
+            <div class="users-stats">
+                <p class="stats-number">{{ licencies|length }}</p>
+                <p class="stats-label">licencié{{ licencies|length|pluralize }}</p>
+            </div>
+            {% if request.user.is_superuser %}
+            <div class="users-stats">
+                <a href="{% url 'ajouter_licencie' %}" class="stats-add-btn">
+                    <span class="action-btn-icon">➕</span>
+                    Ajouter
+                </a>
+            </div>
+            {% endif %}
         </div>
-        <div class="users-stats">
-            <a href="{% url 'ajouter_licencie' %}" class="stats-add-btn">
-                <span class="action-btn-icon">➕</span>
-                Ajouter
-            </a>
-        </div>
-    </div>
     {% else %}
-    <div class="stats-row">
-        <div class="users-stats">
-            <p class="stats-number">0</p>
-            <p class="stats-label">aucun licencié</p>
+        <div class="stats-row">
+            <div class="users-stats">
+                <p class="stats-number">0</p>
+                <p class="stats-label">aucun licencié</p>
+            </div>
+            {% if request.user.is_superuser %}
+            <div class="users-stats">
+                <a href="{% url 'ajouter_licencie' %}" class="stats-add-btn">
+                    <span class="action-btn-icon">➕</span>
+                    Ajouter
+                </a>
+            </div>
+            {% endif %}
         </div>
-        <div class="users-stats">
-            <a href="{% url 'ajouter_licencie' %}" class="stats-add-btn">
-                <span class="action-btn-icon">➕</span>
-                Ajouter
-            </a>
-        </div>
-    </div>
     {% endif %}
+
 
     <!-- Filtrage établissement (pour superusers) -->
     {% if request.user.is_superuser %}
