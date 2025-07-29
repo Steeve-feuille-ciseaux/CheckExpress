@@ -83,6 +83,7 @@ v0.20.0 -> Export data Finalisé
 v0.20.1 -> Bouton Ajouté un licencié replacé
 v0.20.2 -> Bouton Ajouté un prof replacé
 v0.20.3 -> Bouton un licencié réservé au admin + préparation rework message
+v0.20.4 -> Amélioration message après validation d'un formulaire en cours
 
 next step : 
 - review html, voir_session.html, user_detail.html, ajouter_utilisateur.html

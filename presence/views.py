@@ -56,7 +56,13 @@ def creer_session(request):
     if request.method == 'POST':
         form = SessionForm(request.POST, user=request.user)
         if form.is_valid():
-            # ... reste inchangé ...
+            session = form.save(commit=False)
+            session.created_by = request.user
+            session.save()
+            form.save_m2m()
+
+            messages.success(request, "✅ Session créée avec succès.")  # ✅ Message ajouté
+
             return redirect('liste_sessions')
     else:
         initial = {}
@@ -197,6 +203,7 @@ def ajouter_licencie(request):
                 licence.etablissement = profile.etablissement
 
             licence.save()
+            messages.success(request, "Le licencié a été ajouté avec succès.")
             return redirect('liste_licencies')
     else:
         form = LicenceForm()

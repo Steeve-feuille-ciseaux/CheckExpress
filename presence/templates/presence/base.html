@@ -8,10 +8,10 @@
     <meta name="theme-color" content="#2196F3">
     <link rel="stylesheet" href="{% static 'presence/css/style.css' %}?v=3">
     <link rel="stylesheet" href="{% static 'presence/css/form.css' %}?v=2">
+    <link rel="stylesheet" href="{% static 'presence/css/messages.css' %}?v=2">
 
     {% block css %}
         <link rel="stylesheet" href="{% static 'presence/css/mobile.css' %}?v=2">
-        <link rel="stylesheet" href="{% static 'presence/css/messages.css' %}?v=2">
     {% endblock %}
 </head>
 <body>
@@ -92,9 +92,9 @@
         <p>&copy; {{ now.year }} - Check Express</p>
     </footer>
 
+    <script src="{% static 'presence/mobile/messages.js' %}"></script>
     {% block javascript %}
         <script src="{% static 'presence/mobile/base.js' %}"></script>
-        <script src="{% static 'presence/mobile/messages.js' %}"></script>
     {% endblock %}
     
 </body>
