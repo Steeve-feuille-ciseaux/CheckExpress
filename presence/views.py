@@ -1074,14 +1074,14 @@ def user_detail(request, user_id):
 def ajouter_utilisateur_prof(request):
     if not request.user.is_superuser:
         messages.warning(request, "Accès refusé")
-        return redirect('accueil')  # redirige vers la page d'accueil
+        return redirect('voir_utilisateurs')  # redirige vers la page d'accueil
 
     if request.method == 'POST':
         form = UserCreationWithGroupForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Utilisateur ajouté avec succès.")
-            return redirect('accueil')
+            messages.success(request, "Prof ajouté avec succès.")
+            return redirect('voir_utilisateurs')
     else:
         form = UserCreationWithGroupForm()
 
