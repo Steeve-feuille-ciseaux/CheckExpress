@@ -58,11 +58,15 @@ def creer_session(request):
         if form.is_valid():
             session = form.save(commit=False)
             session.created_by = request.user
+
+            # 🔧 Établissement = celui du profil de l'utilisateur connecté
+            if hasattr(request.user, 'profile'):
+                session.etablissement = request.user.profile.etablissement
+
             session.save()
             form.save_m2m()
 
-            messages.success(request, "✅ Session créée avec succès.")  # ✅ Message ajouté
-
+            messages.success(request, "Session créée avec succès.")
             return redirect('liste_sessions')
     else:
         initial = {}
@@ -259,7 +263,7 @@ def modifier_licencie(request, licencie_id):
     licencie = get_object_or_404(Licence, pk=licencie_id)
 
     if request.method == 'POST':
-        form = LicenceForm(request.POST, instance=licencie)
+        form = LicenceForm(request.POST or None, instance=licencie, user=request.user)
         if form.is_valid():
             form.save()
             return redirect('liste_licencies')

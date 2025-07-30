@@ -77,71 +77,20 @@
 
     <!-- Liste des licenciés -->
     {% if licencies %}
-        <div class="users-grid">
+        <div class="users-grid simplified-grid">
             {% for licencie in licencies %}
-                <div class="user-card">
-                    <!-- En-tête -->
-                    <div class="user-header">
-                        <h3 class="user-name">{{ licencie.prenom }} {{ licencie.nom }}</h3>
-                        <span class="grade-badge">{{ licencie.grade|default:"N/A" }}</span>
+                <div class="user-line">
+                    <div class="user-line-info">
+                        {{ licencie.prenom }} {{ licencie.nom }}
                     </div>
-
-                    <!-- Infos -->
-                    <div class="user-content">
-                        <div class="user-info">
-
-                            <!-- Participation -->
-                            <div class="info-item">
-                                <span class="info-icon">✅</span>
-                                <div class="info-content">
-                                    <div class="info-label">Présences</div>
-                                    <div class="info-value">{{ licencie.nb_presences }}</div>
-                                </div>
-                            </div>
-
-                            <!-- Dernière présence -->
-                            <div class="info-item">
-                                <span class="info-icon">📅</span>
-                                <div class="info-content">
-                                    <div class="info-label">Dernière présence</div>
-                                    <div class="info-value">
-                                        {% if licencie.last_session_date %}
-                                            {{ licencie.last_session_date|date:"d/m/Y" }}
-                                        {% else %}
-                                            — Aucune
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Établissement -->
-                            {% if request.user.is_superuser %}
-                            <div class="info-item">
-                                <span class="info-icon">🏢</span>
-                                <div class="info-content">
-                                    <div class="info-label">Établissement</div>
-                                    <div class="info-value">
-                                        {{ licencie.etablissement.name|default:"Non renseigné" }}
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
-
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="user-actions">
-                        <a href="{% url 'detail_licencie' licencie.id %}" class="user-action-btn btn-view">
-                            <span>👁️</span>
-                            Voir
-                        </a>
-                        <!-- <a href="{% url 'modifier_licencie' licencie.id %}" class="user-action-btn btn-edit">
-                            ✏️ Modifier
-                        </a>
-                        <form action="{% url 'supprimer_licencie' licencie.id %}" method="get" style="display:inline;">
-                            <button type="submit" class="user-action-btn btn-delete">❌ Supprimer</button>
-                        </form> -->
+                    <div class="user-line-action">
+                        📅 
+                        {% if licencie.last_session_date %}
+                            {{ licencie.last_session_date|date:"d/m/Y" }}
+                        {% else %}
+                            Aucune
+                        {% endif %}
+                        <a href="{% url 'detail_licencie' licencie.id %}" class="btn-view-line">Voir</a>
                     </div>
                 </div>
             {% endfor %}

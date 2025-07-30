@@ -1,12 +1,35 @@
 {% extends "presence/base.html" %}
 
-{% block content %}
-  <h2>Confirmer la suppression</h2>
-  <p>Êtes-vous sûr de vouloir supprimer l'utilisateur {{ user_obj.get_full_name }} ({{ user_obj.username }}) ?</p>
+{% load static %}
 
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Oui, supprimer</button>
-    <a href="javascript:history.back()" class="btn-cancel">Annuler</a>
-  </form>
+{% block title %}Confirmation de suppression{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'presence/mobile/confirme_delete.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container confirmation-container">
+    <div class="confirmation-box">
+        <h2 class="confirmation-title">⚠️ Suppression d'un utilisateur</h2>
+
+        <p class="confirmation-text">
+            Êtes-vous sûr de vouloir <strong>supprimer définitivement</strong> l'utilisateur suivant ?
+        </p>
+
+        <div class="licencie-highlight">
+            {{ user_obj.get_full_name }} <br>
+            <span style="font-size: 0.9em; color: #666;">(@{{ user_obj.username }})</span>
+        </div>
+
+        <form method="post" class="confirmation-form">
+            {% csrf_token %}
+            <div class="confirmation-buttons">
+                <button type="submit" class="btn-confirm">❌ Supprimer</button>
+                <a href="javascript:history.back()" class="btn-cancel">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

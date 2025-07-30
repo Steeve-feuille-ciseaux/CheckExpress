@@ -47,23 +47,27 @@ class SessionForm(forms.ModelForm):
 class LicenceForm(forms.ModelForm):
     class Meta:
         model = Licence
-        fields = ['nom', 'prenom', 'date_naissance', 'grade']
+        fields = ['nom', 'prenom', 'date_naissance', 'grade', 'etablissement']
         widgets = {
             'date_naissance': forms.DateInput(
                 attrs={
                     'type': 'date',
                     'class': 'form-control'
                 },
-                format='%Y-%m-%d'  # ← important
+                format='%Y-%m-%d'
             ),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Forcer l'affichage au format HTML5 si instance existe
+        # Format initial pour la date
         if self.instance and self.instance.date_naissance:
             self.initial['date_naissance'] = self.instance.date_naissance.strftime('%Y-%m-%d')
+
+        # Supprimer le champ établissement si l'utilisateur n'est pas superuser
+        if user and not user.is_superuser:
+            self.fields.pop('etablissement', None)
 
 class UserCreationWithGroupForm(UserCreationForm):
     group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
@@ -127,5 +131,31 @@ class UserUpdateForm(forms.ModelForm):
 
             etablissement = self.cleaned_data.get('etablissement')
             Profile.objects.update_or_create(user=user, defaults={'etablissement': etablissement})
+
+        return user
+    
+class UserCreationWithGroupForm(UserCreationForm):
+    group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
+    etablissement = forms.ModelChoiceField(queryset=Etablissement.objects.all(), required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        
+        if commit:
+            user.save()
+
+            # Ajouter l'utilisateur au groupe
+            group = self.cleaned_data.get('group')
+            if group:
+                user.groups.add(group)
+
+            # Créer le profile avec l’établissement
+            etablissement = self.cleaned_data.get('etablissement')
+            Profile.objects.create(user=user, etablissement=etablissement)
 
         return user
