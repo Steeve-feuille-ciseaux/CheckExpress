@@ -117,6 +117,7 @@ def voir_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
     return render(request, 'presence/voir_session.html', {'session': session})
 
+
 @login_required
 def modifier_session(request, pk):
     session = get_object_or_404(Session, pk=pk)
@@ -132,11 +133,14 @@ def modifier_session(request, pk):
     if request.method == 'POST':
         form = SessionForm(request.POST, instance=session, user=request.user)
         if form.is_valid():
-            session = form.save(commit=False)
-            session.checked_by = request.user
-            session.save()
+            session_updated = form.save(commit=False)
+            session_updated.checked_by = request.user
+            session_updated.save()
             form.save_m2m()
+            messages.success(request, "Session modifiée avec succès.")
             return redirect('liste_sessions')
+        else:
+            messages.error(request, "Erreur lors de la modification de la session. Veuillez vérifier les informations saisies.")
     else:
         form = SessionForm(instance=session, user=request.user)
 
@@ -207,8 +211,10 @@ def ajouter_licencie(request):
                 licence.etablissement = profile.etablissement
 
             licence.save()
-            messages.success(request, "Le licencié a été ajouté avec succès.")
+            messages.success(request, f"Le licencié '{licence.prenom} {licence.nom}' a été ajouté avec succès.")
             return redirect('liste_licencies')
+        else:
+            messages.error(request, "Erreur lors de l'ajout du licencié. Veuillez vérifier les informations saisies.")
     else:
         form = LicenceForm()
 
@@ -265,8 +271,11 @@ def modifier_licencie(request, licencie_id):
     if request.method == 'POST':
         form = LicenceForm(request.POST or None, instance=licencie, user=request.user)
         if form.is_valid():
-            form.save()
+            licencie_updated = form.save()
+            messages.success(request, f"Licencié '{licencie_updated.prenom} {licencie_updated.nom}' modifié avec succès.")
             return redirect('liste_licencies')
+        else:
+            messages.error(request, "Erreur lors de la modification du licencié. Veuillez vérifier les informations saisies.")
     else:
         form = LicenceForm(instance=licencie)
 
@@ -1078,14 +1087,16 @@ def user_detail(request, user_id):
 def ajouter_utilisateur_prof(request):
     if not request.user.is_superuser:
         messages.warning(request, "Accès refusé")
-        return redirect('voir_utilisateurs')  # redirige vers la page d'accueil
+        return redirect('voir_utilisateurs')
 
     if request.method == 'POST':
         form = UserCreationWithGroupForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Prof ajouté avec succès.")
+            user = form.save()
+            messages.success(request, f"Professeur '{user.username}' ajouté avec succès.")
             return redirect('voir_utilisateurs')
+        else:
+            messages.error(request, "Erreur lors de l'ajout du professeur. Veuillez vérifier les informations saisies.")
     else:
         form = UserCreationWithGroupForm()
 
@@ -1100,9 +1111,11 @@ def user_edit(request, user_id):
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=user_obj)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Utilisateur mis à jour avec succès.")
+            user_updated = form.save()
+            messages.success(request, f"Utilisateur '{user_updated.username}' mis à jour avec succès.")
             return redirect('voir_utilisateurs')
+        else:
+            messages.error(request, "Erreur lors de la modification de l'utilisateur. Veuillez vérifier les informations saisies.")
     else:
         initial = {
             'etablissement': profile.etablissement if profile else None,
@@ -1121,13 +1134,17 @@ def user_delete(request, user_id):
     user_obj = get_object_or_404(User, pk=user_id)
 
     if request.method == 'POST':
-        # Optionnel : Empêcher un superuser de se supprimer lui-même
+        # Empêcher un superuser de se supprimer lui-même
         if user_obj == request.user:
             messages.error(request, "Vous ne pouvez pas supprimer votre propre compte.")
             return redirect('voir_utilisateurs')
 
-        user_obj.delete()
-        messages.success(request, "Utilisateur supprimé avec succès.")
+        username = user_obj.username
+        try:
+            user_obj.delete()
+            messages.success(request, f"Utilisateur '{username}' supprimé avec succès.")
+        except Exception as e:
+            messages.error(request, f"Erreur lors de la suppression de l'utilisateur '{username}'.")
         return redirect('voir_utilisateurs')
 
     return render(request, 'presence/user_confirm_delete.html', {'user_obj': user_obj})
@@ -1195,9 +1212,11 @@ def ajouter_ville(request):
     if request.method == 'POST':
         form = VilleForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Ville ajoutée avec succès.")
+            ville = form.save()
+            messages.success(request, f"Ville '{ville.name}' ajoutée avec succès.")
             return redirect('gestion_ville')
+        else:
+            messages.error(request, "Erreur lors de l'ajout de la ville. Veuillez vérifier les informations saisies.")
     else:
         form = VilleForm()
     return render(request, 'presence/ajouter_ville.html', {'form': form})
@@ -1209,14 +1228,15 @@ def modifier_ville(request, ville_id):
     if request.method == 'POST':
         form = VilleForm(request.POST, instance=ville)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Ville modifiée avec succès.")
+            ville_updated = form.save()
+            messages.success(request, f"Ville '{ville_updated.name}' modifiée avec succès.")
             return redirect('gestion_ville')
+        else:
+            messages.error(request, "Erreur lors de la modification de la ville. Veuillez vérifier les informations saisies.")
     else:
         form = VilleForm(instance=ville)
 
     return render(request, 'presence/modifier_ville.html', {'form': form, 'ville': ville})
-
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -1224,12 +1244,15 @@ def supprimer_ville(request, ville_id):
     ville = get_object_or_404(Ville, pk=ville_id)
 
     if request.method == 'POST':
-        ville.delete()
-        messages.success(request, "Ville supprimée avec succès.")
+        ville_name = ville.name
+        try:
+            ville.delete()
+            messages.success(request, f"Ville '{ville_name}' supprimée avec succès.")
+        except Exception as e:
+            messages.error(request, f"Impossible de supprimer la ville '{ville_name}'. Elle est peut-être utilisée par des établissements.")
         return redirect('gestion_ville')
 
     return render(request, 'presence/supprimer_ville.html', {'ville': ville})
-
 
 # gestion établissement
 @login_required
@@ -1244,9 +1267,11 @@ def ajouter_etablissement(request):
     if request.method == 'POST':
         form = EtablissementForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Établissement ajouté avec succès.")
+            etablissement = form.save()
+            messages.success(request, f"Établissement '{etablissement.name}' ajouté avec succès.")
             return redirect('gestion_etablissement')
+        else:
+            messages.error(request, "Erreur lors de l'ajout de l'établissement. Veuillez vérifier les informations saisies.")
     else:
         form = EtablissementForm()
     return render(request, 'presence/ajouter_etablissement.html', {'form': form})
@@ -1259,14 +1284,15 @@ def modifier_etablissement(request, etablissement_id):
     if request.method == 'POST':
         form = EtablissementForm(request.POST, instance=etablissement)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Établissement modifié avec succès.")
+            etablissement_updated = form.save()
+            messages.success(request, f"Établissement '{etablissement_updated.name}' modifié avec succès.")
             return redirect('gestion_etablissement')
+        else:
+            messages.error(request, "Erreur lors de la modification de l'établissement. Veuillez vérifier les informations saisies.")
     else:
         form = EtablissementForm(instance=etablissement)
 
     return render(request, 'presence/modifier_etablissement.html', {'form': form, 'etablissement': etablissement})
-
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -1274,8 +1300,12 @@ def supprimer_etablissement(request, etablissement_id):
     etablissement = get_object_or_404(Etablissement, pk=etablissement_id)
 
     if request.method == 'POST':
-        etablissement.delete()
-        messages.success(request, "Établissement supprimé avec succès.")
+        etablissement_name = etablissement.name
+        try:
+            etablissement.delete()
+            messages.success(request, f"Établissement '{etablissement_name}' supprimé avec succès.")
+        except Exception as e:
+            messages.error(request, f"Impossible de supprimer l'établissement '{etablissement_name}'. Il est peut-être utilisé par des utilisateurs ou licenciés.")
         return redirect('gestion_etablissement')
 
     return render(request, 'presence/supprimer_etablissement.html', {'etablissement': etablissement})
@@ -1293,9 +1323,11 @@ def ajouter_role(request):
     if request.method == 'POST':
         form = GroupForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Rôle (groupe) ajouté avec succès.")
+            role = form.save()
+            messages.success(request, f"Rôle '{role.name}' ajouté avec succès.")
             return redirect('gestion_role')
+        else:
+            messages.error(request, "Erreur lors de l'ajout du rôle. Veuillez vérifier les informations saisies.")
     else:
         form = GroupForm()
 
@@ -1309,14 +1341,15 @@ def modifier_role(request, role_id):
     if request.method == 'POST':
         form = GroupForm(request.POST, instance=group)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Rôle mis à jour avec succès.")
+            role_updated = form.save()
+            messages.success(request, f"Rôle '{role_updated.name}' mis à jour avec succès.")
             return redirect('gestion_role')
+        else:
+            messages.error(request, "Erreur lors de la modification du rôle. Veuillez vérifier les informations saisies.")
     else:
         form = GroupForm(instance=group)
 
     return render(request, 'presence/modifier_role.html', {'form': form, 'group': group})
-
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -1324,8 +1357,12 @@ def supprimer_role(request, role_id):
     group = get_object_or_404(Group, pk=role_id)
 
     if request.method == 'POST':
-        group.delete()
-        messages.success(request, "Rôle supprimé avec succès.")
+        role_name = group.name
+        try:
+            group.delete()
+            messages.success(request, f"Rôle '{role_name}' supprimé avec succès.")
+        except Exception as e:
+            messages.error(request, f"Impossible de supprimer le rôle '{role_name}'. Il est peut-être utilisé par des utilisateurs.")
         return redirect('gestion_role')
 
     return render(request, 'presence/supprimer_role.html', {'group': group})

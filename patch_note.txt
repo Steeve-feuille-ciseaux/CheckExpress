@@ -86,6 +86,7 @@ v0.20.3 -> Bouton un licencié réservé au admin + préparation rework message
 v0.20.4 -> Part 1 -> Amélioration message après validation d'un formulaire en cours 
 v0.20.5 -> Part 2 -> Amélioration message + Correctien ajout d'un prof
 v0.20.6 -> UX Améliorer sur de nombre page et feature
+v0.20.7 -> Part 3 -> Correction du fichier view.py afin d'appliquer les messages manquants
 
 next step : 
 - !!! Amélioration message, répliquer le message ajout d'un ville pour le reste !!!
