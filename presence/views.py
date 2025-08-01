@@ -19,14 +19,30 @@ from django.views.generic.edit import FormView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-
 def accueil(request):
     today = localdate()
     now = localtime()
-    sessions_today = Session.objects.filter(date=today)
-    sessions = Session.objects.exclude(date=today).order_by('-date')
 
-    return render(request, 'presence/accueil.html', {'sessions_today': sessions_today, 'sessions': sessions, 'today': today, 'now': now,})
+    if request.user.is_authenticated:
+        user_etablissement = getattr(request.user.profile, 'etablissement', None)
+        if user_etablissement:
+            sessions_today = Session.objects.filter(date=today, etablissement=user_etablissement)
+            sessions = Session.objects.exclude(date=today).filter(etablissement=user_etablissement).order_by('-date')
+        else:
+            # Utilisateur sans établissement : ne voit aucune session
+            sessions_today = Session.objects.none()
+            sessions = Session.objects.none()
+    else:
+        # Utilisateur non connecté : comportement inchangé
+        sessions_today = Session.objects.filter(date=today)
+        sessions = Session.objects.exclude(date=today).order_by('-date')
+
+    return render(request, 'presence/accueil.html', {
+        'sessions_today': sessions_today,
+        'sessions': sessions,
+        'today': today,
+        'now': now,
+    })
 
 def enregistrer_presence(request):
     if request.method == 'POST':

@@ -1,3 +1,4 @@
+-- PROTOTYPE --
 v0.01.0 -> prototype + créer session 
 v0.02.0 -> modifier session
 v0.03.0 -> visualiser les licenciers et exporté la liste sur excel
@@ -25,6 +26,7 @@ v0.13.1 -> Update UX : liste_licencies.html
 v0.14.0 -> Update Feature : Export data licencier
 v0.14.1 -> Rendu export excel amélioré
 v0.14.2 -> Update pré-requis d'installation
+-- ALPHA --
 v0.14.2.1 -> préparation interface mobile
 v0.15.0 -> UI Mobile : Menu -> base.html
 v0.15.1 -> UI Mobile : base.html améliorer
@@ -88,6 +90,8 @@ v0.20.5 -> Part 2/3 -> Amélioration message + Correctien ajout d'un prof
 v0.20.6 -> UX Améliorer sur de nombre page et feature
 v0.20.7 -> Part 3/3 -> Correction du fichier view.py afin d'appliquer les messages manquants
 v0.20.8 -> Message validation du formulaire unifié
+v0.21.0 -> Onglet Mes session restreint + Correction Filtre session en accueil
+-- BETA --
 
 next step : 
 - review html, voir_session.html, user_detail.html, ajouter_utilisateur.html
